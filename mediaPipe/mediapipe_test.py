@@ -10,9 +10,22 @@ os.chdir(path)
 IMAGE_FILES = os.listdir(path)
 
 with mp_hands.Hands(
-    static_image_mode=True,
-    max_num_hands=2,
-    min_detection_confidence=0.5) as hands:
+  static_image_mode=True,
+  max_num_hands=2,
+  min_detection_confidence=0.5) as hands:
+
+  f = open('../coordinate/mediapipe.csv', 'w')
+  column = []
+  for i in range(0,21,1):
+    column.append('x'+str(i))
+  for i in range(0,21,1):
+    column.append('y'+str(i))
+  for i in range(0,21,1):
+    column.append('z'+str(i))
+  for i in range(0,62,1):
+    f.write(column[i]+',')
+  f.write('z20'+'\n')
+
   for idx, file in enumerate(IMAGE_FILES):
     # Read an image, flip it around y-axis for correct handedness output (see
     # above).
@@ -27,22 +40,25 @@ with mp_hands.Hands(
     image_height, image_width, _ = image.shape
     annotated_image = image.copy()
 
-    f = open('../coordinate/c_'+str(idx)+'.txt','w')
     for hand_landmarks in results.multi_hand_landmarks:
-      f.write('\n x locate \n -------------------------\n')
+      locate = []
+
       for ids, landmrk in enumerate(hand_landmarks.landmark):
-        cx = str(landmrk.x)+'\n'
-        f.write(cx)
-      f.write('\n y locate \n -------------------------\n')
+        locate.append(str(landmrk.x))
+
       for ids, landmrk in enumerate(hand_landmarks.landmark):
-        cy = str(landmrk.y)+'\n'
-        f.write(cy)
-      f.write('\n z locate \n -------------------------\n')
+        locate.append(str(landmrk.y))
+
       for ids, landmrk in enumerate(hand_landmarks.landmark):
-        cz = str(landmrk.z)+'\n'
-        f.write(cz)
+        locate.append(str(landmrk.z))
             
       mp_drawing.draw_landmarks(
         annotated_image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+    # csv 파일 제작
+    f.write(locate.pop(0))
+    for i in locate:
+      f.write(','+i)
+    f.write('\n')
+
     cv2.imwrite(
         '../completion_image/annotated_image' + str(idx) + '.png', cv2.flip(annotated_image, 1))
