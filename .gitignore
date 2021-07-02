@@ -1,6 +1,9 @@
+# mediapipe
 mediaPipe/completion_image/
 mediaPipe/proto_image/
 
+# backend
+application-*.yml
 
 # Created by https://www.toptal.com/developers/gitignore/api/intellij,androidstudio,python,jupyternotebooks,java,macos,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij,androidstudio,python,jupyternotebooks,java,macos,windows
