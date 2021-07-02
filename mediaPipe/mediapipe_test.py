@@ -54,6 +54,7 @@ with mp_hands.Hands(
             
       mp_drawing.draw_landmarks(
         annotated_image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+        
     # csv 파일 제작
     f.write(locate.pop(0))
     for i in locate:
