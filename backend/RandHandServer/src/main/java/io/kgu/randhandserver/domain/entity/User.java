@@ -38,7 +38,7 @@ public class User implements Serializable {
     private String picture;
 
     @OneToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "info_id")
     private UserInfo userInfo;
 
     @ElementCollection

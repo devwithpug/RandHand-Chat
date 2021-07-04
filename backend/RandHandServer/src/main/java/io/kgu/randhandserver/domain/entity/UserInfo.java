@@ -22,7 +22,7 @@ public class UserInfo implements Serializable {
 
     @Id
     @GeneratedValue
-    @JsonIgnore
+    @Column(name = "info_id")
     private Long id;
 
     @Column

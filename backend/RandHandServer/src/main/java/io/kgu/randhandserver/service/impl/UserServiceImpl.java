@@ -24,6 +24,11 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    public UserDto dto(User user) {
+        return UserDto.of(userRepository.findById(user.getId()).get());
+    }
+
+    @Override
     public UserInfoDto getUserInfo(User user) {
 
         return UserInfoDto.of(user);

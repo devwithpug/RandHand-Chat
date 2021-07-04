@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface UserService {
 
+    // Dto 전환
+    UserDto dto(User user);
     // 회원 정보 조회
     UserInfoDto getUserInfo(User user);
     // 회원 정보 변경 요청
