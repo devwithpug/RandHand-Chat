@@ -1,6 +1,5 @@
 package io.kgu.randhandserver.socket.config;
 
-import io.kgu.randhandserver.socket.handler.TextOnlyWebSocketHandler;
 import io.kgu.randhandserver.socket.handler.TextWithImageWebSocketHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,15 +14,9 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    @Bean // for spring websocket
+    @Bean
     public WebSocketHandler webSocketHandler() {
-//        return new TextOnlyWebSocketHandler();
         return new TextWithImageWebSocketHandler();
-    }
-
-    @Bean // for tomcat websocket
-    public ServerEndpointExporter serverEndpointExporter() {
-        return new ServerEndpointExporter();
     }
 
     @Bean
@@ -35,7 +28,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketHandler(), "/websocket/spring/**")
+        registry.addHandler(webSocketHandler(), "/websocket/session/**")
                 .setAllowedOrigins("*");
     }
 }
