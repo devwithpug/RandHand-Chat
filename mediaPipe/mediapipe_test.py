@@ -5,7 +5,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
 # For static images:
-path = 'C:/Users/mpoli/Desktop/Git/RandHand-Chat/mediaPipe/proto_image' # 파일 경로 지정
+path = 'C:/Users/dh/Desktop/Git/RandHand-Chat/mediaPipe/proto_image' # 파일 경로 지정
 os.chdir(path)
 IMAGE_FILES = os.listdir(path)
 
