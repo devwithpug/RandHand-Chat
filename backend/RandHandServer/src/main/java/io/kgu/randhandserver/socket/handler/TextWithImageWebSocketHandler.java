@@ -35,14 +35,13 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         sessions.add(session);
         log.info("client{} connect", session.getRemoteAddress());
 
-        List<String> sessionKey = session.getHandshakeHeaders().get("session-key");
+        try {
+            List<String> sessionKey = session.getHandshakeHeaders().get("session-key");
 
-
-        // TODO - 세션에서 얻은 userDto 이용하여 검증 & 메시지 전송자 명시 필요
-        UserDto userDto = objectMapper.convertValue(redisTemplate.opsForHash().get("user:" + sessionKey.get(0), "entity"), UserDto.class);
-
-        if (userDto == null) {
-            throw new AccessDeniedException("인증된 세션이 존재하지 않습니다.");
+            // TODO - 세션에서 얻은 userDto 이용하여 검증 & 메시지 전송자 명시 필요
+            UserDto userDto = objectMapper.convertValue(redisTemplate.opsForHash().get("user:" + sessionKey.get(0), "entity"), UserDto.class);
+        } catch (Exception e) {
+            log.warn("인증된 세션이 존재하지 않습니다.");
         }
 
         for (WebSocketSession webSocketSession : sessions) {
