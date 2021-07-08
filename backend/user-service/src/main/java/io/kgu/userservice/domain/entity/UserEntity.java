@@ -1,6 +1,7 @@
 package io.kgu.userservice.domain.entity;
 
 import io.kgu.userservice.domain.dto.UserDto;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 

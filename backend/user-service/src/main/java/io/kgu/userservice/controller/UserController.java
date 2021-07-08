@@ -30,7 +30,7 @@ public class UserController {
         UserDto userDto = mapper.map(requestUser, UserDto.class);
 
         if (userDto == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         userDto = userService.createUser(userDto);
@@ -73,6 +73,19 @@ public class UserController {
         return getListResponseEntity(friends);
     }
 
+    // 친구 단일 조회
+    @GetMapping("/users/{userId}/friends/{friendId}")
+    public ResponseEntity<ResponseUser> getOneFriends(@PathVariable String userId, @PathVariable String friendId) {
+
+        UserDto friend = userService.getOneFriends(userId, friendId);
+
+        if (friend == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(friend, ResponseUser.class));
+    }
+
     // 친구 추가 요청
     @PostMapping("/users/{userId}/friends/{friendId}")
     public ResponseEntity<List<ResponseUser>> addFriend(@PathVariable String userId, @PathVariable String friendId) {
@@ -98,6 +111,19 @@ public class UserController {
         List<UserDto> blockedList = userService.getAllBlocked(userId);
 
         return getListResponseEntity(blockedList);
+    }
+
+    // 차단 유저 단일 조회
+    @GetMapping("/users/{userId}/blocked/{blockId}")
+    public ResponseEntity<ResponseUser> getOneBlocked(@PathVariable String userId, @PathVariable String blockId) {
+
+        UserDto blocked = userService.getOneBlocked(userId, blockId);
+
+        if (blocked == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(blocked, ResponseUser.class));
     }
 
     // 유저 차단 요청
@@ -132,7 +158,7 @@ public class UserController {
     }
 
     private ResponseEntity<List<ResponseUser>> getListResponseEntity(List<UserDto> friends) {
-        
+
         if (friends == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

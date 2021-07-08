@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -33,6 +35,8 @@ public class UserServiceImpl implements UserService {
         userDto.setStatusMessage("");
 
         UserEntity userEntity = mapper.map(userDto, UserEntity.class);
+        userEntity.setUserFriends(new ArrayList<>());
+        userEntity.setUserBlocked(new ArrayList<>());
 
         userRepository.save(userEntity);
 
