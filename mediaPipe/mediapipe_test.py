@@ -5,9 +5,23 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
 # For static images:
-path = 'C:/Users/dh/Desktop/Git/RandHand-Chat/mediaPipe/proto_image'
+path = 'C:/Users/dh/Desktop/Git/RandHand-Chat/mediaPipe/proto_image' # 파일 경로 지정
 os.chdir(path)
 IMAGE_FILES = os.listdir(path)
+# --------------------------------------<파일 순서 개선>---------------------------------------
+# 파일 이름은 숫자로 넣어줘야 함
+COPY_FILES = []
+
+for i in IMAGE_FILES:
+    COPY_FILES.append(i.replace('.jpg', ''))
+
+COPY_FILES=sorted(COPY_FILES, key=int)
+IMAGE_FILES = []
+
+for i in COPY_FILES:
+    IMAGE_FILES.append(i+'.jpg')
+
+# --------------------------------------------------------------------------------------------
 
 with mp_hands.Hands(
   static_image_mode=True,
