@@ -41,14 +41,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserByUserId(String userId) {
+
+        if (!validateUser(userId)) return null;
+
         UserEntity userEntity = userRepository.findByUserId(userId);
         return mapper.map(userEntity, UserDto.class);
     }
 
     @Override
-    public UserDto modifyUserInfo(UserDto userDto) {
+    public UserDto modifyUserInfo(String userId, UserDto userDto) {
 
-        if (!validateUser(userDto.getUserId())) return null;
+        if (!validateUser(userId)) return null;
 
         UserEntity userEntity = userRepository.findByUserId(userDto.getUserId());
         userEntity.update(userDto);
@@ -65,6 +68,23 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         return getFriendsList(userEntity);
+    }
+
+    @Override
+    public UserDto getOneFriends(String userId, String friendId) {
+
+        if (!validateUser(userId, friendId)) return null;
+
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+        if (!userEntity.getUserFriends().contains(friendId)) {
+            log.error("친구로 등록되지 않은 유저입니다.");
+            return null;
+        }
+
+        UserEntity friend = userRepository.findByUserId(friendId);
+
+        return mapper.map(friend, UserDto.class);
     }
 
     @Override
@@ -106,6 +126,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getOneBlocked(String userId, String blockId) {
+
+        if (!validateUser(userId, blockId)) return null;
+
+        UserEntity userEntity = userRepository.findByUserId(userId);
+
+        if (!userEntity.getUserBlocked().contains(blockId)) {
+            log.error("차단 목록에 존재하지 않는 유저입니다.");
+            return null;
+        }
+
+        UserEntity blocked = userRepository.findByUserId(blockId);
+
+        return mapper.map(blocked, UserDto.class);
+    }
+
+    @Override
     public List<UserDto> blockUser(String userId, String blockId) {
 
         if (!validateUser(userId, blockId)) return null;
@@ -142,7 +179,8 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    private boolean validateUser(String... userId) {
+    @Override
+    public boolean validateUser(String... userId) {
 
         boolean returnResult = true;
 
