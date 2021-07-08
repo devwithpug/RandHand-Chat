@@ -1,8 +1,10 @@
 package io.kgu.userservice.domain.entity;
 
 import io.kgu.userservice.domain.dto.UserDto;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -13,6 +15,8 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "users")
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserEntity implements Serializable {
 
     @Id
@@ -38,12 +42,12 @@ public class UserEntity implements Serializable {
     private String picture;
 
     @ElementCollection
-    @JoinTable(name = "user_friends",
+    @JoinTable(name = "users_friends",
             joinColumns = {@JoinColumn(name = "my_id")})
     private List<String> userFriends;
 
     @ElementCollection
-    @JoinTable(name = "user_blocked",
+    @JoinTable(name = "users_blocked",
             joinColumns = {@JoinColumn(name = "my_id")})
     private List<String> userBlocked;
 

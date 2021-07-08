@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +26,9 @@ public class UserController {
 
     // 회원 생성(UserDto.userId == null 인 경우)
     @PostMapping("/users")
-    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser requestUser) {
+    public ResponseEntity<ResponseUser> createUser(@Valid @RequestBody RequestUser requestUser) {
 
         UserDto userDto = mapper.map(requestUser, UserDto.class);
-
-        if (userDto == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         userDto = userService.createUser(userDto);
 
@@ -53,12 +50,12 @@ public class UserController {
 
     // 회원 정보 변경 요청(UserDto.userId != null 인 경우)
     @PostMapping("/users/{userId}")
-    public ResponseEntity<ResponseUser> modifyUser(@PathVariable String userId, @RequestBody RequestUser requestUser) {
+    public ResponseEntity<ResponseUser> modifyUser(@PathVariable String userId, @Valid @RequestBody RequestUser requestUser) {
 
         UserDto userDto = userService.modifyUserInfo(userId, mapper.map(requestUser, UserDto.class));
 
-        if (userDto == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (userDto.getUserId() == null || userDto.getStatusMessage() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map(userDto, ResponseUser.class));

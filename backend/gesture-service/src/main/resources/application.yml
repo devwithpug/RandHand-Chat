@@ -12,7 +12,7 @@ spring:
       jdbc.lob.non_contextual_creation: true
     generate-ddl: true
   application:
-    name: user-service
+    name: gesture-service
 #    hibernate:
 #      ddl-auto: validate
 #logging:

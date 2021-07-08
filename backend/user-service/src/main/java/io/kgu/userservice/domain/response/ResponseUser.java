@@ -1,15 +1,20 @@
 package io.kgu.userservice.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponseUser {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ResponseUser implements Serializable {
 
     private String userId;
     private String email;
