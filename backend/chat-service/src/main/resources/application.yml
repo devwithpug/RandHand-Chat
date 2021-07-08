@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    include:
+      - datasource
+  jpa:
+    properties:
+      format_sql: true
+      show_sql: true
+      jdbc.lob.non_contextual_creation: true
+    generate-ddl: true
+#    hibernate:
+#      ddl-auto: validate
+#logging:
+#  level:
+#    root: debug
