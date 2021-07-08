@@ -1,6 +1,9 @@
 # mediapipe
-mediaPipe/completion_image/
-mediaPipe/proto_image/
+handDetection/mediaPipe(static_image)/original_images/
+handDetection/mediaPipe(static_image)/annotated_images/
+handDetection/mediaPipe(webCam_input)/annotated_videos/
+handDetection/mediaPipe(webCam_input)/original_videos/
+
 
 # backend
 application-*.yml

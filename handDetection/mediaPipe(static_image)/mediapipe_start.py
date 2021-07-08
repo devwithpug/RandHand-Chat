@@ -5,7 +5,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
 # For static images:
-path = 'C:/Users/dh/Desktop/Git/RandHand-Chat/mediaPipe/proto_image' # 파일 경로 지정
+path = 'C:/Users/dh/Desktop/Git/RandHand-Chat/handDetection/mediaPipe(static_image)/original_images' # 파일 경로 지정
 os.chdir(path)
 IMAGE_FILES = os.listdir(path)
 # --------------------------------------<파일 순서 개선>---------------------------------------
@@ -28,7 +28,7 @@ with mp_hands.Hands(
   max_num_hands=2,
   min_detection_confidence=0.5) as hands:
 
-  f = open('../coordinate/mediapipe.csv', 'w')
+  f = open('../dataSets/mediapipe.csv', 'w')
   column = []
   for i in range(0,21,1):
     column.append('x'+str(i))
@@ -76,4 +76,4 @@ with mp_hands.Hands(
     f.write('\n')
 
     cv2.imwrite(
-        '../completion_image/annotated_image' + str(idx) + '.png', cv2.flip(annotated_image, 1))
+        '../annotated_images/annotated_image' + str(idx) + '.png', cv2.flip(annotated_image, 1))
