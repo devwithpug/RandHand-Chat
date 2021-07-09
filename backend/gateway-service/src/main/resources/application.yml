@@ -14,6 +14,9 @@ logging:
     com.netflix.discovery.shared.resolver.aws.ConfigClusterResolver: WARN
 
 spring:
+  profiles:
+    include:
+      - token
   application:
     name: gateway-service
   cloud:
@@ -22,10 +25,29 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
+            - Path=/user-service/login
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
             - Path=/user-service/**
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
 
         - id: chat-service
           uri: lb://CHAT-SERVICE
@@ -48,4 +70,3 @@ spring:
           args:
             preLogger: true
             postLogger: true
-

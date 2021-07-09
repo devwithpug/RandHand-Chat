@@ -2,15 +2,18 @@ package io.kgu.userservice.service;
 
 import io.kgu.userservice.domain.dto.UserDto;
 import io.kgu.userservice.domain.request.RequestUser;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     // 회원 생성(UserDto.userId == null 인 경우)
     UserDto createUser(UserDto userDto);
     // 회원 조회
     UserDto getUserByUserId(String userId);
+    // 이메일로 회원 조회
+    UserDto getUserByEmail(String email);
     // 회원 정보 변경 요청(UserDto.userId != null 인 경우)
     UserDto modifyUserInfo(String userId, UserDto userDto);
     // 친구 목록 조회

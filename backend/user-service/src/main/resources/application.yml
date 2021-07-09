@@ -5,6 +5,7 @@ spring:
   profiles:
     include:
       - datasource
+      - token
   jpa:
     properties:
       format_sql: true

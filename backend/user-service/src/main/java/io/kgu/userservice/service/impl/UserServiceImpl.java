@@ -7,6 +7,9 @@ import io.kgu.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +29,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
 
-        if (userDto.getUserId() != null) {
-            log.error("이미 존재하는 유저입니다. : {}", userDto.getUserId());
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            log.error("이미 존재하는 유저입니다. : {}", userDto.getEmail());
             return null;
         }
 
@@ -37,7 +40,6 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = mapper.map(userDto, UserEntity.class);
         userEntity.setUserFriends(new ArrayList<>());
         userEntity.setUserBlocked(new ArrayList<>());
-
         userRepository.save(userEntity);
 
         return mapper.map(userEntity, UserDto.class);
@@ -49,6 +51,15 @@ public class UserServiceImpl implements UserService {
         if (!validateUser(userId)) return null;
 
         UserEntity userEntity = userRepository.findByUserId(userId);
+        return mapper.map(userEntity, UserDto.class);
+    }
+
+    @Override
+    public UserDto getUserByEmail(String email) {
+        UserEntity userEntity = userRepository.findByEmail(email);
+
+        if (userEntity == null) return null;
+
         return mapper.map(userEntity, UserDto.class);
     }
 
@@ -221,5 +232,19 @@ public class UserServiceImpl implements UserService {
         });
 
         return result;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        UserEntity userEntity = userRepository.findByUserId(username);
+
+        if (userEntity == null) {
+            throw new UsernameNotFoundException("userId : " + username + " not exists!");
+        }
+        return new User(userEntity.getEmail(), userEntity.getUserId(),
+                true, true, true, true,
+                new ArrayList<>());
+
     }
 }

@@ -9,8 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,10 @@ public class UserController {
         UserDto userDto = mapper.map(requestUser, UserDto.class);
 
         userDto = userService.createUser(userDto);
+
+        if (userDto == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(userDto, ResponseUser.class));
     }
@@ -62,8 +68,8 @@ public class UserController {
     }
 
     // 친구 목록 조회
-    @GetMapping("/users/{userId}/friends")
-    public ResponseEntity<List<ResponseUser>> friends(@PathVariable String userId) {
+    @GetMapping("/users/friends")
+    public ResponseEntity<List<ResponseUser>> friends(@RequestHeader("userId") String userId) {
 
         List<UserDto> friends = userService.getAllFriends(userId);
 
@@ -71,8 +77,8 @@ public class UserController {
     }
 
     // 친구 단일 조회
-    @GetMapping("/users/{userId}/friends/{friendId}")
-    public ResponseEntity<ResponseUser> getOneFriends(@PathVariable String userId, @PathVariable String friendId) {
+    @GetMapping("/users/friends/{friendId}")
+    public ResponseEntity<ResponseUser> getOneFriends(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
         UserDto friend = userService.getOneFriends(userId, friendId);
 
@@ -84,8 +90,8 @@ public class UserController {
     }
 
     // 친구 추가 요청
-    @PostMapping("/users/{userId}/friends/{friendId}")
-    public ResponseEntity<List<ResponseUser>> addFriend(@PathVariable String userId, @PathVariable String friendId) {
+    @PostMapping("/users/friends/{friendId}")
+    public ResponseEntity<List<ResponseUser>> addFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
         List<UserDto> friends = userService.addFriend(userId, friendId);
 
@@ -93,8 +99,8 @@ public class UserController {
     }
 
     // 친구 삭제 요청
-    @PostMapping("/users/{userId}/friends/{friendId}/remove")
-    public ResponseEntity<List<ResponseUser>> removeFriend(@PathVariable String userId, @PathVariable String friendId) {
+    @PostMapping("/users/friends/{friendId}/remove")
+    public ResponseEntity<List<ResponseUser>> removeFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
         List<UserDto> friends = userService.removeFriend(userId, friendId);
 
@@ -102,8 +108,8 @@ public class UserController {
     }
 
     // 차단 목록 조회
-    @GetMapping("/users/{userId}/blocked")
-    public ResponseEntity<List<ResponseUser>> blocked(@PathVariable String userId) {
+    @GetMapping("/users/blocked")
+    public ResponseEntity<List<ResponseUser>> blocked(@RequestHeader("userId") String userId) {
 
         List<UserDto> blockedList = userService.getAllBlocked(userId);
 
@@ -111,8 +117,8 @@ public class UserController {
     }
 
     // 차단 유저 단일 조회
-    @GetMapping("/users/{userId}/blocked/{blockId}")
-    public ResponseEntity<ResponseUser> getOneBlocked(@PathVariable String userId, @PathVariable String blockId) {
+    @GetMapping("/users/blocked/{blockId}")
+    public ResponseEntity<ResponseUser> getOneBlocked(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
         UserDto blocked = userService.getOneBlocked(userId, blockId);
 
@@ -124,8 +130,8 @@ public class UserController {
     }
 
     // 유저 차단 요청
-    @PostMapping("/users/{userId}/blocked/{blockId}")
-    public ResponseEntity<List<ResponseUser>> blockUser(@PathVariable String userId, @PathVariable String blockId) {
+    @PostMapping("/users/blocked/{blockId}")
+    public ResponseEntity<List<ResponseUser>> blockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
         List<UserDto> blockedList = userService.blockUser(userId, blockId);
 
@@ -133,8 +139,8 @@ public class UserController {
     }
 
     // 유저 차단 해제 요청
-    @PostMapping("/users/{userId}/blocked/{blockId}/remove")
-    public ResponseEntity<List<ResponseUser>> unblockUser(@PathVariable String userId, @PathVariable String blockId) {
+    @PostMapping("/users/blocked/{blockId}/remove")
+    public ResponseEntity<List<ResponseUser>> unblockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
         List<UserDto> blockedList = userService.unblockUser(userId, blockId);
 
@@ -142,8 +148,8 @@ public class UserController {
     }
 
     // 회원 서비스 탈퇴
-    @GetMapping("/users/{userId}/delete")
-    public ResponseEntity<?> deleteUser(@PathVariable String userId) {
+    @GetMapping("/users/delete")
+    public ResponseEntity<?> deleteUser(@RequestHeader("userId") String userId) {
 
         if (!userService.validateUser(userId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -29,7 +29,7 @@ public class UserEntity implements Serializable {
     @Column(nullable = false, updatable = false)
     private String auth;
 
-    @Column(nullable = false, length = 50, updatable = false)
+    @Column(nullable = false, length = 50, updatable = false, unique = true)
     private String email;
 
     @Column(nullable = false, length = 50)
