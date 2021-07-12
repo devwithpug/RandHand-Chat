@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- 메시지 입력화면에서의 사용할 컬러 -->
+    <color name="colorMyMessage">#FFCC80</color>
+    <color name="colorApplyMessage">#FFF</color>
+    <color name="mes_background">#EAE4E4</color>
+    <color name="myMes_textColor">#FFF</color>
+    <color name="applyMes_textColor">#978C8C</color>
+    <color name="color_editText">#777272</color>
 </resources>

@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">RandHand-Chat</string>
+    <string name="app_name">랜손채팅</string>
+    <string name="input_placeholder_message">Write a message</string>
+    <string name="getMyMessage">Placeholder message</string>
+    <string name="getApplyMessage">Apply message</string>
+    <string name="userName">User</string>
 </resources>

@@ -4,18 +4,37 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RandHandChat">
-        <activity android:name=".MainActivity">
+        <activity android:name=".Adapter.MessageAdapter" />
+
+        <!-- Message Activity 등록 -->
+        <activity
+            android:name=".ChatActivity"
+            android:theme="@style/MessageTheme" />
+
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/MainTheme"/>
+
+        <!-- Splash Activity 등록 -->
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+        <!-- Login Activity 등록 -->
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/LoginTheme" />
     </application>
 
 </manifest>
