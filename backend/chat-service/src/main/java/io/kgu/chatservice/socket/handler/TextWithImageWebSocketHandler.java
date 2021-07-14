@@ -1,8 +1,12 @@
 package io.kgu.chatservice.socket.handler;
 
-import io.kgu.chatservice.domain.entity.Message;
+import io.kgu.chatservice.domain.dto.MessageDto;
+import io.kgu.chatservice.domain.entity.ChatEntity;
+import io.kgu.chatservice.domain.entity.MessageEntity;
+import io.kgu.chatservice.repository.ChatRepository;
 import io.kgu.chatservice.repository.MessageRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,16 +23,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
 
     private final MessageRepository messageRepository;
+    private final ChatRepository chatRepository;
+    private final ModelMapper modelMapper;
 
     private static Set<WebSocketSession> sessions = new ConcurrentHashMap().newKeySet();
 
     @Autowired
-    public TextWithImageWebSocketHandler(MessageRepository messageRepository) {
+    public TextWithImageWebSocketHandler(MessageRepository messageRepository, ChatRepository chatRepository, ModelMapper modelMapper) {
         this.messageRepository = messageRepository;
+        this.chatRepository = chatRepository;
+        this.modelMapper = modelMapper;
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+
+        if (session.getUri().getPath().equals("/websocket/session/")) {
+            throw new AccessDeniedException("sessionId 가 없습니다.");
+        }
+        
         super.afterConnectionEstablished(session);
         sessions.add(session);
         log.info("client{} connect", session.getRemoteAddress());
@@ -44,7 +57,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         log.info("client{} message : {}", session.getRemoteAddress(), message.getPayload());
         for (WebSocketSession webSocketSession : sessions) {
             if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
-
+            storeMessage(session, message);
             webSocketSession.sendMessage(message);
         }
     }
@@ -55,6 +68,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         log.info(message.toString());
         for (WebSocketSession webSocketSession : sessions) {
             if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
+            storeMessage(session, message);
             webSocketSession.sendMessage(message);
         }
     }
@@ -66,11 +80,15 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         log.info("client{} disconnect", session.getRemoteAddress());
     }
 
-
-    // TODO - 메시지 DB 로그 남기기
     private void storeMessage(WebSocketSession sender, AbstractWebSocketMessage<?> message) throws AccessDeniedException {
 
-        // TODO - from & to 검증
+        String sessionId = sender.getUri().getPath().replace("/websocket/session/", "");
+        ChatEntity chatRoom = chatRepository.findBySessionId(sessionId);
+
+        if (chatRoom == null) {
+            throw new IllegalArgumentException("ChatRoom 존재 하지 않음");
+        }
+
         if (!sender.getHandshakeHeaders().containsKey("from") || !sender.getHandshakeHeaders().containsKey("to") || message == null) {
             throw new AccessDeniedException("잘못된 메세지 전송 요청");
         }
@@ -78,27 +96,25 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         String from = sender.getHandshakeHeaders().get("from").get(0);
         String to = sender.getHandshakeHeaders().get("to").get(0);
 
-        Message msg = null;
+        if (!chatRoom.getUserIds().contains(from) || !chatRoom.getUserIds().contains(to)) {
+            throw new AccessDeniedException("ChatRoom 구성원이 아닙니다.");
+        }
+
+        MessageDto messageDto = MessageDto.builder()
+                .sessionId(sessionId)
+                .fromUser(from)
+                .toUser(to)
+                .build();
 
         if (message instanceof TextMessage) {
-
-            msg = Message.builder()
-                    .fromUser(from)
-                    .toUser(to)
-                    .content(((TextMessage) message).getPayload())
-                    .build();
-
+            messageDto.setContent(((TextMessage)message).getPayload());
         } else if (message instanceof BinaryMessage) {
-            msg = Message.builder()
-                    .fromUser(from)
-                    .toUser(to)
-                    .content("[Binary data]")
-                    .build();
+            messageDto.setContent("[Binary data]");
         } else {
             throw new ClassFormatError("잘못된 메세지 포맷");
         }
 
-        messageRepository.save(msg);
+        messageRepository.save(modelMapper.map(messageDto, MessageEntity.class));
 
     }
 

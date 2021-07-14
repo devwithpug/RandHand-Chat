@@ -23,7 +23,16 @@ eureka:
   instance:
     instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
   client:
-    register-with-eureka: true
-    fetch-registry: true
+    register-with-eureka: false
+    fetch-registry: false
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
+
+kafka:
+  topic:
+    queue: queue-topic
+    match: match-topic
+    chat: chat-topic
+  address: 127.0.0.1:9092
+  group_id:
+    match: match-group
