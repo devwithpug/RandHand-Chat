@@ -1,0 +1,24 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/devwithpug/RandHand-config
+          default-label: main
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, busrefresh
+
+encrypt:
+  key-store:
+    password: insert_your_key
+    alias: apiEncryptionKey
+    location: file:apiEncryptionKey.jks
