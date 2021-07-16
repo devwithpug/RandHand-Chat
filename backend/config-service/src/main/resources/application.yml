@@ -21,4 +21,4 @@ encrypt:
   key-store:
     password: insert_your_key
     alias: apiEncryptionKey
-    location: file:///Volumes/SSD/repo/RandHand-Chat/backend/config-service/apiEncryptionKey.jks
+    location: file:apiEncryptionKey.jks
