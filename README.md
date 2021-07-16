@@ -16,8 +16,9 @@
 
 ### Backend
 
-[2021.07.17 - 02 RabbitMQ, Spring Cloud Bus를 통한 application.yml 외부 관리, 실시간 동기화 구현](./backend/개발일지/02-RabbitMQ,%20Spring%20Cloud%20Bus를%20통한%20application.yml%20외부%20관리,%20실시간%20동기화%20구현.md)
-[2021.07.12 - 01 백엔드 서버 인증 방식으로 JWT를 도입함](./backend/개발일지/01-백엔드%20서버%20인증%20방식으로%20JWT를%20도입함.md)
+* [2021.07.17 - 02 RabbitMQ, Spring Cloud Bus를 통한 application.yml 외부 관리, 실시간 동기화 구현](./backend/개발일지/02-RabbitMQ,%20Spring%20Cloud%20Bus를%20통한%20application.yml%20외부%20관리,%20실시간%20동기화%20구현.md)
+
+* [2021.07.12 - 01 백엔드 서버 인증 방식으로 JWT를 도입함](./backend/개발일지/01-백엔드%20서버%20인증%20방식으로%20JWT를%20도입함.md)
 
 ## 커밋 메시지 규칙 
 
