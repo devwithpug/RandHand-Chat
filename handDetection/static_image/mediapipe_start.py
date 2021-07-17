@@ -1,11 +1,12 @@
 import os
 import cv2
 import mediapipe as mp
+import pandas as pd 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
 # For static images:
-path = 'C:/Users/dh/Desktop/Git/RandHand-Chat/handDetection/mediaPipe(static_image)/original_images' # 파일 경로 지정
+path = '/home/donghyun/Git/RandHand-Chat/handDetection/static_image/original_images/' # 파일 경로 지정
 os.chdir(path)
 IMAGE_FILES = os.listdir(path)
 # --------------------------------------<파일 순서 개선>---------------------------------------
@@ -28,17 +29,12 @@ with mp_hands.Hands(
   max_num_hands=2,
   min_detection_confidence=0.5) as hands:
 
-  f = open('../dataSets/mediapipe.csv', 'w')
   column = []
-  for i in range(0,21,1):
-    column.append('x'+str(i))
-  for i in range(0,21,1):
-    column.append('y'+str(i))
-  for i in range(0,21,1):
-    column.append('z'+str(i))
-  for i in range(0,62,1):
-    f.write(column[i]+',')
-  f.write('z20'+'\n')
+  column += ['x'+str(i) for i in range(0,21,1)]
+  column += ['y'+str(i) for i in range(0,21,1)]
+  column += ['z'+str(i) for i in range(0,21,1)]
+
+  df = pd.DataFrame([],columns=column)
 
   for idx, file in enumerate(IMAGE_FILES):
     # Read an image, flip it around y-axis for correct handedness output (see
@@ -68,12 +64,10 @@ with mp_hands.Hands(
             
       mp_drawing.draw_landmarks(
         annotated_image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
-        
-    # csv 파일 제작
-    f.write(locate.pop(0))
-    for i in locate:
-      f.write(','+i)
-    f.write('\n')
+      # csv 파일 제작
+      df.loc[idx]=locate
 
     cv2.imwrite(
         '../annotated_images/annotated_image' + str(idx) + '.png', cv2.flip(annotated_image, 1))
+        
+df.to_csv('../dataSets/mediapipe.csv',mode='w')

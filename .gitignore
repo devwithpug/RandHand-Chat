@@ -1,8 +1,9 @@
 # mediapipe
-handDetection/mediaPipe(static_image)/original_images/
-handDetection/mediaPipe(static_image)/annotated_images/
-handDetection/mediaPipe(webCam_input)/annotated_videos/
-handDetection/mediaPipe(webCam_input)/original_videos/
+handDetection/static_image/original_images/
+handDetection/static_image/annotated_images/
+handDetection/webCam_input/annotated_videos/
+handDetection/webCam_input/original_videos/
+randhand/
 
 
 # backend
