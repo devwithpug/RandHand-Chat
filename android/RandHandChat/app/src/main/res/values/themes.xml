@@ -8,12 +8,12 @@
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnSecondary">@color/purple_200</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-
     </style>
+
         <!-- 스틀래시 스크린 액티비티용 테마 -->
         <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
             <item name="android:windowBackground">@drawable/splash_background</item>
@@ -27,8 +27,9 @@
 
     <!-- 로그인 페이지 스크린 엑티비티용 테마 -->
     <style name="LoginTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="colorPrimary">@color/mes_background</item>
+        <item name="colorPrimaryDark">@color/mes_background</item>
+        <item name="android:windowBackground">@color/mes_background</item>
     </style>
 
     <!-- 기본 메인 페이지 스크린 텍티비티용 테마 -->

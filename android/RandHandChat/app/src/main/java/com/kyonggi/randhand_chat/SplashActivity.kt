@@ -5,13 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import androidx.constraintlayout.motion.widget.MotionLayout
+import com.kyonggi.randhand_chat.databinding.ActivitySplashBinding
 import java.util.logging.Handler
 
 class SplashActivity : AppCompatActivity() {
 //    private val SPLASH_VIEW_TIME: Long by lazy { 1500 }
+    private lateinit var splashBinding: ActivitySplashBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
+        splashBinding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(splashBinding.root)
 
         val motionLayout: MotionLayout = findViewById<MotionLayout>(R.id.motionLayout)
         motionLayout.addTransitionListener(object : MotionLayout.TransitionListener {
