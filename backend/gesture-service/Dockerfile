@@ -3,7 +3,7 @@ COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle build --no-daemon
 
-FROM openjdk:17-ea-11-jdk-slim
+FROM openjdk:17-ea-11-slim
 VOLUME /tmp
-COPY --from=build /home/gradle/src/build/libs/*.jar UserService.jar
-ENTRYPOINT [ "java", "-jar", "UserService.jar" ]
+COPY --from=build /home/gradle/src/build/libs/*.jar GestureService.jar
+ENTRYPOINT [ "java", "-jar", "GestureService.jar" ]

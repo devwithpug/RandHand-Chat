@@ -12,6 +12,10 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    enabled = false
+}
+
 ext {
     set('springCloudVersion', "2020.0.3")
 }
