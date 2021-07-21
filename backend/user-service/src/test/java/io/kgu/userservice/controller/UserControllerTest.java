@@ -145,7 +145,7 @@ class UserControllerTest {
         Mockito.when(modelMapper.map(friends1, ResponseUser.class)).thenReturn(resp1);
         Mockito.when(modelMapper.map(friends2, ResponseUser.class)).thenReturn(resp2);
 
-        mvc.perform(get("/users/UUID/friends"))
+        mvc.perform(get("/users/friends").header("userId", "UUID"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
@@ -161,7 +161,7 @@ class UserControllerTest {
         Mockito.when(userService.getOneFriends("UUID", "F1")).thenReturn(friends1);
         Mockito.when(modelMapper.map(friends1, ResponseUser.class)).thenReturn(resp1);
 
-        mvc.perform(get("/users/UUID/friends/F1"))
+        mvc.perform(get("/users/friends/F1").header("userId", "UUID"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId", is("F1")));
@@ -177,7 +177,7 @@ class UserControllerTest {
         Mockito.when(userService.addFriend("UUID", "F1")).thenReturn(List.of(friends1));
         Mockito.when(modelMapper.map(friends1, ResponseUser.class)).thenReturn(resp1);
 
-        mvc.perform(post("/users/UUID/friends/F1"))
+        mvc.perform(post("/users/friends/F1").header("userId", "UUID"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
@@ -195,7 +195,7 @@ class UserControllerTest {
         Mockito.when(userService.removeFriend("UUID", "F1")).thenReturn(List.of(friends2));
         Mockito.when(modelMapper.map(friends2, ResponseUser.class)).thenReturn(resp2);
 
-        mvc.perform(post("/users/UUID/friends/F1/remove"))
+        mvc.perform(post("/users/friends/F1/remove").header("userId", "UUID"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
@@ -212,7 +212,7 @@ class UserControllerTest {
 
         Mockito.when(userService.validateUser("UUID")).thenReturn(true);
 
-        mvc.perform(get("/users/UUID/delete"))
+        mvc.perform(get("/users/delete").header("userId", "UUID"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
