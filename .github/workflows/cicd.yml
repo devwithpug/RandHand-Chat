@@ -67,7 +67,7 @@ jobs:
         tags: devwithpug/gesture-service:0.1
 
     - name: EC2 인스턴스 내부의 CodeDeploy 트리거 발동
-      run: aws deploy --region ap-northeast-2 create-deployment --application-name CodeDeploy-application-example --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name CodeDeploy-group-example --github-location repository=devwithpug/CI-CD-with-Github-Actions,commitId=${GITHUB_SHA}
+      run: aws deploy --region ap-northeast-2 create-deployment --application-name CodeDeploy-application-randhand --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name CodeDeploy-group-randhand --github-location repository=devwithpug/RandHand-Chat,commitId=${GITHUB_SHA}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
