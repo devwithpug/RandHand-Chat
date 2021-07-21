@@ -4,7 +4,7 @@ fi
 
 mkdir -vp /home/ec2-user/randhand/build
 
-docker-compose down
+/usr/local/bin/docker-compose -f /home/ec2-user/docker-compose.yml down
 
 if [[ "$(docker ps -a -q 2> /dev/null)" != "" ]]; then
     docker stop $(docker ps -a -q)
