@@ -6,7 +6,7 @@ mkdir -vp /home/ec2-user/randhand/build
 
 docker-compose down
 
-if [[ "$(docker ps -a -q 2> /dev/null)" != ""]];
+if [[ "$(docker ps -a -q 2> /dev/null)" != ""]]; then
     docker stop $(docker ps -a -q)
     docker rm $(docker ps -a -q)
     docker rmi $(docker images -q)
