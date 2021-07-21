@@ -1,0 +1,13 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ec2-user/randhand/build
+
+hooks:
+  BeforeInstall:
+    - location: .github/scripts/BeforeInstall.bash
+      runas: root
+  AfterInstall:
+    - location: .github/scripts/AfterInstall.bash
+      runas: root
