@@ -1,0 +1,31 @@
+name: Gradle 프로젝트 빌드 & 도커 빌드, 푸시 & AWS CodeDeploy 트리거 발동
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build-docker-image:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Gradle 빌드 & 도커 빌드, 푸시
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: devwithpug/ci-cd-with-github-actions
+        tags: latest
+
+    - name: EC2 인스턴스 내부의 CodeDeploy 트리거 발동
+      run: aws deploy --region ap-northeast-2 create-deployment --application-name CodeDeploy-application-example --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name CodeDeploy-group-example --github-location repository=devwithpug/CI-CD-with-Github-Actions,commitId=${GITHUB_SHA}
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        Default_region_name: ap-northeast-2
