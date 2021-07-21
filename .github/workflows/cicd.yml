@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  CI-CD-수행:
+  RandHand-Chat-CI-CD:
 
     runs-on: ubuntu-latest
     
