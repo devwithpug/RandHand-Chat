@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  CI/CD 수행:
+  CI-CD-수행:
 
     runs-on: ubuntu-latest
     
