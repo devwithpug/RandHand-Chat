@@ -2,9 +2,9 @@ name: Gradle 프로젝트 빌드 & 도커 빌드, 푸시 & AWS CodeDeploy 트리
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '!backend/개발일지/**'
 
 jobs:
 
