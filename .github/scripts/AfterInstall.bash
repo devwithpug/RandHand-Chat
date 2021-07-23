@@ -20,7 +20,5 @@ docker pull devwithpug/gesture-service:0.1
 /usr/local/bin/docker-compose -f /home/ec2-user/docker-compose.yml up -d user-service
 /home/ec2-user/sleep.sh
 /usr/local/bin/docker-compose -f /home/ec2-user/docker-compose.yml up -d chat-service
-# /usr/bin/docker start -a wait-for-sec
-# /usr/local/bin/docker-compose -f /home/ec2-user/docker-compose.yml up -d gesture-service
-# /usr/bin/docker stop wait-for-sec
-# /usr/bin/docker rm wait-for-sec
+/home/ec2-user/sleep.sh
+/usr/local/bin/docker-compose -f /home/ec2-user/docker-compose.yml up -d gesture-service
