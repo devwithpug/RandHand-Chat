@@ -3,4 +3,4 @@ ADD . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python", "gesture_service.py"]
+ENTRYPOINT ["python", "gesture_service.py", "eureka-server:8761"]
