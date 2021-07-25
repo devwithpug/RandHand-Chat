@@ -3,10 +3,12 @@ from kafka.admin import KafkaAdminClient, NewTopic
 import json, argparse, requests
 
 parser = argparse.ArgumentParser()
+parser.add_argument('gateway_host', nargs='?', type=str, default='localhost', help='ex) "localhost"')
 parser.add_argument('kafka_host_ip', nargs='?', type=str, default='localhost:9092', help='ex) "localhost:9092"')
 parser.add_argument('kafka_topic', nargs='?', type=str, default='queue-topic', help='ex) "queue-topic"')
 args = parser.parse_args()
 
+GATEWAY = args.gateway_host
 HOST = args.kafka_host_ip
 TOPIC = args.kafka_topic
 print(HOST, TOPIC)
@@ -34,7 +36,7 @@ if __name__ == "__main__":
     for msg in consumer:
         assert isinstance(msg.value, dict)
         print(msg.value)
-        requests.post("http://localhost:8000/gesture-service/queue", json=msg.value)
+        requests.post("http://" + GATEWAY + ":8000/gesture-service/queue", json=msg.value)
 
 
 # 1. android 에서 chat-service/chats POST 요청 보냄 (makeChatQueue)
