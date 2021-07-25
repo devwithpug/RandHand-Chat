@@ -9,5 +9,8 @@ mkdir -vp /home/ec2-user/randhand/build
 if [[ "$(docker ps -a -q 2> /dev/null)" != "" ]]; then
     docker stop $(docker ps -a -q)
     docker rm $(docker ps -a -q)
+fi
+
+if [[ "$(docker images -q 2> /dev/null)" != "" ]]; then
     docker rmi $(docker images -q)
 fi
