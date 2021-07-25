@@ -10,6 +10,10 @@ public class RequestQueue {
 
     @NotNull
     @NotBlank
+    private String userId;
+
+    @NotNull
+    @NotBlank
     private String gesture;
 
 }

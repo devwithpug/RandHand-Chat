@@ -22,11 +22,11 @@ public class ChatController {
     private final ModelMapper modelMapper;
 
     @PostMapping("/chats")
-    public ResponseEntity<ResponseQueue> makeChatQueue(@Valid @RequestBody RequestQueue requestQueue, @RequestHeader("userId") String userId) {
+    public ResponseEntity<ResponseQueue> makeChatQueue(@Valid @RequestBody RequestQueue requestQueue) {
 
         chatService.makeChatQueue(modelMapper.map(requestQueue, QueueDto.class));
 
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseQueue(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseQueue(requestQueue.getUserId()));
     }
 
     @GetMapping("/chats/{sessionId}")

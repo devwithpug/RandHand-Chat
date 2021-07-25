@@ -45,13 +45,6 @@ jobs:
         push: true
         tags: devwithpug/gateway-service:0.1
 
-    - name: Build & Push user-service
-      uses: docker/build-push-action@v2
-      with:
-        context: ./backend/user-service
-        push: true
-        tags: devwithpug/user-service:0.1
-
     - name: Build & Push chat-service
       uses: docker/build-push-action@v2
       with:
