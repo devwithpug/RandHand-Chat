@@ -33,7 +33,9 @@ public class UserController {
         userDto = userService.createUser(userDto);
 
         if (userDto == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(ResponseUser.errorResponseDetails("회원가입 실패 : 이메일 중복"));
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(userDto, ResponseUser.class));
@@ -46,7 +48,9 @@ public class UserController {
         UserDto userDto = userService.getUserByUserId(userId);
 
         if (userDto == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ResponseUser.errorResponseDetails("회원조회 실패 : 존재하지 않는 유저"));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map(userDto, ResponseUser.class));
@@ -58,8 +62,14 @@ public class UserController {
 
         UserDto userDto = userService.modifyUserInfo(userId, mapper.map(requestUser, UserDto.class));
 
-        if (userDto.getUserId() == null || userDto.getStatusMessage() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (userDto.getUserId() == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ResponseUser.errorResponseDetails("회원정보변경 실패 : 존재하지 않는 유저"));
+        } else if (userDto.getStatusMessage() == null) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(ResponseUser.errorResponseDetails("회원정보변경 실패 : 상태 메세지 필요"));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map(userDto, ResponseUser.class));
@@ -71,6 +81,12 @@ public class UserController {
 
         List<UserDto> friends = userService.getAllFriends(userId);
 
+        if (friends == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(List.of(ResponseUser.errorResponseDetails("친구목록조회 실패 : 존재하지 않는 유저입니다.")));
+        }
+
         return getListResponseEntity(friends);
     }
 
@@ -81,7 +97,9 @@ public class UserController {
         UserDto friend = userService.getOneFriends(userId, friendId);
 
         if (friend == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ResponseUser.errorResponseDetails("친구조회 실패 : 회원 또는 친구가 존재하지 않거나 친구가 아닌경우 입니다."));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map(friend, ResponseUser.class));
@@ -93,6 +111,12 @@ public class UserController {
 
         List<UserDto> friends = userService.addFriend(userId, friendId);
 
+        if (friends == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(List.of(ResponseUser.errorResponseDetails("친구추가 실패 : 회원 또는 친구가 존재하지 않는 경우 입니다.")));
+        }
+
         return getListResponseEntity(friends);
     }
 
@@ -102,6 +126,12 @@ public class UserController {
 
         List<UserDto> friends = userService.removeFriend(userId, friendId);
 
+        if (friends == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(List.of(ResponseUser.errorResponseDetails("친구삭제 실패 : 회원 또는 친구가 존재하지 않는 경우 입니다.")));
+        }
+
         return getListResponseEntity(friends);
     }
 
@@ -110,6 +140,12 @@ public class UserController {
     public ResponseEntity<List<ResponseUser>> blocked(@RequestHeader("userId") String userId) {
 
         List<UserDto> blockedList = userService.getAllBlocked(userId);
+
+        if (blockedList == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(List.of(ResponseUser.errorResponseDetails("차단목록조회 실패 : 존재하지 않는 유저입니다.")));
+        }
 
         return getListResponseEntity(blockedList);
     }
@@ -121,7 +157,9 @@ public class UserController {
         UserDto blocked = userService.getOneBlocked(userId, blockId);
 
         if (blocked == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ResponseUser.errorResponseDetails("차단조회 실패 : 회원 또는 차단회원이 존재하지 않거나 차단하지 않은 경우 입니다."));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map(blocked, ResponseUser.class));
@@ -133,6 +171,12 @@ public class UserController {
 
         List<UserDto> blockedList = userService.blockUser(userId, blockId);
 
+        if (blockedList == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(List.of(ResponseUser.errorResponseDetails("유저차단 실패 : 회원 또는 차단할 유저가 존재하지 않는 경우 입니다.")));
+        }
+
         return getListResponseEntity(blockedList);
     }
 
@@ -142,6 +186,12 @@ public class UserController {
 
         List<UserDto> blockedList = userService.unblockUser(userId, blockId);
 
+        if (blockedList == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(List.of(ResponseUser.errorResponseDetails("차단해제 실패 : 회원 또는 차단할 유저가 존재하지 않는 경우 입니다.")));
+        }
+
         return getListResponseEntity(blockedList);
     }
 
@@ -150,23 +200,27 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@RequestHeader("userId") String userId) {
 
         if (!userService.validateUser(userId)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(List.of(ResponseUser.errorResponseDetails("회원탈퇴 실패 : 존재하지 않는 유저")));
         }
 
         userService.deleteUser(userId);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ResponseUser.errorResponseDetails("회원탈퇴 성공 : " + userId));
     }
 
-    private ResponseEntity<List<ResponseUser>> getListResponseEntity(List<UserDto> friends) {
+    private ResponseEntity<List<ResponseUser>> getListResponseEntity(List<UserDto> request) {
 
-        if (friends == null) {
+        if (request == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         List<ResponseUser> result = new ArrayList<>();
 
-        friends.forEach(f -> result.add(mapper.map(f, ResponseUser.class)));
+        request.forEach(f -> result.add(mapper.map(f, ResponseUser.class)));
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
