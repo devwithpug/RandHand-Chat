@@ -5,6 +5,7 @@ handDetection/webCam_input/annotated_videos/
 handDetection/webCam_input/original_videos/
 randhand/
 .vscode/
+handDetection/model/original_images/
 
 # backend
 application-*.yml
