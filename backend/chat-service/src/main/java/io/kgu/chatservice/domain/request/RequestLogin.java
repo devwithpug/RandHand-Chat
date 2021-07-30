@@ -1,5 +1,6 @@
 package io.kgu.chatservice.domain.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RequestLogin {
 
     @NotNull(message = "userId 값이 필요합니다.")

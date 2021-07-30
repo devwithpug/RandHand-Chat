@@ -9,6 +9,7 @@ import io.kgu.chatservice.security.token.CustomAuthenticationToken;
 import io.kgu.chatservice.service.UserService;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -44,7 +45,7 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
             );
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BadCredentialsException(e.getMessage());
         }
 
     }
