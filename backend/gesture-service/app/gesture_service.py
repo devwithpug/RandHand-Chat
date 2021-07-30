@@ -1,7 +1,15 @@
 from flask import Flask, request
 import py_eureka_client.eureka_client as eureka_client
-import socket, argparse
+import socket, argparse, time
 from contextlib import closing
+
+
+def log(msg):
+    print("[{}] {}".format(
+            time.strftime("%c", time.localtime(time.time())),
+            msg
+        ))
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('eureka_server_ip', nargs='?', type=str, default='localhost:8761', help='ex) "localhost:8761"')
@@ -30,7 +38,7 @@ def create_queue():
     # TODO - request data 검증 & 매칭 수행
 
     data = request.json
-    print(data)
+    log(data)
     return data
 
 # health_check

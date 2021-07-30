@@ -4,4 +4,4 @@ WORKDIR /app
 ENV TZ Asia/Seoul
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python", "gesture_service.py", "eureka-server:8761"]
+ENTRYPOINT ["python", "-u", "gesture_service.py", "eureka-server:8761"]

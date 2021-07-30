@@ -1,6 +1,15 @@
 from kafka import KafkaConsumer, TopicPartition
 from kafka.admin import KafkaAdminClient, NewTopic
-import json, argparse, requests
+from kafka.errors import NoBrokersAvailable
+import json, argparse, requests, time
+
+
+def log(msg):
+    print("[{}] {}".format(
+            time.strftime("%c", time.localtime(time.time())),
+            msg
+        ))
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('gateway_host', nargs='?', type=str, default='localhost', help='ex) "localhost"')
@@ -11,7 +20,7 @@ args = parser.parse_args()
 GATEWAY = args.gateway_host
 HOST = args.kafka_host_ip
 TOPIC = args.kafka_topic
-print(HOST, TOPIC)
+log("{}, {}".format(HOST, TOPIC))
 
 # Return KafkaConsumer that subscribes specific topics.
 def init_consumer(server, topic_name):
@@ -31,11 +40,20 @@ def init_consumer(server, topic_name):
 
 if __name__ == "__main__":
 
-    consumer = init_consumer(HOST, TOPIC)
+    consumer = None
+
+    while consumer is None:
+        try:
+            consumer = init_consumer(HOST, TOPIC)
+        except NoBrokersAvailable as err:
+            log("ERROR: {} / Retry in 10 seconds".format(err))
+            time.sleep(10.0)
+
+    log("Broker Connected, topics: {}".format(consumer.topics()))
 
     for msg in consumer:
         assert isinstance(msg.value, dict)
-        print(msg.value)
+        log(msg.value)
         requests.post("http://" + GATEWAY + ":8000/gesture-service/queue", json=msg.value)
 
 
