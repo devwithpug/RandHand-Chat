@@ -5,6 +5,7 @@ RUN gradle build --no-daemon
 
 FROM openjdk:17-ea-11-jdk-slim
 VOLUME /tmp
+ENV TZ Asia/Seoul
 COPY apiEncryptionKey.jks apiEncryptionKey.jks
 COPY --from=build /home/gradle/src/build/libs/*.jar ConfigService.jar
 ENTRYPOINT [ "java", "-jar", "ConfigService.jar" ]

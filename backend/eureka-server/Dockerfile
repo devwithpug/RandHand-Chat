@@ -5,5 +5,6 @@ RUN gradle build --no-daemon
 
 FROM openjdk:17-ea-11-jdk-slim
 VOLUME /tmp
+ENV TZ Asia/Seoul
 COPY --from=build /home/gradle/src/build/libs/*.jar EurekaServer.jar
 ENTRYPOINT [ "java", "-jar", "EurekaServer.jar" ]

@@ -5,5 +5,6 @@ RUN gradle build --no-daemon
 
 FROM openjdk:17-ea-11-slim
 VOLUME /tmp
+ENV TZ Asia/Seoul
 COPY --from=build /home/gradle/src/build/libs/*.jar GatewayService.jar
 ENTRYPOINT [ "java", "-jar", "GatewayService.jar" ]
