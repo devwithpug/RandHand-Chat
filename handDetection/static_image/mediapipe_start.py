@@ -54,13 +54,13 @@ with mp_hands.Hands(
       locate = []
 
       for ids, landmrk in enumerate(hand_landmarks.landmark):
-        locate.append(str(landmrk.x))
+        locate.append(landmrk.x)
 
       for ids, landmrk in enumerate(hand_landmarks.landmark):
-        locate.append(str(landmrk.y))
+        locate.append(landmrk.y)
 
       for ids, landmrk in enumerate(hand_landmarks.landmark):
-        locate.append(str(landmrk.z))
+        locate.append(landmrk.z)
             
       mp_drawing.draw_landmarks(
         annotated_image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
