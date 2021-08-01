@@ -50,6 +50,8 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = userRepository.findByAuthAndEmail(auth, email);
 
+        if (userEntity == null) return null;
+
         return mapper.map(userEntity, UserDto.class);
     }
 

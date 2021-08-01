@@ -1,7 +1,6 @@
 package io.kgu.chatservice.controller;
 
 import io.kgu.chatservice.domain.dto.UserDto;
-import io.kgu.chatservice.domain.request.RequestFindUser;
 import io.kgu.chatservice.domain.request.RequestUser;
 import io.kgu.chatservice.domain.response.ResponseUser;
 import io.kgu.chatservice.service.UserService;
@@ -44,9 +43,9 @@ public class UserController {
 
     // auth, email 회원 조회
     @GetMapping("/users")
-    public ResponseEntity<ResponseUser> findUser(@Valid @RequestBody RequestFindUser requestFindUser) {
+    public ResponseEntity<ResponseUser> findUser(@RequestHeader("auth") String auth, @RequestHeader("email") String email) {
 
-        UserDto userDto = userService.getUserByAuthAndEmail(requestFindUser.getAuth(), requestFindUser.getEmail());
+        UserDto userDto = userService.getUserByAuthAndEmail(auth, email);
 
         if (userDto == null) {
             return ResponseEntity
