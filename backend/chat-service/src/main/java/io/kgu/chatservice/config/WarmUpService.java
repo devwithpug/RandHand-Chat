@@ -1,6 +1,5 @@
 package io.kgu.chatservice.config;
 
-import com.netflix.appinfo.InstanceInfo;
 import io.kgu.chatservice.domain.request.RequestLogin;
 import io.kgu.chatservice.domain.request.RequestUser;
 import io.kgu.chatservice.domain.response.ResponseUser;
@@ -13,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 
@@ -43,8 +43,8 @@ public class WarmUpService {
         while (statusCode != 200) {
             try {
                 Thread.sleep(10000);
-                statusCode = rt.getForEntity("http://localhost:8000/chat-service/actuator/health", String.class).getStatusCodeValue();
-            } catch (InterruptedException | HttpServerErrorException e) {
+                statusCode = rt.getForEntity("http://gateway-service:8000/chat-service/actuator/health", String.class).getStatusCodeValue();
+            } catch (InterruptedException | HttpServerErrorException | ResourceAccessException e) {
                 log.warn("No servers available now. Retry in next 10 seconds.");
             }
         }
@@ -55,7 +55,7 @@ public class WarmUpService {
         log.info("Warm up with RestTemplate call");
 
         ResponseEntity<ResponseUser> response = rt.postForEntity(
-                "http://localhost:8000/chat-service/users",
+                "http://gateway-service:8000/chat-service/users",
                 requestUserHttpEntity,
                 ResponseUser.class
         );
@@ -68,7 +68,7 @@ public class WarmUpService {
         HttpEntity<RequestLogin> requestLoginHttpEntity = new HttpEntity<>(login, headers);
 
         rt.postForEntity(
-                "http://localhost:8000/chat-service/login",
+                "http://gateway-service:8000/chat-service/login",
                 requestLoginHttpEntity,
                 ResponseUser.class
         );
