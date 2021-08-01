@@ -9,7 +9,9 @@ public interface UserService extends UserDetailsService {
 
     // 회원 생성(UserDto.userId == null 인 경우)
     UserDto createUser(UserDto userDto);
-    // 회원 조회
+    // auth, 이메일로 회원 조회
+    UserDto getUserByAuthAndEmail(String auth, String email);
+    // userId로 회원 조회
     UserDto getUserByUserId(String userId);
     // 이메일로 회원 조회
     UserDto getUserByEmail(String email);
@@ -34,6 +36,6 @@ public interface UserService extends UserDetailsService {
     // 회원 서비스 탈퇴
     void deleteUser(String userId);
     // 회원 검증
-    public boolean validateUser(String... userId);
+    boolean validateUser(String... userId);
 
 }

@@ -6,6 +6,7 @@ import io.kgu.chatservice.domain.response.ResponseUser;
 import io.kgu.chatservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -23,59 +24,69 @@ public class WarmUpService {
 
     private final UserService userService;
 
+    @Value("${randhand.host_ip}")
+    private String host;
+    @Value("${randhand.warm_up}")
+    private boolean isWarmUp;
+
     @Scheduled(fixedDelay = 30 * 60 * 1000)
     public void onApplicationEvent() {
 
-        log.info("Initializing Chat-service warm up");
+        if (isWarmUp) {
 
-        RequestUser req = RequestUser.builder().email("t@t").auth("t").picture("t").name("t").build();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        headers.add("Accept", "application/json");
-        headers.add("Accept-Encoding", "gzip, deflate, br");
+            log.info("Initializing Chat-service warm up");
 
-        HttpEntity<RequestUser> requestUserHttpEntity = new HttpEntity<>(req, headers);
+            RequestUser req = RequestUser.builder().email("t@t").auth("t").picture("t").name("t").build();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "application/json");
+            headers.add("Accept", "application/json");
+            headers.add("Accept-Encoding", "gzip, deflate, br");
 
-        RestTemplate rt = new RestTemplate();
+            HttpEntity<RequestUser> requestUserHttpEntity = new HttpEntity<>(req, headers);
 
-        int statusCode = -1;
+            RestTemplate rt = new RestTemplate();
 
-        while (statusCode != 200) {
-            try {
-                Thread.sleep(10000);
-                statusCode = rt.getForEntity("http://gateway-service:8000/chat-service/actuator/health", String.class).getStatusCodeValue();
-            } catch (InterruptedException | HttpServerErrorException | ResourceAccessException e) {
-                log.warn("No servers available now. Retry in next 10 seconds.");
+            int statusCode = -1;
+
+            while (statusCode != 200) {
+                try {
+                    Thread.sleep(10000);
+                    statusCode = rt.getForEntity("http://"+ host +":8000/chat-service/actuator/health", String.class).getStatusCodeValue();
+                } catch (InterruptedException | HttpServerErrorException | ResourceAccessException e) {
+                    log.warn("No servers available now. Retry in next 10 seconds.");
+                }
             }
+
+            long startTime = System.currentTimeMillis();
+
+            log.info("Chat-service was registered and Connected with Gateway-service");
+            log.info("Warm up with RestTemplate call");
+
+            ResponseEntity<ResponseUser> response = rt.postForEntity(
+                    "http://"+ host +":8000/chat-service/users",
+                    requestUserHttpEntity,
+                    ResponseUser.class
+            );
+            String userId = response.getBody().getUserId();
+
+            RequestLogin login = new RequestLogin();
+            login.setUserId(userId);
+            login.setEmail("t@t");
+
+            HttpEntity<RequestLogin> requestLoginHttpEntity = new HttpEntity<>(login, headers);
+
+            rt.postForEntity(
+                    "http://"+ host +":8000/chat-service/login",
+                    requestLoginHttpEntity,
+                    ResponseUser.class
+            );
+
+            userService.deleteUser(userId);
+
+            log.info("Completed Chat-service warm up in {} ms", System.currentTimeMillis() - startTime);
+
+        } else {
+            log.info("Chat-service warm up skipped");
         }
-
-        long startTime = System.currentTimeMillis();
-
-        log.info("Chat-service was registered and Connected with Gateway-service");
-        log.info("Warm up with RestTemplate call");
-
-        ResponseEntity<ResponseUser> response = rt.postForEntity(
-                "http://gateway-service:8000/chat-service/users",
-                requestUserHttpEntity,
-                ResponseUser.class
-        );
-        String userId = response.getBody().getUserId();
-
-        RequestLogin login = new RequestLogin();
-        login.setUserId(userId);
-        login.setEmail("t@t");
-
-        HttpEntity<RequestLogin> requestLoginHttpEntity = new HttpEntity<>(login, headers);
-
-        rt.postForEntity(
-                "http://gateway-service:8000/chat-service/login",
-                requestLoginHttpEntity,
-                ResponseUser.class
-        );
-
-        userService.deleteUser(userId);
-
-        log.info("Completed Chat-service warm up in {} ms", System.currentTimeMillis() - startTime);
-
     }
 }

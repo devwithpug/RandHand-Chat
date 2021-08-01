@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
 
-        if (userRepository.existsByEmail(userDto.getEmail())) {
+        if (userRepository.existsByAuthAndEmail(userDto.getAuth(), userDto.getEmail())) {
             log.error("이미 존재하는 유저입니다. : {}", userDto.getEmail());
             return null;
         }
@@ -41,6 +41,14 @@ public class UserServiceImpl implements UserService {
         userEntity.setUserFriends(new ArrayList<>());
         userEntity.setUserBlocked(new ArrayList<>());
         userRepository.save(userEntity);
+
+        return mapper.map(userEntity, UserDto.class);
+    }
+
+    @Override
+    public UserDto getUserByAuthAndEmail(String auth, String email) {
+
+        UserEntity userEntity = userRepository.findByAuthAndEmail(auth, email);
 
         return mapper.map(userEntity, UserDto.class);
     }

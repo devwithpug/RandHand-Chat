@@ -1,6 +1,7 @@
 package io.kgu.chatservice.controller;
 
 import io.kgu.chatservice.domain.dto.UserDto;
+import io.kgu.chatservice.domain.request.RequestFindUser;
 import io.kgu.chatservice.domain.request.RequestUser;
 import io.kgu.chatservice.domain.response.ResponseUser;
 import io.kgu.chatservice.service.UserService;
@@ -41,7 +42,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(userDto, ResponseUser.class));
     }
 
-    // 회원 조회
+    // auth, email 회원 조회
+    @GetMapping("/users")
+    public ResponseEntity<ResponseUser> findUser(@Valid @RequestBody RequestFindUser requestFindUser) {
+
+        UserDto userDto = userService.getUserByAuthAndEmail(requestFindUser.getAuth(), requestFindUser.getEmail());
+
+        if (userDto == null) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ResponseUser.errorResponseDetails("회원조회 실패 : 존재하지 않는 유저"));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(userDto, ResponseUser.class));
+    }
+
+    // userId 회원 조회
     @GetMapping("/users/{userId}")
     public ResponseEntity<ResponseUser> user(@PathVariable String userId) {
 
