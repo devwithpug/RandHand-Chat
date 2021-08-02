@@ -16,6 +16,8 @@
 
 ### Backend
 
+* [2021.08.03 - 04 JVM Warm Up을 통해서 스프링 클라우드의 첫 번째 요청도 동일한 속도로 제공하기.md](./backend/개발일지/04-JVM%20Warm%20Up을%20통해서%20스프링%20클라우드의%20첫%20번째%20요청도%20동일한%20속도로%20제공하기.md)
+
 * [2021.07.23 - 03 Github Actions, AWS CodeDeploy를 통한 CI/CD 파이프라인 자동화](./backend/개발일지/03-Github%20Actions,%20AWS%20CodeDeploy를%20통한%20CICD%20파이프라인%20자동화.md)
 
 * [2021.07.17 - 02 RabbitMQ, Spring Cloud Bus를 통한 application.yml 외부 관리, 실시간 동기화 구현](./backend/개발일지/02-RabbitMQ,%20Spring%20Cloud%20Bus를%20통한%20application.yml%20외부%20관리,%20실시간%20동기화%20구현.md)
