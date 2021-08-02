@@ -6,7 +6,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
 # For static images:
-path = '/home/donghyun/Git/RandHand-Chat/handDetection/static_image/original_images/' # 파일 경로 지정
+path = 'C:\\Users\\dh\\Desktop\\Git\\RandHand-Chat\\handDetection\\static_image\\original_images' # 파일 경로 지정
 os.chdir(path)
 IMAGE_FILES = os.listdir(path)
 # --------------------------------------<파일 순서 개선>---------------------------------------
@@ -54,13 +54,13 @@ with mp_hands.Hands(
       locate = []
 
       for ids, landmrk in enumerate(hand_landmarks.landmark):
-        locate.append(str(landmrk.x))
+        locate.append(landmrk.x)
 
       for ids, landmrk in enumerate(hand_landmarks.landmark):
-        locate.append(str(landmrk.y))
+        locate.append(landmrk.y)
 
       for ids, landmrk in enumerate(hand_landmarks.landmark):
-        locate.append(str(landmrk.z))
+        locate.append(landmrk.z)
             
       mp_drawing.draw_landmarks(
         annotated_image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
