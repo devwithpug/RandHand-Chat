@@ -57,7 +57,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         log.info("client{} message : {}", session.getRemoteAddress(), message.getPayload());
         for (WebSocketSession webSocketSession : sessions) {
             if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
-            storeMessage(session, message);
+            if (!session.getHandshakeHeaders().containsKey("debug")) storeMessage(session, message);
             webSocketSession.sendMessage(message);
         }
     }
@@ -68,7 +68,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         log.info(message.toString());
         for (WebSocketSession webSocketSession : sessions) {
             if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
-            storeMessage(session, message);
+            if (!session.getHandshakeHeaders().containsKey("debug")) storeMessage(session, message);
             webSocketSession.sendMessage(message);
         }
     }
@@ -84,20 +84,27 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
 
         String sessionId = sender.getUri().getPath().replace("/websocket/session/", "");
         ChatEntity chatRoom = chatRepository.findBySessionId(sessionId);
+        String from = "from";
+        String to = "to";
 
-        if (chatRoom == null) {
-            throw new IllegalArgumentException("ChatRoom 존재 하지 않음");
-        }
+        if (!sender.getHandshakeHeaders().containsKey("skip-validate-session")) {
 
-        if (!sender.getHandshakeHeaders().containsKey("from") || !sender.getHandshakeHeaders().containsKey("to") || message == null) {
-            throw new AccessDeniedException("잘못된 메세지 전송 요청");
-        }
+            // Gesture-service 에서 생성된 chatroom 검증
+            if (chatRoom == null) {
+                throw new IllegalArgumentException("ChatRoom 존재 하지 않음");
+            }
 
-        String from = sender.getHandshakeHeaders().get("from").get(0);
-        String to = sender.getHandshakeHeaders().get("to").get(0);
+            if (!sender.getHandshakeHeaders().containsKey("from") || !sender.getHandshakeHeaders().containsKey("to") || message == null) {
+                throw new AccessDeniedException("잘못된 메세지 전송 요청");
+            }
 
-        if (!chatRoom.getUserIds().contains(from) || !chatRoom.getUserIds().contains(to)) {
-            throw new AccessDeniedException("ChatRoom 구성원이 아닙니다.");
+            from = sender.getHandshakeHeaders().get("from").get(0);
+            to = sender.getHandshakeHeaders().get("to").get(0);
+
+            if (!chatRoom.getUserIds().contains(from) || !chatRoom.getUserIds().contains(to)) {
+                throw new AccessDeniedException("ChatRoom 구성원이 아닙니다.");
+            }
+
         }
 
         MessageDto messageDto = MessageDto.builder()

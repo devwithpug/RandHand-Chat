@@ -5,11 +5,15 @@ plugins {
 }
 
 group = 'io.kgu'
-version = '0.0.1-SNAPSHOT'
+version = '0.1'
 sourceCompatibility = '11'
 
 repositories {
     mavenCentral()
+}
+
+jar {
+    enabled = false
 }
 
 ext {

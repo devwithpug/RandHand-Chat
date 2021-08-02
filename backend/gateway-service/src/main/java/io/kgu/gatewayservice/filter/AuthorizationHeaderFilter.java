@@ -30,13 +30,17 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
             ServerHttpRequest request = exchange.getRequest();
 
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange, "No authorization in header", HttpStatus.UNAUTHORIZED);
+                return onError(exchange, "No authorization in header", HttpStatus.BAD_REQUEST);
             } else if (!request.getHeaders().containsKey("userId")) {
-                return onError(exchange, "No userId in header", HttpStatus.UNAUTHORIZED);
+                return onError(exchange, "No userId in header", HttpStatus.BAD_REQUEST);
             }
 
             String userId = request.getHeaders().get("userId").get(0);
             String token = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+
+            if (!token.startsWith("Bearer ")) {
+                return onError(exchange, "JWT token must starts with 'Bearer ' prefix", HttpStatus.BAD_REQUEST);
+            }
 
             String jwt = token.replace("Bearer ", "");
 

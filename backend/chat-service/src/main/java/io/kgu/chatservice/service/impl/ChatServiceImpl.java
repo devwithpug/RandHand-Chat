@@ -29,7 +29,8 @@ public class ChatServiceImpl implements ChatService {
     public QueueDto makeChatQueue(QueueDto queueDto) {
 
         if (queueDto.getGesture() == null || queueDto.getUserId() == null) {
-            throw new IllegalArgumentException("Invalid request from queueDto: " + queueDto);
+            log.error("Invalid request from queueDto: " + queueDto);
+            return null;
         }
 
         kafkaProducer.sendQueue(queueDto);
@@ -60,7 +61,8 @@ public class ChatServiceImpl implements ChatService {
         ChatEntity chatEntity = chatRepository.findBySessionId(sessionId);
 
         if (chatEntity == null) {
-            throw new NoSuchElementException("해당 sessionId 와 일치하는 ChatRoom 이 존재하지 않습니다: " + sessionId);
+            log.error("해당 sessionId 와 일치하는 ChatRoom 이 존재하지 않습니다: " + sessionId);
+            return null;
         }
         return modelMapper.map(chatEntity, ChatDto.class);
     }

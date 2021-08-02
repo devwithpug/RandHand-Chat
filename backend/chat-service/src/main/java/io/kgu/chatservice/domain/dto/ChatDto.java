@@ -13,4 +13,9 @@ public class ChatDto implements Serializable {
     private String sessionId;
     private List<String> userIds;
 
+    public static ChatDto errorResponseDetails(String msg) {
+        return ChatDto.builder()
+                .sessionId(msg)
+                .build();
+    }
 }

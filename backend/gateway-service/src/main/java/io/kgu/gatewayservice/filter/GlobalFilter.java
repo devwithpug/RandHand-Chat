@@ -26,7 +26,7 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
             ServerHttpResponse response = exchange.getResponse();
 
             if (config.isPreLogger()) {
-                log.info("Global PRE filter : [{}] {}", request.getMethodValue(), request.getURI().getHost());
+                log.info("Global PRE filter : [{}] {}", request.getMethodValue(), request.getURI().getPath());
             }
 
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {

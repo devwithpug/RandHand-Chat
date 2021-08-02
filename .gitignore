@@ -9,9 +9,26 @@ handDetection/model/original_images/
 
 # backend
 application-*.yml
+docker-compose.yml
 
 # Created by https://www.toptal.com/developers/gitignore/api/intellij,androidstudio,python,jupyternotebooks,java,macos,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij,androidstudio,python,jupyternotebooks,java,macos,windows
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+.ionide
 
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -394,7 +411,7 @@ captures/
 *.swp
 
 # Keystore files
-*.jks
+# *.jks
 *.keystore
 
 # Google Services (e.g. APIs or Firebase)
