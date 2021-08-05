@@ -36,6 +36,6 @@ public interface UserService extends UserDetailsService {
     // 회원 서비스 탈퇴
     void deleteUser(String userId);
     // 회원 검증
-    boolean validateUser(String... userId);
+    void validateUserByUserId(String... userId);
 
 }

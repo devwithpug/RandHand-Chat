@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -96,11 +97,11 @@ public class WarmUpService {
         } else {
             log.info("Chat-service warm up skipped");
         }
-
-        UserDto warmUpUser = userService.getUserByAuthAndEmail("t", "t@t");
-        if (warmUpUser != null) {
+        try {
+            UserDto warmUpUser = userService.getUserByAuthAndEmail("t", "t@t");
             userService.deleteUser(warmUpUser.getUserId());
             log.info("Warm up Entity was deleted successfully");
+        } catch (UsernameNotFoundException ex) {
         }
     }
 

@@ -7,6 +7,7 @@ import io.kgu.chatservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -31,8 +32,9 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
 
         if (userRepository.existsByAuthAndEmail(userDto.getAuth(), userDto.getEmail())) {
-            log.error("이미 존재하는 유저입니다. : {}", userDto.getEmail());
-            return null;
+            throw new DuplicateKeyException(String.format(
+                    "이미 존재하는 유저입니다 'auth: %s, email: %s'", userDto.getAuth(), userDto.getEmail()
+            ));
         }
 
         userDto.setUserId(UUID.randomUUID().toString());
@@ -51,7 +53,11 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = userRepository.findByAuthAndEmail(auth, email);
 
-        if (userEntity == null) return null;
+        if (userEntity == null) {
+            throw new UsernameNotFoundException(String.format(
+                    "존재하지 않는 유저입니다 'auth: %s, email: %s'", auth, email
+            ));
+        }
 
         return mapper.map(userEntity, UserDto.class);
     }
@@ -59,7 +65,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserByUserId(String userId) {
 
-        if (!validateUser(userId)) return null;
+        validateUserByUserId(userId);
 
         UserEntity userEntity = userRepository.findByUserId(userId);
         return mapper.map(userEntity, UserDto.class);
@@ -69,7 +75,11 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserByEmail(String email) {
         UserEntity userEntity = userRepository.findByEmail(email);
 
-        if (userEntity == null) return null;
+        if (userEntity == null) {
+            throw new UsernameNotFoundException(String.format(
+                    "존재하지 않는 유저입니다 'email: %s'", email
+            ));
+        }
 
         return mapper.map(userEntity, UserDto.class);
     }
@@ -77,7 +87,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto modifyUserInfo(String userId, UserDto userDto) {
 
-        if (!validateUser(userId)) return null;
+        validateUserByUserId(userId);
+
+        if (userDto.getStatusMessage() == null) {
+            throw new IllegalArgumentException(
+                    "상태 메세지가 반드시 필요합니다 'statusMessage : null'"
+            );
+        }
 
         UserEntity userEntity = userRepository.findByUserId(userDto.getUserId());
         userEntity.update(userDto);
@@ -89,7 +105,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllFriends(String userId) {
 
-        if (!validateUser(userId)) return null;
+        validateUserByUserId(userId);
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
@@ -99,13 +115,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getOneFriends(String userId, String friendId) {
 
-        if (!validateUser(userId, friendId)) return null;
+        validateUserByUserId(userId,friendId);
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         if (!userEntity.getUserFriends().contains(friendId)) {
-            log.error("친구로 등록되지 않은 유저입니다.");
-            return null;
+            throw new IllegalArgumentException(String.format(
+                    "친구로 등록되지 않은 유저입니다 'userId: %s, friendId: %s'", userId, friendId
+            ));
         }
 
         UserEntity friend = userRepository.findByUserId(friendId);
@@ -116,12 +133,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> addFriend(String userId, String friendId) {
 
-        if (!validateUser(userId, friendId)) return null;
+        validateUserByUserId(userId, friendId);
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
-        userEntity.addFriend(friendId);
+        if (userEntity.getUserFriends().contains(friendId)) {
+            throw new IllegalArgumentException(String.format(
+                    "이미 친구로 등록된 유저입니다 'friendId: %s'", friendId
+            ));
+        }
 
+        userEntity.getUserFriends().add(friendId);
         userRepository.save(userEntity);
 
         return getFriendsList(userEntity);
@@ -130,12 +152,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> removeFriend(String userId, String friendId) {
 
-        if (!validateUser(userId, friendId)) return null;
+        validateUserByUserId(userId, friendId);
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
-        userEntity.removeFriend(friendId);
+        if (!userEntity.getUserFriends().contains(friendId)) {
+            throw new IllegalArgumentException(String.format(
+                    "친구로 등록되지 않은 유저입니다 'friendId: %s'", friendId
+            ));
+        }
 
+        userEntity.getUserFriends().remove(friendId);
         userRepository.save(userEntity);
 
         return getFriendsList(userEntity);
@@ -144,7 +171,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllBlocked(String userId) {
 
-        if (!validateUser(userId)) return null;
+        validateUserByUserId(userId);
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
@@ -154,13 +181,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getOneBlocked(String userId, String blockId) {
 
-        if (!validateUser(userId, blockId)) return null;
+        validateUserByUserId(userId, blockId);
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
         if (!userEntity.getUserBlocked().contains(blockId)) {
-            log.error("차단 목록에 존재하지 않는 유저입니다.");
-            return null;
+            throw new IllegalArgumentException(String.format(
+                    "차단 목록에 존재하지 않는 유저입니다 'blockId : %s'", blockId
+            ));
         }
 
         UserEntity blocked = userRepository.findByUserId(blockId);
@@ -171,12 +199,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> blockUser(String userId, String blockId) {
 
-        if (!validateUser(userId, blockId)) return null;
+        validateUserByUserId(userId, blockId);
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
-        userEntity.blockUser(blockId);
+        if (userEntity.getUserBlocked().contains(blockId)) {
+            throw new IllegalArgumentException(String.format(
+                    "이미 차단된 유저입니다 'blockId : %s'", blockId
+            ));
+        }
 
+        userEntity.getUserBlocked().add(blockId);
         userRepository.save(userEntity);
 
         return getBlockedList(userEntity);
@@ -185,12 +218,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> unblockUser(String userId, String blockId) {
 
-        if (!validateUser(userId, blockId)) return null;
+        validateUserByUserId(userId, blockId);
 
         UserEntity userEntity = userRepository.findByUserId(userId);
 
-        userEntity.unblockUser(blockId);
+        if (!userEntity.getUserBlocked().contains(blockId)) {
+            throw new IllegalArgumentException(String.format(
+                    "차단된 유저가 아닙니다 'blockId : %s'", blockId
+            ));
+        }
 
+        userEntity.getUserBlocked().remove(blockId);
         userRepository.save(userEntity);
 
         return getBlockedList(userEntity);
@@ -199,26 +237,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String userId) {
 
-        if (validateUser(userId)) {
-            userRepository.deleteByUserId(userId);
-        }
+        validateUserByUserId(userId);
+
+        userRepository.deleteByUserId(userId);
 
     }
 
     @Override
-    public boolean validateUser(String... userId) {
-
-        boolean returnResult = true;
+    public void validateUserByUserId(String... userId) {
 
         for (String id : userId) {
             if (!userRepository.existsByUserId(id)) {
-                log.error("존재하지 않는 유저입니다. : {}", id);
-                returnResult = false;
+                throw new UsernameNotFoundException(String.format(
+                        "존재하지 않는 유저입니다 'userId: %s'", id
+                ));
             }
         }
-
-        return returnResult;
-
     }
 
     private List<UserDto> getFriendsList(UserEntity userEntity) {

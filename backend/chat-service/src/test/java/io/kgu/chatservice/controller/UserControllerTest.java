@@ -12,13 +12,16 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -210,8 +213,6 @@ class UserControllerTest {
     @DisplayName("회원 서비스 탈퇴")
     void deleteUser() throws Exception {
 
-        Mockito.when(userService.validateUser("UUID")).thenReturn(true);
-
         mvc.perform(get("/users/delete").header("userId", "UUID"))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -226,14 +227,16 @@ class UserControllerTest {
     void createUserFail() throws Exception {
 
         Mockito.when(modelMapper.map(requestUser, UserDto.class)).thenReturn(userDto);
-        Mockito.when(userService.createUser(userDto)).thenReturn(null);
+
+        doThrow(new DuplicateKeyException("createUserFailTest"))
+                .when(userService).createUser(userDto);
 
         mvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestUser)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.userId", is("회원가입 실패 : 이메일 중복")));
+                .andExpect(jsonPath("$.*").value("createUserFailTest"));
 
     }
 
@@ -241,24 +244,24 @@ class UserControllerTest {
     @DisplayName("친구 추가 요청 실패")
     void addFriendsFail() throws Exception {
 
-        requestUser.setUserId("UUID");
+        doThrow(new IllegalArgumentException("addFriendsFailTest"))
+                .when(userService).addFriend("UUID", "DuplicatedFriends");
 
-        Mockito.when(userService.addFriend("UUID", "F1")).thenReturn(null);
-
-        mvc.perform(post("/users/friends/F1").header("userId", "UUID"))
+        mvc.perform(post("/users/friends/DuplicatedFriends").header("userId", "UUID"))
                 .andDo(print())
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.*").value("addFriendsFailTest"));
 
     }
 
     @Test
-    @DisplayName("회원 서비스 탈퇴")
+    @DisplayName("회원 서비스 탈퇴 실패")
     void deleteUserFail() throws Exception {
 
-        Mockito.when(userService.validateUser("UUID")).thenReturn(false);
+        doThrow(new UsernameNotFoundException("deleteUserFailTest"))
+                .when(userService).deleteUser("illegalUserId");
 
-        mvc.perform(get("/users/delete").header("userId", "UUID"))
+        mvc.perform(get("/users/delete").header("userId", "illegalUserId"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }

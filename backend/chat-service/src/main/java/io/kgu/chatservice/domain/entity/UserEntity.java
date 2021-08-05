@@ -63,33 +63,5 @@ public class UserEntity implements Serializable {
         this.picture = userDto.getPicture();
     }
 
-    public void addFriend(String friendId) {
-
-        if (this.userFriends.contains(friendId)) throw new DuplicateKeyException("Already exists friends");
-
-        this.userFriends.add(friendId);
-    }
-
-    public void removeFriend(String friendId) {
-
-        if (!this.userFriends.contains(friendId)) throw new EntityNotFoundException("friend does not exists");
-
-        this.userFriends.remove(friendId);
-    }
-
-    public void blockUser(String blockId) {
-
-        if (this.userBlocked.contains(blockId)) throw new DuplicateKeyException("Already blocked user");
-
-        this.userBlocked.add(blockId);
-    }
-
-    public void unblockUser(String blockId) {
-
-        if (!this.userBlocked.contains(blockId)) throw new EntityNotFoundException("blocked user does not exists");
-
-        this.userBlocked.remove(blockId);
-    }
-
     // TODO - ROLE(enum) 추가
 }
