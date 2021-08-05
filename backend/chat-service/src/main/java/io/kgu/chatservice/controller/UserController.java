@@ -7,10 +7,12 @@ import io.kgu.chatservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -124,7 +126,15 @@ public class UserController {
     @PostMapping("/users/friends/{friendId}")
     public ResponseEntity<List<ResponseUser>> addFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
-        List<UserDto> friends = userService.addFriend(userId, friendId);
+        List<UserDto> friends;
+
+        try {
+            friends = userService.addFriend(userId, friendId);
+        } catch (DuplicateKeyException ex) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(List.of(ResponseUser.errorResponseDetails("친구추가 실패 : 이미 친구로 등록된 유저입니다.")));
+        }
 
         if (friends == null) {
             return ResponseEntity
@@ -139,7 +149,15 @@ public class UserController {
     @PostMapping("/users/friends/{friendId}/remove")
     public ResponseEntity<List<ResponseUser>> removeFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
-        List<UserDto> friends = userService.removeFriend(userId, friendId);
+        List<UserDto> friends;
+
+        try {
+            friends = userService.removeFriend(userId, friendId);
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(List.of(ResponseUser.errorResponseDetails("친구삭제 실패 : 친구로 등록되지 않은 유저입니다.")));
+        }
 
         if (friends == null) {
             return ResponseEntity
@@ -184,7 +202,15 @@ public class UserController {
     @PostMapping("/users/blocked/{blockId}")
     public ResponseEntity<List<ResponseUser>> blockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
-        List<UserDto> blockedList = userService.blockUser(userId, blockId);
+        List<UserDto> blockedList;
+
+        try {
+            blockedList = userService.blockUser(userId, blockId);
+        } catch (DuplicateKeyException ex) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(List.of(ResponseUser.errorResponseDetails("유저차단 실패 : 이미 차단된 유저입니다.")));
+        }
 
         if (blockedList == null) {
             return ResponseEntity
@@ -199,7 +225,15 @@ public class UserController {
     @PostMapping("/users/blocked/{blockId}/remove")
     public ResponseEntity<List<ResponseUser>> unblockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
-        List<UserDto> blockedList = userService.unblockUser(userId, blockId);
+        List<UserDto> blockedList;
+
+        try {
+            blockedList = userService.unblockUser(userId, blockId);
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(List.of(ResponseUser.errorResponseDetails("유저차단 실패 : 차단된 유저가 아닙니다.")));
+        }
 
         if (blockedList == null) {
             return ResponseEntity

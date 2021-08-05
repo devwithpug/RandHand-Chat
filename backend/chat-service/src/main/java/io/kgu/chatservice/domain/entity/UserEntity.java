@@ -1,10 +1,13 @@
 package io.kgu.chatservice.domain.entity;
 
 import io.kgu.chatservice.domain.dto.UserDto;
+import javassist.NotFoundException;
+import javassist.tools.web.BadHttpRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.dao.DuplicateKeyException;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -61,18 +64,30 @@ public class UserEntity implements Serializable {
     }
 
     public void addFriend(String friendId) {
+
+        if (this.userFriends.contains(friendId)) throw new DuplicateKeyException("Already exists friends");
+
         this.userFriends.add(friendId);
     }
 
     public void removeFriend(String friendId) {
+
+        if (!this.userFriends.contains(friendId)) throw new EntityNotFoundException("friend does not exists");
+
         this.userFriends.remove(friendId);
     }
 
     public void blockUser(String blockId) {
+
+        if (this.userBlocked.contains(blockId)) throw new DuplicateKeyException("Already blocked user");
+
         this.userBlocked.add(blockId);
     }
 
     public void unblockUser(String blockId) {
+
+        if (!this.userBlocked.contains(blockId)) throw new EntityNotFoundException("blocked user does not exists");
+
         this.userBlocked.remove(blockId);
     }
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -224,22 +225,31 @@ public class UserServiceImpl implements UserService {
 
         List<UserDto> result = new ArrayList<>();
 
-        userEntity.getUserFriends().forEach(f -> {
-            UserEntity byUserId = userRepository.findByUserId(f);
-            result.add(mapper.map(byUserId, UserDto.class));
-        });
+        Iterator<String> iter = userEntity.getUserFriends().iterator();
 
-        return result;
+        return processIter(result, iter);
     }
 
     private List<UserDto> getBlockedList(UserEntity userEntity) {
 
         List<UserDto> result = new ArrayList<>();
 
-        userEntity.getUserBlocked().forEach(f -> {
-            UserEntity byUserId = userRepository.findByUserId(f);
-            result.add(mapper.map(byUserId, UserDto.class));
-        });
+        Iterator<String> iter = userEntity.getUserBlocked().iterator();
+
+        return processIter(result, iter);
+    }
+
+    private List<UserDto> processIter(List<UserDto> result, Iterator<String> iter) {
+        while (iter.hasNext()) {
+            String id = iter.next();
+            UserEntity byUserId = userRepository.findByUserId(id);
+
+            if (byUserId == null) {
+                iter.remove();
+            } else {
+                result.add(mapper.map(byUserId, UserDto.class));
+            }
+        }
 
         return result;
     }
