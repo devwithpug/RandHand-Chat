@@ -9,9 +9,9 @@ eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
-    registry-fetch-interval-seconds: 15
+    registry-fetch-interval-seconds: 20 # default 30
     disable-delta: true
   server:
-    response-cache-update-interval-ms: 10000
-    peer-node-read-timeout-ms: 400
-    peer-node-connect-timeout-ms: 400
+    response-cache-update-interval-ms: 20000 # default 0
+    peer-node-read-timeout-ms: 3000 # default 200
+    peer-node-connect-timeout-ms: 3000 # default 200

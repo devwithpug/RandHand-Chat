@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -72,9 +73,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(mapper.map(userDto, ResponseUser.class));
     }
 
-    // 회원 정보 변경 요청(UserDto.userId != null 인 경우)
-    @PostMapping("/users/{userId}")
-    public ResponseEntity<ResponseUser> modifyUser(@PathVariable String userId, @Valid @RequestBody RequestUser requestUser) {
+    // 회원 정보 변경 요청
+    @PostMapping("/users/update")
+    public ResponseEntity<ResponseUser> modifyUser(@RequestHeader String userId, @Valid @RequestBody RequestUser requestUser) {
 
         UserDto userDto;
 
@@ -227,9 +228,7 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
 
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(ResponseUser.errorResponseDetails("회원탈퇴 성공 : " + userId));
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("deleted", userId));
     }
 
     private ResponseEntity<List<ResponseUser>> getListResponseEntity(List<UserDto> request) {

@@ -24,10 +24,4 @@ public class ResponseUser implements Serializable {
     private List<ResponseUser> userFriends;
     private List<ResponseUser> userBlocked;
 
-
-    public static ResponseUser errorResponseDetails(String msg) {
-        return ResponseUser.builder()
-                .userId(msg)
-                .build();
-    }
 }
