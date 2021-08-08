@@ -1,6 +1,7 @@
 package io.kgu.chatservice.messagequeue;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -23,6 +24,15 @@ import java.util.Map;
 public class KafkaConfig {
 
     private final Environment env;
+
+    @Bean
+    public KafkaAdmin kafkaAdmin() {
+        Map<String, Object> properties = new HashMap<>();
+
+        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.address"));
+
+        return new KafkaAdmin(properties);
+    }
 
     @Bean
     public ConsumerFactory<String, String> consumerFactory() {
