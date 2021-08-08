@@ -127,7 +127,7 @@ class UserControllerTest {
         Mockito.when(userService.modifyUserInfo("UUID", userDto)).thenReturn(userDto);
         Mockito.when(modelMapper.map(userDto, ResponseUser.class)).thenReturn(responseUser);
 
-        mvc.perform(post("/users/UUID")
+        mvc.perform(post("/users/update").header("userId", "UUID")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestUser)))
                 .andDo(print())
