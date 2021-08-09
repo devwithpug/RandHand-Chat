@@ -1,5 +1,6 @@
 package io.kgu.chatservice.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.kgu.chatservice.domain.dto.ChatDto;
 import io.kgu.chatservice.domain.dto.QueueDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
@@ -10,14 +11,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
-import java.util.InvalidPropertiesFormatException;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
 
@@ -26,11 +28,12 @@ public class ChatServiceImpl implements ChatService {
     private final KafkaProducer kafkaProducer;
 
     @Override
-    public QueueDto makeChatQueue(QueueDto queueDto) {
+    public QueueDto makeChatQueue(QueueDto queueDto) throws JsonProcessingException {
 
         if (queueDto.getGesture() == null || queueDto.getUserId() == null) {
-            log.error("Invalid request from queueDto: " + queueDto);
-            return null;
+            throw new IllegalArgumentException(String.format(
+                    "잘못된 요청입니다 'userId: %s, gesture: %s'", queueDto.getUserId(), queueDto.getGesture()
+            ));
         }
 
         kafkaProducer.sendQueue(queueDto);
@@ -56,14 +59,37 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public ChatDto getOneChatRoom(String sessionId) {
+    public ChatDto getOneChatRoomBySessionId(String sessionId) {
 
         ChatEntity chatEntity = chatRepository.findBySessionId(sessionId);
 
         if (chatEntity == null) {
-            log.error("해당 sessionId 와 일치하는 ChatRoom 이 존재하지 않습니다: " + sessionId);
-            return null;
+            throw new EntityNotFoundException(String.format(
+                    "일치하는 채팅방이 없습니다 'sessionId: %s'", sessionId
+            ));
         }
+
         return modelMapper.map(chatEntity, ChatDto.class);
+    }
+
+    @Override
+    public ChatDto getOneChatRoomByUserId(String userId) {
+
+        ChatEntity chatEntity = chatRepository.findByUserId(userId);
+
+        if (chatEntity == null) {
+            throw new EntityNotFoundException(String.format(
+                    "일치하는 채팅방이 없습니다 'userId: %s'", userId
+            ));
+        }
+
+        return modelMapper.map(chatEntity, ChatDto.class);
+    }
+
+    @Override
+    public void removeChatRoomBySessionId(String sessionId) {
+
+        chatRepository.deleteBySessionId(sessionId);
+
     }
 }

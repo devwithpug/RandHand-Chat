@@ -19,18 +19,14 @@ public class KafkaProducer {
     private final ObjectMapper objectMapper;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void sendQueue(QueueDto queueDto) {
+    public void sendQueue(QueueDto queueDto) throws JsonProcessingException {
 
         String jsonInString = "";
 
-        try {
-            jsonInString = objectMapper.writeValueAsString(queueDto);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        jsonInString = objectMapper.writeValueAsString(queueDto);
 
         kafkaTemplate.send(env.getProperty("kafka.topic.queue"), jsonInString);
-        log.info("Kafka Producer sent data to queue topic: " + queueDto);
+        log.info("Kafka Producer sent data to queue topic: " + queueDto.getUserId()); // base64 출력 생략
     }
 
     public void sendMatchedInfo(ChatDto chatDto) {
