@@ -3,7 +3,7 @@ from flask_apscheduler import APScheduler, scheduler
 import py_eureka_client.eureka_client as eureka_client
 import socket, argparse, time, json
 from contextlib import closing
-from kafka import KafkaProducer
+from kafka import KafkaProducer, errors
 from gesture import Gesture_Predict
 
 def log(msg):
@@ -18,6 +18,20 @@ parser.add_argument('host', nargs='?', type=str, default='localhost', help='ex) 
 args = parser.parse_args()
 
 EUREKA_IP = args.host
+
+producer = None
+
+while producer is None:
+    try:
+        producer = KafkaProducer(acks=0,
+                                compression_type='gzip', 
+                                bootstrap_servers=[EUREKA_IP+':9092'],
+                                value_serializer=lambda x: json.dumps(x).encode('utf-8'))
+    except errors.NoBrokersAvailable:
+        log("NoBrokersAvailable! retry in 1m")
+        time.sleep(60.0)
+
+predict = Gesture_Predict(limit=1.5)
 
 rest_port = 5000
 
@@ -37,28 +51,24 @@ scheduler.api_enabled = True
 scheduler.init_app(app)
 scheduler.start()
 
-producer = KafkaProducer(acks=0,
-                         compression_type='gzip', 
-                         bootstrap_servers=[EUREKA_IP+':9092'],
-                         value_serializer=lambda x: json.dumps(x).encode('utf-8'))
-
-@scheduler.task('interval', id='predict_gesture', seconds=10)
+@scheduler.task('interval', id='predict_gesture', seconds=15)
 def do_predict():
 
-    predict = Gesture_Predict(gesture_dict, limit=1.5)
-    result = predict()
+    if len(gesture_dict) > 0:
 
-    if len(result) > 0:
+        result = predict.do_predict(gesture_dict)
 
-        for ids in result:
-            gesture_dict.pop(ids[0])
-            gesture_dict.pop(ids[1])
-            log("New chat room created! : {}".format(ids))
+        if len(result) > 0:
 
-            value = {'userIds': ids}
-            producer.send('match-topic', value=value)
+            for ids in result:
+                gesture_dict.pop(ids[0])
+                gesture_dict.pop(ids[1])
+                log("New chat room created! : {}".format(ids))
 
-        log("gesture_queue : {}".format(list(gesture_dict.keys())))
+                value = {'userIds': ids}
+                producer.send('match-topic', value=value)
+
+            log("gesture_queue : {}".format(list(gesture_dict.keys())))
 
 # TODO - chat room 생성한뒤에 chat-service [match-topic] 전송까지 완료
 # TODO - chat-service 에서 [match-topic] consume하여 chatroom 싱글턴 리스트로 관리하고
