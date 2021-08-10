@@ -59,13 +59,6 @@ jobs:
         push: true
         tags: devwithpug/gesture-service:0.1
 
-    - name: Build & Push randhand-kafka-consumer
-      uses: docker/build-push-action@v2
-      with:
-        context: ./backend/gesture-service/consumer
-        push: true
-        tags: devwithpug/randhand-kafka-consumer:0.1
-
     - name: EC2 인스턴스 내부의 CodeDeploy 트리거 발동
       run: aws deploy --region ap-northeast-2 create-deployment --application-name CodeDeploy-application-randhand --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name CodeDeploy-group-randhand --github-location repository=devwithpug/RandHand-Chat,commitId=${GITHUB_SHA}
       env:

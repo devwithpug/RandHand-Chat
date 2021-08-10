@@ -74,15 +74,7 @@ public class KafkaConfig {
     /**
      * 카프카 토픽 생성
      */
-
-    @Bean
-    public NewTopic queueTopic() {
-        return TopicBuilder.name("queue-topic")
-                .partitions(1)
-                .replicas(1)
-                .build();
-    }
-
+    
     @Bean
     public NewTopic matchTopic() {
         return TopicBuilder.name("match-topic")

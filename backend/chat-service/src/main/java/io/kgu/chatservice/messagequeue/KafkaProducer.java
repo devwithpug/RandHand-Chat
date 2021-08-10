@@ -3,7 +3,6 @@ package io.kgu.chatservice.messagequeue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kgu.chatservice.domain.dto.ChatDto;
-import io.kgu.chatservice.domain.dto.QueueDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -18,16 +17,6 @@ public class KafkaProducer {
     private final Environment env;
     private final ObjectMapper objectMapper;
     private final KafkaTemplate<String, String> kafkaTemplate;
-
-    public void sendQueue(QueueDto queueDto) throws JsonProcessingException {
-
-        String jsonInString = "";
-
-        jsonInString = objectMapper.writeValueAsString(queueDto);
-
-        kafkaTemplate.send(env.getProperty("kafka.topic.queue"), jsonInString);
-        log.info("Kafka Producer sent data to queue topic: " + queueDto.getUserId()); // base64 출력 생략
-    }
 
     public void sendMatchedInfo(ChatDto chatDto) {
 

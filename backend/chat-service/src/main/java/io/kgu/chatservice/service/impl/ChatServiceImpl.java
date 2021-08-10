@@ -1,8 +1,6 @@
 package io.kgu.chatservice.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.kgu.chatservice.domain.dto.ChatDto;
-import io.kgu.chatservice.domain.dto.QueueDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
 import io.kgu.chatservice.messagequeue.KafkaProducer;
 import io.kgu.chatservice.repository.ChatRepository;
@@ -26,20 +24,6 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final ModelMapper modelMapper;
     private final KafkaProducer kafkaProducer;
-
-    @Override
-    public QueueDto makeChatQueue(QueueDto queueDto) throws JsonProcessingException {
-
-        if (queueDto.getGesture() == null || queueDto.getUserId() == null) {
-            throw new IllegalArgumentException(String.format(
-                    "잘못된 요청입니다 'userId: %s, gesture: %s'", queueDto.getUserId(), queueDto.getGesture()
-            ));
-        }
-
-        kafkaProducer.sendQueue(queueDto);
-
-        return queueDto;
-    }
 
     @Override
     public ChatDto createChatRoom(ChatDto chatDto) {
