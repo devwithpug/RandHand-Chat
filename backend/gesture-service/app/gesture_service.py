@@ -86,7 +86,8 @@ def create_queue():
         assert isinstance(gesture, str)
         assert isinstance(userId, str)
     except AssertionError:
-        return Response(status=400)
+        error = {"error": "gesture, userId 모두 입력해야 합니다"}
+        return error, 400
 
     gesture_dict[userId] = gesture
 
@@ -104,9 +105,11 @@ def cancel_queue():
     try:
         gesture_dict.pop(userId)
     except KeyError:
-        return Response(status=404)
+        error = {"error": "queue에 등록되지 않은 userId 입니다"}
+        return error, 404
 
     log("cancel queue : {}".format(userId))
+
     return Response(status=200)
 
 # health_check
