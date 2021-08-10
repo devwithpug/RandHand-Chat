@@ -1,2 +1,4 @@
 Flask==2.0.1
 py-eureka-client==0.10.0
+Flask-APScheduler==1.12.2
+kafka-python==2.0.2

@@ -1,7 +1,8 @@
-FROM python:3.8.5
+FROM devwithpug/python_env_test:0.1
 ADD . /app
 WORKDIR /app
 ENV TZ Asia/Seoul
+ARG HOST
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python", "-u", "gesture_service.py", "eureka-server:8761"]
+CMD ["sh", "-c", "python -u gesture_service.py $HOST"]
