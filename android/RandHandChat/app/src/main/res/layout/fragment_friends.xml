@@ -3,17 +3,105 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/myProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/myProfileCardView"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:padding="10dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/myProfile_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/mes_background"
+                android:longClickable="false"
+                android:src="@drawable/hand_icon" />
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/myProfileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="사용자"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/myStatusMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="상태메세지"
+            android:layout_gravity="center"
+            android:layout_marginLeft="80sp"/>
+
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friends_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myProfile"
         tools:itemCount="17"
         tools:listitem="@layout/list_friends">
 
+
     </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/test_addFriend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="친구추가"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/test_deleteFriend"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/test_deleteFriend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="친구삭제"
+        app:layout_constraintBottom_toBottomOf="@+id/test_addFriend"
+        app:layout_constraintEnd_toStartOf="@+id/test_blockFriend"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/test_addFriend"
+        app:layout_constraintTop_toTopOf="@+id/test_addFriend"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/test_blockFriend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="친구차단"
+        app:layout_constraintBottom_toBottomOf="@+id/test_deleteFriend"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/test_deleteFriend"
+        app:layout_constraintTop_toTopOf="@+id/test_deleteFriend"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
