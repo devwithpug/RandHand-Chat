@@ -27,8 +27,6 @@ with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     rest_port = s.getsockname()[1]
 
-rest_port = 5000
-
 eureka_client.init(eureka_server=EUREKA_IP+":8761/eureka",
                     app_name="gesture-service",
                     instance_port=rest_port)
@@ -87,6 +85,7 @@ def create_queue():
 
     return Response(status=200)
 
+# cancel queue
 @app.route("/queue/cancel", methods=['POST'])
 def cancel_queue():
 
