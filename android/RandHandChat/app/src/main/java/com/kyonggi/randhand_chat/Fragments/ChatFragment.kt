@@ -1,15 +1,20 @@
 package com.kyonggi.randhand_chat.Fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.kyonggi.randhand_chat.ChatActivity
 import com.kyonggi.randhand_chat.databinding.FragmentChattingsBinding
 
 class ChatFragment : Fragment() {
+
+    private lateinit var binding: FragmentChattingsBinding
+
     companion object {
         const val TAG : String = "로그"
         // 채팅 정보에대한 Fragment 생성
@@ -22,6 +27,11 @@ class ChatFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "ChatFragment -onCreate() called")
+        binding = FragmentChattingsBinding.inflate(layoutInflater)
+
+        binding.floatingActionButtonMenu.setOnClickListener {
+            startActivity(Intent(activity , ChatActivity::class.java))
+        }
     }
     // Fragment 를 안고 있는 Activity 에 붙였을때
     override fun onAttach(context: Context) {

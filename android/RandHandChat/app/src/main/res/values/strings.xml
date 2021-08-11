@@ -4,4 +4,6 @@
     <string name="getMyMessage">Placeholder message</string>
     <string name="getApplyMessage">Apply message</string>
     <string name="userName">User</string>
+    <string name="blockFriend">친구차단</string>
+    <string name="deleteFriend">친구삭제</string>
 </resources>

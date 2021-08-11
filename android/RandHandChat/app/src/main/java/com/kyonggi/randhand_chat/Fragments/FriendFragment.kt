@@ -1,22 +1,36 @@
 package com.kyonggi.randhand_chat.Fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.SearchView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.kyonggi.randhand_chat.Adapter.UserAdapter
-import com.kyonggi.randhand_chat.Model.User
+import com.kyonggi.randhand_chat.BlockedFriendActivity
+import com.kyonggi.randhand_chat.Domain.ResponseUser
+import com.kyonggi.randhand_chat.ProfileActivity
 import com.kyonggi.randhand_chat.R
+import com.kyonggi.randhand_chat.Retrofit.IRetrofit
+import com.kyonggi.randhand_chat.Retrofit.Service.ServiceUser
+import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.FragmentFriendsBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 
 class FriendFragment : Fragment() {
+    private lateinit var retrofit: Retrofit
+    private lateinit var supplementService: IRetrofit
+
     private lateinit var friendsBinding: FragmentFriendsBinding
-    private lateinit var adapter: UserAdapter
-    var profileList: ArrayList<User> = ArrayList()
+    private var profileList: MutableList<ResponseUser> = mutableListOf()
+
     companion object {
         const val TAG : String = "로그"
         // 친구 정보들에 대한 Fragment 를 가져온다
@@ -27,9 +41,35 @@ class FriendFragment : Fragment() {
 
     // 메모리에 올라갔을때
     override fun onCreate(savedInstanceState: Bundle?) {
+        initRetrofit()
+        setHasOptionsMenu(true)
         super.onCreate(savedInstanceState)
         Log.d(TAG, "FriendFragment -onCreate() called")
-        addData()
+    }
+
+    override fun onResume() {
+        val userId = AppUtil.prefs.getString("userId", null)
+        val token = AppUtil.prefs.getString("token", null)
+        friendList(supplementService, token, userId)
+        // 로그인 사용자 정보 가져오기
+        getMyInfo(supplementService, userId)
+        super.onResume()
+    }
+
+    // 액션바 붙여주기
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_toolbar_menu, menu)
+
+        val search = menu?.findItem(R.id.search_user)?.actionView as SearchView
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    // 메뉴 아이템 선택시 불리는 메소드
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.blockedList -> startActivity(Intent(activity, BlockedFriendActivity::class.java ))
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     // Fragment 를 안고 있는 Activity 에 붙였을때
@@ -38,48 +78,118 @@ class FriendFragment : Fragment() {
         Log.d(TAG, "FriendFragment -onAttach() called")
     }
 
-    private fun addData() {
-        profileList.add(User("1","박준후","http://t1.daumcdn.net/friends/prod/editor/dc8b3d02-a15a-4afa-a88b-989cf2a50476.jpg"))
-        profileList.add(User("1","김기용","1"))
-        profileList.add(User("1","김기현","1"))
-        profileList.add(User("1","한동현","1"))
-        profileList.add(User("1","최준규","1"))
-        profileList.add(User("1","김기용","1"))
-        profileList.add(User("1","김기현","1"))
-        profileList.add(User("1","한동현","1"))
-        profileList.add(User("1","최준규","1"))
-        profileList.add(User("1","김기용","1"))
-        profileList.add(User("1","김기현","1"))
-        profileList.add(User("1","한동현","1"))
-        profileList.add(User("1","최준규","1"))
-        profileList.add(User("1","김기용","1"))
-        profileList.add(User("1","김기현","1"))
-        profileList.add(User("1","한동현","1"))
-        profileList.add(User("1","최준규","1"))
+
+    // View 가 생성되었을때
+    // Fragment 와 레이아웃을 연결시켜준다
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        Log.d(TAG, "FriendFragment -onCreateView() called")
+        friendsBinding = FragmentFriendsBinding.inflate(inflater, container, false)
+
+        return friendsBinding.root
     }
 
     // onCreateView 의 리턴값은 View를 가지고 있다.
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        friendsBinding.friendsList.apply {
-            layoutManager = LinearLayoutManager(activity)
-            // 어댑터 설정
-            adapter = UserAdapter(profileList)
-            // 어댑터 연결
+        Log.d(TAG, "FriendFragment -onViewCreated() called")
 
+            with(friendsBinding) {
+                // 리사이클러뷰 설정
+                friendsList.apply {
+                    // 세로로 만들어주기
+                    layoutManager = LinearLayoutManager(activity)
+                    // 어뎁터 성능을 위해서 추가
+                    friendsList.setHasFixedSize(true)
+                    // 친구 목록 List 설정
+                    val userId = AppUtil.prefs.getString("userId", null)
+                    val token = AppUtil.prefs.getString("token", null)
+                    friendList(supplementService, token, userId)
+                    // 로그인 사용자 정보 가져오기
+                    getMyInfo(supplementService, userId)
+            }
+                /**
+                 *  테스트용 친구 추가 메소드 -> 채팅쪽에서 매칭된 유저때 다시 설정
+                 */
+                testAddFriend.setOnClickListener {
+                    addFriend(supplementService, "599f11f5-a6a8-45c7-a902-628911dc9e46")
+                }
         }
     }
 
-    // View 가 생성되었을때
-    // Fragment 와 레이아웃을 연결시켜준다
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        Log.d(TAG, "FriendFragment -onCreateView() called")
-//        val view = inflater.inflate(R.layout.fragment_friends, container, false )
-        friendsBinding = FragmentFriendsBinding.inflate(inflater, container, false)
-        return friendsBinding.root
+    fun getMyInfo(supplementService: IRetrofit, userId: String) {
+        val token = AppUtil.prefs.getString("token",null)
+        val userId = AppUtil.prefs.getString("userId", null)
+        supplementService.getUserInfo(token, userId, userId).enqueue(object : Callback<ResponseUser> {
+            override fun onResponse(call: Call<ResponseUser>, response: Response<ResponseUser>) {
+                val info = response.body()
+                // 로그인한 회원정보 넣어주기
+                with(friendsBinding) {
+                    myProfileName.text = info?.name
+                    myStatusMessage.text = info?.message
+                    Glide.with(this@FriendFragment)
+                        .load(info?.picture)
+                        .into(myProfileImage)
+
+                    // 내 정보 클릭시
+                    myProfile.setOnClickListener {
+                        val intent = Intent(activity, ProfileActivity::class.java)
+                        intent.putExtra("userId", AppUtil.prefs.getString("userId", null))
+                        startActivity(intent)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseUser>, t: Throwable) {
+            }
+
+        })
+    }
+
+    private fun addFriend(supplementService: IRetrofit, friendId: String) {
+        supplementService.addUser(AppUtil.prefs.getString("token",null), AppUtil.prefs.getString("userId",null), friendId)
+            .enqueue(object: Callback<List<ResponseUser>> {
+                override fun onResponse(call: Call<List<ResponseUser>>, response: Response<List<ResponseUser>>) {
+                    val body = response.body() as MutableList<ResponseUser>
+                    // 추가된 친구 adapter 에 반영
+                    addData(body.last())
+                }
+
+                override fun onFailure(call: Call<List<ResponseUser>>, t: Throwable) {
+                }
+
+            })
+    }
+
+    private fun friendList(supplementService: IRetrofit, token: String, userId: String) {
+        supplementService.getUserFriendsList(token, userId).enqueue(object: Callback<List<ResponseUser>>{
+            override fun onResponse(call: Call<List<ResponseUser>>, response: Response<List<ResponseUser>>) {
+                val list = response.body()
+                Log.d("리스트", list.toString())
+                profileList = list as MutableList<ResponseUser>
+                // 어댑터 설정
+                friendsBinding.friendsList.adapter = UserAdapter(profileList)
+            }
+
+            override fun onFailure(call: Call<List<ResponseUser>>, t: Throwable) {
+                Toast.makeText(activity, "친구목록 조회 실패.", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+    }
+
+
+    /**
+     *  테스트용 친구 추가 메소드 -> 채팅쪽에서 매칭된 유저때 다시 설정
+     */
+    fun addData(user: ResponseUser) {
+        profileList.add(user)
+        // 갱신처리를 해주어야한다.
+        friendsBinding.friendsList.adapter?.notifyDataSetChanged()
+
+    }
+
+    private fun initRetrofit() {
+        retrofit = ServiceUser.getInstance()
+        supplementService = retrofit.create(IRetrofit::class.java)
     }
 }

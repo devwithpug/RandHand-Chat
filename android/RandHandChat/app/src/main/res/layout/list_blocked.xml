@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/profile_image"
+            android:id="@+id/profileImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/mes_background"
@@ -34,7 +34,7 @@
 
 
     <TextView
-        android:id="@+id/profile_name"
+        android:id="@+id/profileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="사용자"
@@ -44,15 +44,16 @@
         app:layout_constraintTop_toTopOf="@+id/profileCardView">
     </TextView>
 
-    <TextView
-        android:id="@+id/profile_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/profileCardView"
-        app:layout_constraintStart_toEndOf="@+id/profileCardView"
-        app:layout_constraintTop_toTopOf="@+id/profileCardView"
-        android:layout_marginLeft="150dp"
-        tools:text="상태메시지">
-    </TextView>
+    <ImageButton
+        android:id="@+id/btnBlocked"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginRight="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_delete"
+        tools:ignore="SpeakableTextPresentCheck" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

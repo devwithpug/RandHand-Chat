@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/mes_background"
     tools:context=".LoginActivity">
 
     <androidx.constraintlayout.widget.Guideline
@@ -28,29 +29,31 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="0dp"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_login_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:text="OAuth 로그인 구현"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/logo_guideline" />
+        app:layout_constraintTop_toTopOf="@+id/logo_guideline"
+        app:layout_constraintVertical_bias="0.351">
+
+    </com.google.android.gms.common.SignInButton>
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="0dp"
+        android:id="@+id/testButton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="OAuth 로그인 구현"
-        app:layout_constraintEnd_toEndOf="@+id/button"
-        app:layout_constraintStart_toStartOf="@+id/button"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        android:text="메인창이동"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/google_login_button"
+        app:layout_constraintStart_toStartOf="@+id/google_login_button"
+        app:layout_constraintTop_toBottomOf="@+id/google_login_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
