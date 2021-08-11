@@ -21,6 +21,9 @@ class Gesture_Predict:
         self.hands = hands
         self.predict = []
 
+    def refresh_data(self):
+        self.angle_data = pd.DataFrame(columns=['angle'+str(x) for x in range(0,18,1)])
+        self.predict = []
 
     # =======================================================================================
     # Compute Angles
@@ -31,7 +34,10 @@ class Gesture_Predict:
         
             # img detection & preprocessing
             img = cv2.flip(file, 1)
-            img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            try:
+                img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            except Exception:
+                return idx
             result = self.hands.process(img2)
 
             # result save
@@ -92,6 +98,7 @@ class Gesture_Predict:
 
 
     def do_predict(self, gesture_dict):
+        self.refresh_data()
         img_list = []
         # image decode (서버에서 base64 형식으로 packet이 오면, 형태를 이미지화 해줌)
         for key in gesture_dict:
@@ -99,7 +106,10 @@ class Gesture_Predict:
             img = cv2.imdecode(decoded, cv2.IMREAD_COLOR)
             img_list.append(img)
 
-        self.compute_angles(img_list, list(gesture_dict.keys()))
+        err = self.compute_angles(img_list, list(gesture_dict.keys()))
+
+        if err is not None:
+            return (True, err)
 
         df = self.angle_data
         thumb_false = df[df['angle0']*180/np.pi<90].iloc[:,1:]
@@ -110,4 +120,4 @@ class Gesture_Predict:
         self.fit_predict(thumb_false)
         self.fit_predict(thumb_true)
 
-        return self.predict
+        return (False, self.predict)

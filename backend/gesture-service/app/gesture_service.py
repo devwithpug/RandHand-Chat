@@ -56,7 +56,12 @@ def do_predict():
 
     if len(gesture_dict) > 0:
 
-        result = predict.do_predict(gesture_dict)
+        err, result = predict.do_predict(gesture_dict)
+
+        if err:
+            log("ERROR invalid image : {}", result)
+            gesture_dict.pop(result)
+            log("invalid image '{}' was removed", result)
 
         if len(result) > 0:
 
@@ -79,13 +84,13 @@ def do_predict():
 @app.route("/queue", methods=['POST'])
 def create_queue():
 
-    gesture = request.json['gesture']
-    userId = request.headers['userId']
-
     try:
+        gesture = request.json['gesture']
+        userId = request.headers['userId']
+
         assert isinstance(gesture, str)
         assert isinstance(userId, str)
-    except AssertionError:
+    except (AssertionError, KeyError):
         error = {"error": "gesture, userId 모두 입력해야 합니다"}
         return error, 400
 
@@ -100,7 +105,11 @@ def create_queue():
 @app.route("/queue/cancel", methods=['POST'])
 def cancel_queue():
 
-    userId = request.headers['userId']
+    try:
+        userId = request.headers['userId']
+    except KeyError:
+        error = {"error": "userId 값이 필요합니다"}
+        return error, 400
 
     try:
         gesture_dict.pop(userId)
