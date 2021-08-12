@@ -3,6 +3,7 @@ package io.kgu.chatservice.service.impl;
 import io.kgu.chatservice.domain.dto.UserDto;
 import io.kgu.chatservice.domain.entity.UserEntity;
 import io.kgu.chatservice.repository.UserRepository;
+import io.kgu.chatservice.service.AmazonS3Service;
 import io.kgu.chatservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
+    private final AmazonS3Service amazonS3Service;
     private final UserRepository userRepository;
     private final ModelMapper mapper;
 
@@ -39,6 +42,13 @@ public class UserServiceImpl implements UserService {
 
         userDto.setUserId(UUID.randomUUID().toString());
         userDto.setStatusMessage("");
+
+        try {
+            String image = amazonS3Service.upload(userDto.getPicture(), userDto.getUserId());
+            userDto.setPicture(image);
+        } catch (IOException e) {
+            log.warn("IOException while uploading user profile image 'userId : {}'", userDto.getUserId());
+        }
 
         UserEntity userEntity = mapper.map(userDto, UserEntity.class);
         userEntity.setUserFriends(new ArrayList<>());
@@ -238,6 +248,8 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String userId) {
 
         validateUserByUserId(userId);
+
+        amazonS3Service.delete(userId);
 
         userRepository.deleteByUserId(userId);
 
