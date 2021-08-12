@@ -11,12 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.kyonggi.randhand_chat.Adapter.UserAdapter
-import com.kyonggi.randhand_chat.BlockedFriendActivity
-import com.kyonggi.randhand_chat.Domain.ResponseUser
-import com.kyonggi.randhand_chat.ProfileActivity
+import com.kyonggi.randhand_chat.Fragments.UserActivity.BlockedFriendActivity
+import com.kyonggi.randhand_chat.Domain.User.ResponseUser
+import com.kyonggi.randhand_chat.Fragments.UserActivity.ProfileActivity
 import com.kyonggi.randhand_chat.R
-import com.kyonggi.randhand_chat.Retrofit.IRetrofit
-import com.kyonggi.randhand_chat.Retrofit.Service.ServiceUser
+import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
+import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.FragmentFriendsBinding
 import retrofit2.Call
@@ -26,7 +26,7 @@ import retrofit2.Retrofit
 
 class FriendFragment : Fragment() {
     private lateinit var retrofit: Retrofit
-    private lateinit var supplementService: IRetrofit
+    private lateinit var supplementService: IRetrofitUser
 
     private lateinit var friendsBinding: FragmentFriendsBinding
     private var profileList: MutableList<ResponseUser> = mutableListOf()
@@ -99,7 +99,7 @@ class FriendFragment : Fragment() {
                     // 세로로 만들어주기
                     layoutManager = LinearLayoutManager(activity)
                     // 어뎁터 성능을 위해서 추가
-                    friendsList.setHasFixedSize(true)
+                    setHasFixedSize(true)
                     // 친구 목록 List 설정
                     val userId = AppUtil.prefs.getString("userId", null)
                     val token = AppUtil.prefs.getString("token", null)
@@ -116,7 +116,7 @@ class FriendFragment : Fragment() {
         }
     }
 
-    fun getMyInfo(supplementService: IRetrofit, userId: String) {
+    fun getMyInfo(supplementService: IRetrofitUser, userId: String) {
         val token = AppUtil.prefs.getString("token",null)
         val userId = AppUtil.prefs.getString("userId", null)
         supplementService.getUserInfo(token, userId, userId).enqueue(object : Callback<ResponseUser> {
@@ -126,9 +126,15 @@ class FriendFragment : Fragment() {
                 with(friendsBinding) {
                     myProfileName.text = info?.name
                     myStatusMessage.text = info?.message
-                    Glide.with(this@FriendFragment)
-                        .load(info?.picture)
-                        .into(myProfileImage)
+
+                    activity?.let {
+                        Glide.with(it)
+                            .load(info?.picture)
+                            .error(Glide.with(this@FriendFragment)
+                                .load(R.drawable.no_image))
+                            .into(myProfileImage)
+                    }
+
 
                     // 내 정보 클릭시
                     myProfile.setOnClickListener {
@@ -145,7 +151,7 @@ class FriendFragment : Fragment() {
         })
     }
 
-    private fun addFriend(supplementService: IRetrofit, friendId: String) {
+    private fun addFriend(supplementService: IRetrofitUser, friendId: String) {
         supplementService.addUser(AppUtil.prefs.getString("token",null), AppUtil.prefs.getString("userId",null), friendId)
             .enqueue(object: Callback<List<ResponseUser>> {
                 override fun onResponse(call: Call<List<ResponseUser>>, response: Response<List<ResponseUser>>) {
@@ -160,7 +166,7 @@ class FriendFragment : Fragment() {
             })
     }
 
-    private fun friendList(supplementService: IRetrofit, token: String, userId: String) {
+    private fun friendList(supplementService: IRetrofitUser, token: String, userId: String) {
         supplementService.getUserFriendsList(token, userId).enqueue(object: Callback<List<ResponseUser>>{
             override fun onResponse(call: Call<List<ResponseUser>>, response: Response<List<ResponseUser>>) {
                 val list = response.body()
@@ -189,7 +195,7 @@ class FriendFragment : Fragment() {
     }
 
     private fun initRetrofit() {
-        retrofit = ServiceUser.getInstance()
-        supplementService = retrofit.create(IRetrofit::class.java)
+        retrofit = ServiceURL.getInstance()
+        supplementService = retrofit.create(IRetrofitUser::class.java)
     }
 }
