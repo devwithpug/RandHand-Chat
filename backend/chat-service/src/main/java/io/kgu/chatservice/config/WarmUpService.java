@@ -61,7 +61,7 @@ public class WarmUpService {
 
                 long startTime = System.currentTimeMillis();
 
-                RequestUser requestCreateUser = RequestUser.builder().email("t@t").auth("t").picture("t").name("t").build();
+                RequestUser requestCreateUser = RequestUser.builder().email("t@t").auth("t").name("t").build();
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Content-Type", "application/json");
                 headers.add("Accept", "application/json");

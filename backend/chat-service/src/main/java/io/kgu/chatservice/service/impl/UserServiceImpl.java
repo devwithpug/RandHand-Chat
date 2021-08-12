@@ -44,12 +44,14 @@ public class UserServiceImpl implements UserService {
         userDto.setUserId(UUID.randomUUID().toString());
         userDto.setStatusMessage("");
 
-        try {
-            String image = amazonS3Service.upload(userDto.getPicture(), userDto.getUserId());
-            userDto.setPicture(image);
-        } catch (IOException e) {
-            userDto.setPicture(null);
-            log.warn("IOException while uploading user profile image 'userId : {}'", userDto.getUserId());
+        if (userDto.getPicture() != null) {
+            try {
+                String image = amazonS3Service.upload(userDto.getPicture(), userDto.getUserId());
+                userDto.setPicture(image);
+            } catch (IOException e) {
+                userDto.setPicture(null);
+                log.warn("IOException while uploading user profile image 'userId : {}'", userDto.getUserId());
+            }
         }
 
         UserEntity userEntity = mapper.map(userDto, UserEntity.class);
