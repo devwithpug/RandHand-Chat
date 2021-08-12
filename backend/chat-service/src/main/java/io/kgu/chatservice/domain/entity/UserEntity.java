@@ -60,8 +60,6 @@ public class UserEntity implements Serializable {
     public void update(UserDto userDto) {
         this.name = userDto.getName();
         this.statusMessage = userDto.getStatusMessage();
-        this.picture = userDto.getPicture();
     }
 
-    // TODO - ROLE(enum) 추가
 }

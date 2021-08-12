@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class UserServiceImpl implements UserService {
             String image = amazonS3Service.upload(userDto.getPicture(), userDto.getUserId());
             userDto.setPicture(image);
         } catch (IOException e) {
+            userDto.setPicture(null);
             log.warn("IOException while uploading user profile image 'userId : {}'", userDto.getUserId());
         }
 
@@ -110,6 +112,19 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userEntity);
 
         return userDto;
+    }
+
+    @Override
+    public UserDto modifyUserPicture(String userId, MultipartFile image) throws IOException {
+
+        validateUserByUserId(userId);
+
+        String picture = amazonS3Service.upload(image, userId);
+
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        userEntity.setPicture(picture);
+
+        return mapper.map(userRepository.save(userEntity), UserDto.class);
     }
 
     @Override

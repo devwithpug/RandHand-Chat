@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kgu.chatservice.domain.dto.UserDto;
 import io.kgu.chatservice.domain.request.RequestUser;
 import io.kgu.chatservice.domain.response.ResponseUser;
+import io.kgu.chatservice.service.AmazonS3Service;
 import io.kgu.chatservice.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,11 +42,14 @@ class UserControllerTest {
     @MockBean
     private ModelMapper modelMapper;
 
+    @MockBean
+    private AmazonS3Service amazonS3Service;
+
     RequestUser requestUser = RequestUser.builder()
             .auth("google")
             .email("zm@gmail.com")
             .name("test")
-            .picture("picture")
+            .picture("https://picture")
             .build();
 
     UserDto userDto = UserDto.builder()
@@ -53,7 +57,7 @@ class UserControllerTest {
             .userId("UUID")
             .email("zm@gmail.com")
             .name("test")
-            .picture("picture")
+            .picture("https://picture")
             .statusMessage("")
             .build();
 
@@ -62,7 +66,7 @@ class UserControllerTest {
             .email("zm@gmail.com")
             .name("test")
             .statusMessage("")
-            .picture("picture")
+            .picture("https://picture")
             .build();
 
     UserDto friends1 = UserDto.builder()
@@ -104,6 +108,7 @@ class UserControllerTest {
 
         Mockito.when(userService.getUserByUserId("UUID")).thenReturn(userDto);
         Mockito.when(modelMapper.map(userDto, ResponseUser.class)).thenReturn(responseUser);
+        Mockito.when(amazonS3Service.upload(userDto.getPicture(), userDto.getUserId())).thenReturn("https://test.image");
 
         mvc.perform(get("/users/UUID"))
                 .andDo(print())

@@ -2,7 +2,9 @@ package io.kgu.chatservice.service;
 
 import io.kgu.chatservice.domain.dto.UserDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface UserService extends UserDetailsService {
@@ -17,6 +19,8 @@ public interface UserService extends UserDetailsService {
     UserDto getUserByEmail(String email);
     // 회원 정보 변경 요청(UserDto.userId != null 인 경우)
     UserDto modifyUserInfo(String userId, UserDto userDto);
+    // 회원 프로필 사진 변경 요청
+    UserDto modifyUserPicture(String userId, MultipartFile image) throws IOException;
     // 친구 목록 조회
     List<UserDto> getAllFriends(String userId);
     // 친구 단일 조회
