@@ -1,14 +1,15 @@
-package com.kyonggi.randhand_chat
+package com.kyonggi.randhand_chat.Fragments.UserActivity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
-import com.kyonggi.randhand_chat.Domain.Client
-import com.kyonggi.randhand_chat.Domain.ResponseUser
-import com.kyonggi.randhand_chat.Retrofit.IRetrofit
-import com.kyonggi.randhand_chat.Retrofit.Service.ServiceUser
+import com.kyonggi.randhand_chat.Domain.User.Client
+import com.kyonggi.randhand_chat.Domain.User.ResponseUser
+import com.kyonggi.randhand_chat.R
+import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
+import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.ActivityEditProfileBinding
 import retrofit2.Call
@@ -18,7 +19,7 @@ import retrofit2.Retrofit
 
 class EditProfileActivity : AppCompatActivity() {
     private lateinit var retrofit: Retrofit
-    private lateinit var supplementService: IRetrofit
+    private lateinit var supplementService: IRetrofitUser
 
     private lateinit var binding : ActivityEditProfileBinding
 
@@ -36,6 +37,8 @@ class EditProfileActivity : AppCompatActivity() {
             // 이미지 가져오기
             Glide.with(this@EditProfileActivity)
                 .load(intent.getStringExtra("image"))
+                .error(Glide.with(this@EditProfileActivity)
+                    .load(R.drawable.no_image))
                 .into(profileImage)
 
             val userId = intent.getStringExtra("userId")
@@ -57,7 +60,7 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun editProfile(supplementService: IRetrofit, client: Client) {
+    private fun editProfile(supplementService: IRetrofitUser, client: Client) {
         val token = AppUtil.prefs.getString("token", null)
         val userId = AppUtil.prefs.getString("userId", null)
         supplementService.editClient(token, userId, client).enqueue(object : Callback<ResponseUser> {
@@ -73,7 +76,7 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     private fun initRetrofit() {
-        retrofit = ServiceUser.getInstance()
-        supplementService = retrofit.create(IRetrofit::class.java)
+        retrofit = ServiceURL.getInstance()
+        supplementService = retrofit.create(IRetrofitUser::class.java)
     }
 }

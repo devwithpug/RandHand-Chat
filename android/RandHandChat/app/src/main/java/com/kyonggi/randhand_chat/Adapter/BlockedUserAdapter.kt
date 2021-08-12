@@ -4,9 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.kyonggi.randhand_chat.Domain.ResponseUser
-import com.kyonggi.randhand_chat.Retrofit.IRetrofit
-import com.kyonggi.randhand_chat.Retrofit.Service.ServiceUser
+import com.kyonggi.randhand_chat.Domain.User.ResponseUser
+import com.kyonggi.randhand_chat.R
+import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
+import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.ListBlockedBinding
 import retrofit2.Call
@@ -16,7 +17,7 @@ import retrofit2.Retrofit
 
 class BlockedUserAdapter(val listData: MutableList<ResponseUser>) : RecyclerView.Adapter<BlockedUserAdapter.Holder>() {
     private lateinit var retrofit: Retrofit
-    private lateinit var supplementService: IRetrofit
+    private lateinit var supplementService: IRetrofitUser
 
     // 연결될 리스트 아이템들을 붙이는 작업 -> onCreateViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -35,18 +36,20 @@ class BlockedUserAdapter(val listData: MutableList<ResponseUser>) : RecyclerView
             // 이미지 로드
             Glide.with(holder.itemView)
                 .load(item.picture)
+                .error(Glide.with(holder.itemView)
+                    .load(R.drawable.no_image))
                 .into(image)
 
             // 친구 차단해제 요청
             binding.btnBlocked.setOnClickListener {
-                removeBlockedFriend(supplementService, holder.userId, holder.adapterPosition)
+                removeBlockedFriend(supplementService, holder.userId, holder.bindingAdapterPosition)
                 addFriend(supplementService, holder.userId)
             }
         }
 
     }
     // 유저 차단 해제
-    private fun removeBlockedFriend(supplementService: IRetrofit, blockedId: String, position: Int) {
+    private fun removeBlockedFriend(supplementService: IRetrofitUser, blockedId: String, position: Int) {
         supplementService.getBlockUserRemove(AppUtil.prefs.getString("token", null),AppUtil.prefs.getString("userId", null), blockedId)
             .enqueue(object : Callback<List<ResponseUser>> {
                 override fun onResponse(call: Call<List<ResponseUser>>, response: Response<List<ResponseUser>>) {
@@ -61,7 +64,7 @@ class BlockedUserAdapter(val listData: MutableList<ResponseUser>) : RecyclerView
     }
 
     // 친구 추가
-    private fun addFriend(supplementService: IRetrofit, friendId: String) {
+    private fun addFriend(supplementService: IRetrofitUser, friendId: String) {
         supplementService.addUser(AppUtil.prefs.getString("token",null), AppUtil.prefs.getString("userId",null), friendId)
             .enqueue(object: Callback<List<ResponseUser>> {
                 override fun onResponse(call: Call<List<ResponseUser>>, response: Response<List<ResponseUser>>) {
@@ -86,8 +89,8 @@ class BlockedUserAdapter(val listData: MutableList<ResponseUser>) : RecyclerView
     override fun getItemCount() = listData.size
 
     private fun initRetrofit() {
-        retrofit = ServiceUser.getInstance()
-        supplementService = retrofit.create(IRetrofit::class.java)
+        retrofit = ServiceURL.getInstance()
+        supplementService = retrofit.create(IRetrofitUser::class.java)
     }
 
     // 내부클래스 뷰홀더를위한 클래스 -> 차단된 유저에 대한 View를 잡아준다.

@@ -1,11 +1,11 @@
-package com.kyonggi.randhand_chat.Retrofit
+package com.kyonggi.randhand_chat.Retrofit.IRetrofit
 
-import com.kyonggi.randhand_chat.Domain.Client
-import com.kyonggi.randhand_chat.Domain.ResponseUser
+import com.kyonggi.randhand_chat.Domain.User.Client
+import com.kyonggi.randhand_chat.Domain.User.ResponseUser
 import retrofit2.Call
 import retrofit2.http.*
 
-interface IRetrofit {
+interface IRetrofitUser {
     // 추가되는 url를 넣는다
     // 유저 회원가입
     @POST("users/")

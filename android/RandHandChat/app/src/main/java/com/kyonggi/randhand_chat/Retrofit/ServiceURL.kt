@@ -1,11 +1,11 @@
-package com.kyonggi.randhand_chat.Retrofit.Service
+package com.kyonggi.randhand_chat.Retrofit
 
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 // Singleton 으로 설정
-object ServiceUser {
+object ServiceURL {
     // Base Url
     private const val BASE_URL = "http://3.36.37.197:8000/chat-service/"
     // Retrofit 선언

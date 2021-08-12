@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.kyonggi.randhand_chat.Fragments.ChatFragment
+import com.kyonggi.randhand_chat.Fragments.ChatListFragment
 import com.kyonggi.randhand_chat.Fragments.FriendFragment
 import com.kyonggi.randhand_chat.Fragments.SettingFragment
 import com.kyonggi.randhand_chat.databinding.ActivityMainBinding
@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     private lateinit var mainBinding: ActivityMainBinding
 
     private lateinit var friendFragment: FriendFragment
-    private lateinit var chatFragment: ChatFragment
+    private lateinit var chatListFragment: ChatListFragment
     private lateinit var settingFragment: SettingFragment
 
     companion object {
@@ -61,11 +61,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             R.id.menu_chattings -> {
                 Log.d(TAG, "채팅창 버튼")
                 mainBinding.toolbar.title = "채팅목록"
-                chatFragment = ChatFragment.newInstance()
+                chatListFragment = ChatListFragment.newInstance()
                 // Fragment 관리해준다
                 supportFragmentManager.beginTransaction().replace(
                     R.id.fragmentContainerView,
-                    chatFragment
+                    chatListFragment
                 ).commit()
             }
             R.id.menu_settings -> {
