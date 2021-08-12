@@ -14,20 +14,20 @@
         android:theme="@style/Theme.RandHandChat"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".EditProfileActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:name=".Fragments.ChatsActivity.ChatActivity"
+            android:theme="@style/MessageTheme"
             android:exported="true" />
         <activity
-            android:name=".BlockedFriendActivity"
+            android:name=".Fragments.UserActivity.EditProfileActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".Fragments.UserActivity.BlockedFriendActivity"
             android:exported="true"
             android:theme="@style/MainTheme" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".Fragments.UserActivity.ProfileActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.NoActionBar" /> <!-- Message Activity 등록 -->
-        <activity
-            android:name=".ChatActivity"
-            android:theme="@style/MessageTheme" />
         <activity
             android:name=".MainActivity"
             android:theme="@style/MainTheme" /> <!-- Splash Activity 등록 -->

@@ -1,12 +1,13 @@
-package com.kyonggi.randhand_chat
+package com.kyonggi.randhand_chat.Fragments.UserActivity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bumptech.glide.Glide
-import com.kyonggi.randhand_chat.Domain.ResponseUser
-import com.kyonggi.randhand_chat.Retrofit.IRetrofit
-import com.kyonggi.randhand_chat.Retrofit.Service.ServiceUser
+import com.kyonggi.randhand_chat.Domain.User.ResponseUser
+import com.kyonggi.randhand_chat.R
+import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
+import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.ActivityProfileBinding
 import retrofit2.Call
@@ -18,7 +19,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityProfileBinding
     private lateinit var retrofit: Retrofit
-    private lateinit var supplementService: IRetrofit
+    private lateinit var supplementService: IRetrofitUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +45,7 @@ class ProfileActivity : AppCompatActivity() {
         super.onRestart()
     }
 
-    private fun getMyInfo(supplementService: IRetrofit, infoId: String, intent: Intent) {
+    private fun getMyInfo(supplementService: IRetrofitUser, infoId: String, intent: Intent) {
         val token = AppUtil.prefs.getString("token",null)
         val userId = AppUtil.prefs.getString("userId", null)
         supplementService.getUserInfo(token, userId, infoId).enqueue(object : Callback<ResponseUser> {
@@ -58,7 +59,9 @@ class ProfileActivity : AppCompatActivity() {
                     // 이미지 가져오기
                     Glide.with(this@ProfileActivity)
                         .load(info?.picture)
-                        .into(profileImage)
+                        .error(Glide.with(this@ProfileActivity)
+                            .load(R.drawable.no_image))
+                            .into(profileImage)
                 }
 
                 intent.apply {
@@ -77,7 +80,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun initRetrofit() {
-        retrofit = ServiceUser.getInstance()
-        supplementService = retrofit.create(IRetrofit::class.java)
+        retrofit = ServiceURL.getInstance()
+        supplementService = retrofit.create(IRetrofitUser::class.java)
     }
 }

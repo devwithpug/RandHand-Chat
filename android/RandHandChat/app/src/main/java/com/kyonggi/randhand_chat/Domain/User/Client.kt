@@ -1,4 +1,4 @@
-package com.kyonggi.randhand_chat.Domain
+package com.kyonggi.randhand_chat.Domain.User
 
 import com.google.gson.annotations.SerializedName
 

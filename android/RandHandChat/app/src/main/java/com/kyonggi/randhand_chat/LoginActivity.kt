@@ -11,9 +11,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.kyonggi.randhand_chat.Domain.Client
-import com.kyonggi.randhand_chat.Retrofit.IRetrofit
-import com.kyonggi.randhand_chat.Retrofit.Service.ServiceUser
+import com.kyonggi.randhand_chat.Domain.User.Client
+import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
+import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.ActivityLoginBinding
 import retrofit2.Call
@@ -29,7 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
     // Retrofit 관련 변수 생성
     private lateinit var retrofit: Retrofit
-    private lateinit var supplementService: IRetrofit
+    private lateinit var supplementService: IRetrofitUser
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,7 +116,7 @@ class LoginActivity : AppCompatActivity() {
 
         }
     }
-    private fun getUserIdRequest(supplementService: IRetrofit, auth: String, email: String) {
+    private fun getUserIdRequest(supplementService: IRetrofitUser, auth: String, email: String) {
         supplementService.requestUserId(auth, email).enqueue(object : Callback<Client> {
             override fun onResponse(call: Call<Client>, response: Response<Client>) {
                 val body = response.body()
@@ -136,7 +136,7 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
-    private fun signInClient(supplementService: IRetrofit, client: Client) {
+    private fun signInClient(supplementService: IRetrofitUser, client: Client) {
         supplementService.signupClient(client).enqueue(object : Callback<Client>{
             override fun onResponse(call: Call<Client>, response: Response<Client>) {
                 if (response.isSuccessful) {
@@ -161,7 +161,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // 로그인 후 토근 + ID 저장해두고 Header 값으로 사용
-    private fun loginClient(supplementService: IRetrofit, client: Client) {
+    private fun loginClient(supplementService: IRetrofitUser, client: Client) {
         supplementService.requestLogin(client).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 val token = response.headers()["token"]
@@ -176,7 +176,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initRetrofit() {
-        retrofit = ServiceUser.getInstance()
-        supplementService = retrofit.create(IRetrofit::class.java)
+        retrofit = ServiceURL.getInstance()
+        supplementService = retrofit.create(IRetrofitUser::class.java)
     }
 }

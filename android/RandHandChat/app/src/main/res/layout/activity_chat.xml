@@ -22,8 +22,8 @@
             android:text="Title"
             android:textColor="@color/black"
             android:textSize="20sp">
-
         </TextView>
+
     </androidx.appcompat.widget.Toolbar>
 
 

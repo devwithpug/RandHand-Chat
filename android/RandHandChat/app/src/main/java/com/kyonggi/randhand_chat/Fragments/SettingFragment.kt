@@ -12,8 +12,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.kyonggi.randhand_chat.LoginActivity
-import com.kyonggi.randhand_chat.Retrofit.IRetrofit
-import com.kyonggi.randhand_chat.Retrofit.Service.ServiceUser
+import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
+import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.FragmentSettingsBinding
 import retrofit2.Call
@@ -23,7 +23,7 @@ import retrofit2.Retrofit
 
 class SettingFragment : Fragment() {
     private lateinit var retrofit: Retrofit
-    private lateinit var supplementService: IRetrofit
+    private lateinit var supplementService: IRetrofitUser
 
     private lateinit var settingBinding: FragmentSettingsBinding
     lateinit var mGoogleSignInClient: GoogleSignInClient
@@ -107,7 +107,7 @@ class SettingFragment : Fragment() {
             }
     }
 
-    private fun userWithdrawal(supplementService: IRetrofit, token: String, userId: String) {
+    private fun userWithdrawal(supplementService: IRetrofitUser, token: String, userId: String) {
         supplementService.userWithdrawal(token, userId).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 Log.d("회원탈퇴", "회원탈퇴 성공")
@@ -122,8 +122,8 @@ class SettingFragment : Fragment() {
 
 
     private fun initRetrofit() {
-        retrofit = ServiceUser.getInstance()
-        supplementService = retrofit.create(IRetrofit::class.java)
+        retrofit = ServiceURL.getInstance()
+        supplementService = retrofit.create(IRetrofitUser::class.java)
     }
 
 }
