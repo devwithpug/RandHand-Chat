@@ -8,7 +8,7 @@
 
     <!-- 메세지 보낸 날짜 View -->
     <TextView
-        android:id="@+id/text_date"
+        android:id="@+id/textDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingHorizontal="4dp"
@@ -17,7 +17,7 @@
         android:paddingTop="4dp"
         android:paddingRight="8dp"
         android:paddingBottom="4dp"
-        android:text="June 10"
+        tools:text="June 10"
         android:textColor="@color/applyMes_textColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -26,7 +26,7 @@
         tools:layout_editor_absoluteY="32dp" />
     <!-- 내가 보낸 메세지 View -->
     <TextView
-        android:id="@+id/my_message_body"
+        android:id="@+id/myMessageBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -35,21 +35,21 @@
         android:background="@drawable/my_message"
         android:elevation="2dp"
         android:padding="10dp"
-        android:text="Placeholder message"
+        tools:text ="Placeholder message"
         android:textColor="@color/myMes_textColor"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_date" />
+        app:layout_constraintTop_toBottomOf="@+id/textDate" />
     <!-- 메세지 보낸 시간 View -->
     <TextView
         android:id="@+id/text_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="오전 10:00"
+        tools:text="오전 10:00"
         android:textSize="10sp"
         android:textColor="@color/applyMes_textColor"
-        app:layout_constraintBottom_toBottomOf="@+id/my_message_body"
-        app:layout_constraintRight_toLeftOf="@+id/my_message_body"
+        app:layout_constraintBottom_toBottomOf="@+id/myMessageBody"
+        app:layout_constraintRight_toLeftOf="@+id/myMessageBody"
         android:layout_marginRight="2dp"
         android:layout_marginEnd="2dp" />
 
