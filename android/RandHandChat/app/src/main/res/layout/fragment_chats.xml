@@ -7,10 +7,11 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/chat_list"
+        android:id="@+id/chatRoom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/list_chats">
+        tools:listitem="@layout/list_chats"
+        android:scrollbars="vertical">
     </androidx.recyclerview.widget.RecyclerView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
