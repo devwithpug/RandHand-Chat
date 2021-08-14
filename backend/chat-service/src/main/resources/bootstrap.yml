@@ -4,4 +4,4 @@ spring:
       uri: http://127.0.0.1:8888
       name: randhand
   profiles:
-    active: default, datasource, token, aws
+    active: test, datasource, token, aws

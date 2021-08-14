@@ -55,7 +55,7 @@ jobs:
     - name: Build & Push gesture-service
       uses: docker/build-push-action@v2
       with:
-        context: ./backend/gesture-service/app
+        context: ./backend/gesture-service
         push: true
         tags: devwithpug/gesture-service:0.1
 

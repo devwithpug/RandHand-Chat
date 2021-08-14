@@ -1,5 +1,5 @@
 FROM devwithpug/python_env_test:0.1
-ADD . /app
+ADD ./app /app
 WORKDIR /app
 ENV TZ Asia/Seoul
 ARG HOST
