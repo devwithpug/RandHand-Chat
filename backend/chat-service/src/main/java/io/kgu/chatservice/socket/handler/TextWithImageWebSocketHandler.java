@@ -1,15 +1,14 @@
 package io.kgu.chatservice.socket.handler;
 
-import io.kgu.chatservice.domain.dto.MessageDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
-import io.kgu.chatservice.domain.entity.MessageEntity;
 import io.kgu.chatservice.repository.ChatRepository;
-import io.kgu.chatservice.repository.MessageRepository;
+import io.kgu.chatservice.service.MessageService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
@@ -20,20 +19,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
 @Transactional
+@RequiredArgsConstructor
 public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
 
-    private final MessageRepository messageRepository;
+    private final MessageService messageService;
     private final ChatRepository chatRepository;
-    private final ModelMapper modelMapper;
 
     private static Set<WebSocketSession> sessions = new ConcurrentHashMap().newKeySet();
-
-    @Autowired
-    public TextWithImageWebSocketHandler(MessageRepository messageRepository, ChatRepository chatRepository, ModelMapper modelMapper) {
-        this.messageRepository = messageRepository;
-        this.chatRepository = chatRepository;
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -55,9 +47,13 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         log.info("client{} message : {}", session.getRemoteAddress(), message.getPayload());
+
+        if (!session.getHandshakeHeaders().containsKey("debug")) {
+            verifyAndSaveMessage(session, message);
+        }
+
         for (WebSocketSession webSocketSession : sessions) {
             if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
-            if (!session.getHandshakeHeaders().containsKey("debug")) storeMessage(session, message);
             webSocketSession.sendMessage(message);
         }
     }
@@ -65,10 +61,13 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
     @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
 
+        if (!session.getHandshakeHeaders().containsKey("debug")) {
+            verifyAndSaveMessage(session, message);
+        }
+
         log.info(message.toString());
         for (WebSocketSession webSocketSession : sessions) {
             if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
-            if (!session.getHandshakeHeaders().containsKey("debug")) storeMessage(session, message);
             webSocketSession.sendMessage(message);
         }
     }
@@ -80,48 +79,31 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         log.info("client{} disconnect", session.getRemoteAddress());
     }
 
-    private void storeMessage(WebSocketSession sender, AbstractWebSocketMessage<?> message) throws AccessDeniedException {
+    private void verifyAndSaveMessage(WebSocketSession sender, AbstractWebSocketMessage<?> message) throws AccessDeniedException {
 
         String sessionId = sender.getUri().getPath().replace("/websocket/session/", "");
-        ChatEntity chatRoom = chatRepository.findBySessionId(sessionId);
-        String from = "from";
-        String to = "to";
+        String from = "";
+        ChatEntity chatRoom = null;
 
         if (!sender.getHandshakeHeaders().containsKey("skip-validate-session")) {
+            chatRoom = chatRepository.findChatEntityBySessionId(sessionId);
 
-            // Gesture-service 에서 생성된 chatroom 검증
             if (chatRoom == null) {
-                throw new IllegalArgumentException("ChatRoom 존재 하지 않음");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "ChatRoom 존재 하지 않음");
             }
 
-            if (!sender.getHandshakeHeaders().containsKey("from") || !sender.getHandshakeHeaders().containsKey("to") || message == null) {
-                throw new AccessDeniedException("잘못된 메세지 전송 요청");
+            if (!sender.getHandshakeHeaders().containsKey("userId") || message == null) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "잘못된 메세지 전송 요청");
             }
 
-            from = sender.getHandshakeHeaders().get("from").get(0);
-            to = sender.getHandshakeHeaders().get("to").get(0);
+            from = sender.getHandshakeHeaders().get("userId").get(0);
 
-            if (!chatRoom.getUserIds().contains(from) || !chatRoom.getUserIds().contains(to)) {
-                throw new AccessDeniedException("ChatRoom 구성원이 아닙니다.");
+            if (!chatRoom.getUserIds().contains(from)) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ChatRoom 구성원이 아닙니다.");
             }
-
         }
 
-        MessageDto messageDto = MessageDto.builder()
-                .sessionId(sessionId)
-                .fromUser(from)
-                .toUser(to)
-                .build();
-
-        if (message instanceof TextMessage) {
-            messageDto.setContent(((TextMessage)message).getPayload());
-        } else if (message instanceof BinaryMessage) {
-            messageDto.setContent("[Binary data]");
-        } else {
-            throw new ClassFormatError("잘못된 메세지 포맷");
-        }
-
-        messageRepository.save(modelMapper.map(messageDto, MessageEntity.class));
+        messageService.create(message, chatRoom, from);
 
     }
 

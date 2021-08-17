@@ -4,6 +4,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import io.kgu.chatservice.service.AmazonS3Service;
 import lombok.RequiredArgsConstructor;
@@ -29,19 +30,35 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
     private String bucket;
 
     @Override
-    public String upload(MultipartFile image, String key) throws IOException {
+    public String upload(Object image, String key) throws IOException {
 
-        File uploadFile = convert(image)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid File format"));
+        if (image instanceof MultipartFile) {
+            File uploadFile = convert((MultipartFile) image)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid File format"));
 
-        PutObjectRequest request = new PutObjectRequest(bucket, key, uploadFile)
-                .withCannedAcl(CannedAccessControlList.PublicRead);
+            PutObjectRequest request = new PutObjectRequest(bucket, key, uploadFile)
+                    .withCannedAcl(CannedAccessControlList.PublicRead);
 
-        amazonS3Client.putObject(request);
+            amazonS3Client.putObject(request);
+            uploadFile.delete();
+            return amazonS3Client.getUrl(bucket, key).toString();
 
-        uploadFile.delete();
+        } else if (image instanceof byte[]) {
+            String contentType = "image/jpeg";
 
-        return amazonS3Client.getUrl(bucket, key).toString();
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentType(contentType);
+
+            PutObjectRequest request = new PutObjectRequest(bucket, key, byteArrayToFileInputStream((byte[]) image), objectMetadata);
+
+            amazonS3Client.putObject(request);
+
+            return amazonS3Client.getUrl(bucket, key).toString();
+
+        } else {
+            throw new IllegalArgumentException("Invalid File format");
+        }
+
     }
 
     @Override
@@ -80,13 +97,8 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
 
     }
 
-    @Override
-    public String getUrlFromUserId(String key) {
-        return amazonS3Client.getUrl(bucket, key).toString();
-    }
-
     private Optional<File> convert(MultipartFile file) throws IOException {
-        File convertFile = new File(file.getOriginalFilename());
+        File convertFile = new File("temp.jpg");
         if (convertFile.createNewFile()) {
             try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(file.getBytes());
@@ -94,5 +106,9 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
             return Optional.of(convertFile);
         }
         return Optional.empty();
+    }
+
+    private InputStream byteArrayToFileInputStream(byte[] bytes) {
+        return new ByteArrayInputStream(bytes);
     }
 }
