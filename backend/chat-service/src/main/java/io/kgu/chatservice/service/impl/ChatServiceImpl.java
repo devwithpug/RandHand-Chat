@@ -2,7 +2,6 @@ package io.kgu.chatservice.service.impl;
 
 import io.kgu.chatservice.domain.dto.ChatDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
-import io.kgu.chatservice.messagequeue.KafkaProducer;
 import io.kgu.chatservice.repository.ChatRepository;
 import io.kgu.chatservice.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -22,7 +23,7 @@ import java.util.UUID;
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
-    private final ModelMapper modelMapper;
+    private final ModelMapper mapper;
 
     @Override
     public ChatDto createChatRoom(ChatDto chatDto) {
@@ -33,7 +34,7 @@ public class ChatServiceImpl implements ChatService {
 
         chatDto.setSessionId(LocalDate.now() + ":" + UUID.randomUUID());
 
-        ChatEntity entity = modelMapper.map(chatDto, ChatEntity.class);
+        ChatEntity entity = mapper.map(chatDto, ChatEntity.class);
         chatRepository.save(entity);
 
         log.info("ChatRoom created : " + entity);
@@ -52,25 +53,33 @@ public class ChatServiceImpl implements ChatService {
             ));
         }
 
-        return modelMapper.map(chatEntity, ChatDto.class);
+        return mapper.map(chatEntity, ChatDto.class);
     }
 
     @Override
-    public ChatDto getOneChatRoomByUserId(String userId) {
+    public List<ChatDto> getAllChatRoomByUserId(String userId) {
 
-        ChatEntity chatEntity = chatRepository.findByUserId(userId);
+        List<ChatEntity> result = chatRepository.findAllByUserId(userId);
 
-        if (chatEntity == null) {
+        if (result.isEmpty()) {
             throw new EntityNotFoundException(String.format(
                     "일치하는 채팅방이 없습니다 'userId: %s'", userId
             ));
         }
 
-        return modelMapper.map(chatEntity, ChatDto.class);
+        return result.stream()
+                .map(c -> mapper.map(c, ChatDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     public void removeChatRoomBySessionId(String sessionId) {
+
+        if (!chatRepository.existsById(sessionId)) {
+            throw new EntityNotFoundException(String.format(
+                    "삭제하려는 채팅방이 없습니다 'sessionId: %s'", sessionId
+            ));
+        }
 
         chatRepository.deleteBySessionId(sessionId);
 

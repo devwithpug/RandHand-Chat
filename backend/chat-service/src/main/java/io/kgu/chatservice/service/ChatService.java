@@ -2,11 +2,13 @@ package io.kgu.chatservice.service;
 
 import io.kgu.chatservice.domain.dto.ChatDto;
 
+import java.util.List;
+
 public interface ChatService {
 
     ChatDto createChatRoom(ChatDto chatDto);
     ChatDto getOneChatRoomBySessionId(String sessionId);
-    ChatDto getOneChatRoomByUserId(String userId);
+    List<ChatDto> getAllChatRoomByUserId(String userId);
     void removeChatRoomBySessionId(String sessionId);
 
 }

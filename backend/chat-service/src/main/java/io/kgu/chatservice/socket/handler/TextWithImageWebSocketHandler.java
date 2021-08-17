@@ -1,5 +1,6 @@
 package io.kgu.chatservice.socket.handler;
 
+import io.kgu.chatservice.domain.dto.MessageDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
 import io.kgu.chatservice.repository.ChatRepository;
 import io.kgu.chatservice.service.MessageService;
@@ -79,7 +80,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         log.info("client{} disconnect", session.getRemoteAddress());
     }
 
-    private void verifyAndSaveMessage(WebSocketSession sender, AbstractWebSocketMessage<?> message) throws AccessDeniedException {
+    private void verifyAndSaveMessage(WebSocketSession sender, AbstractWebSocketMessage<?> message) {
 
         String sessionId = sender.getUri().getPath().replace("/websocket/session/", "");
         String from = "";
@@ -103,7 +104,9 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
             }
         }
 
-        messageService.create(message, chatRoom, from);
+        MessageDto result = messageService.create(message, chatRoom, from);
+        chatRoom.setSyncTime(result.getCreatedAt());
+        chatRepository.save(chatRoom);
 
     }
 
