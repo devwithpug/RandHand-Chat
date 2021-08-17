@@ -14,9 +14,6 @@
         android:theme="@style/Theme.RandHandChat"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".Fragments.ChatsActivity.MessageRecyclerView"
-            android:exported="true" />
-        <activity
             android:name=".Fragments.ChatsActivity.ChatActivity"
             android:exported="true"
             android:theme="@style/MessageTheme" />
