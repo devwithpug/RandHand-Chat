@@ -6,8 +6,10 @@ import android.util.Log
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kyonggi.randhand_chat.Adapter.MessageAdapter
-import com.kyonggi.randhand_chat.Domain.Chat.ChatRoom
-import com.kyonggi.randhand_chat.Domain.Message.Message
+import com.kyonggi.randhand_chat.Database.ChatRoomDAO
+import com.kyonggi.randhand_chat.Database.ChatRoomDatabase
+import com.kyonggi.randhand_chat.Database.MessageDAO
+import com.kyonggi.randhand_chat.Database.MessageTable
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.ActivityChatBinding
 import okhttp3.*
@@ -23,7 +25,11 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var chatBinding: ActivityChatBinding
     private lateinit var webSocket: WebSocket
-    private lateinit var chatRoomInfo: ChatRoom
+
+    private lateinit var chatRoomDatabase: ChatRoomDatabase
+    private lateinit var chatDAO: ChatRoomDAO
+    private lateinit var messageDAO: MessageDAO
+    private lateinit var chatId: String // 상대방에 대한 유저 아이디
 
     /**
      * 테스트용 client
@@ -37,13 +43,18 @@ class ChatActivity : AppCompatActivity() {
         setContentView(chatBinding.root)
 
         EventBus.getDefault().register(this)
+        /**
+         *
+         */
+        chatRoomDatabase = ChatRoomDatabase.getInstance(this)!!
+        chatDAO = chatRoomDatabase.roomChatRoomDAO()
+        messageDAO = chatRoomDatabase.roomMessageDAO()
+        chatId = chatDAO.getUserIds("1")
 
         /**
          * 테스트용 메시지 들어있는 List 생성
          */
-        chatRoomInfo = intent.getSerializableExtra("chatRoomInfo") as ChatRoom
-
-        val chatList = chatRoomInfo.messageList as MutableList
+        val chatList = messageDAO.getChatRoomMessage("1")
 
         /**
          * 메시지 어뎁터 설정 및 RecyclerView와 연결
@@ -54,7 +65,6 @@ class ChatActivity : AppCompatActivity() {
          * 메시지 어뎁터 매니저 설정
          */
         chatBinding.messageList.layoutManager = LinearLayoutManager(this)
-
 
         val token = AppUtil.prefs.getString("token", null)
         val userId = AppUtil.prefs.getString("userId", null)
@@ -82,7 +92,8 @@ class ChatActivity : AppCompatActivity() {
             btnSend.setOnClickListener {
                 // 메시지 보내기
                 if (text.isNotEmpty()) {
-                    val message = Message(
+                    val message = MessageTable(null,
+                        "1",
                         userId,
                         text,
                         Calendar.getInstance().timeInMillis
@@ -90,11 +101,23 @@ class ChatActivity : AppCompatActivity() {
                     // scroll the RecyclerView to the last added element
                     messageList.scrollToPosition(messageAdapter.itemCount)
                     messageAdapter.addMessage(message)
+
+                    /**
+                     * 데이터베이스에 보낸 문자를 넣는다
+                     */
+                    messageDAO.insertMessage(message)
                 }
                 webSocket.send(text)
                 editText.text = null
             }
         }
+    }
+
+
+    override fun onDestroy() {
+        EventBus.getDefault().unregister(this)
+        super.onDestroy()
+
     }
 
     override fun finish() {
@@ -103,15 +126,15 @@ class ChatActivity : AppCompatActivity() {
     }
 
     /**
+     * @Subscribe를 통하여 Main 쓰레드에서 실행
      * 메시지 보내준다.
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEventMainThread(message: Message) {
-        with(chatRoomInfo) {
-            message.fromUser = userId
+    fun onEventMainThread(message: MessageTable) {
+            message.fromUser = chatId
             chatBinding.messageList.scrollToPosition(messageAdapter.itemCount)
             messageAdapter.addMessage(message)
-        }
+            messageDAO.insertMessage(message)
     }
 
    inner class MyWebSocketListener : WebSocketListener() {
@@ -133,7 +156,9 @@ class ChatActivity : AppCompatActivity() {
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             Log.d("Socket","Receiving : $text")
-            EventBus.getDefault().post(Message(null,text,Calendar.getInstance().timeInMillis))
+
+            // EventBus 로 message 를 post 해준다
+            EventBus.getDefault().post(MessageTable(null,"1",null,text,Calendar.getInstance().timeInMillis))
         }
 
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
@@ -141,7 +166,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
-            webSocket.send("{\"type\":\"ticker\", \"symbols\": [\"BTC_KRW\"], \"tickTypes\": [\"30M\"]}")
+//            webSocket.send("{\"type\":\"ticker\", \"symbols\": [\"BTC_KRW\"], \"tickTypes\": [\"30M\"]}")
 //        webSocket.close(NORMAL_CLOSURE_STATUS, null) //없을 경우 끊임없이 서버와 통신함
         }
     }

@@ -4,18 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="16dp">
+    android:layout_marginTop="16sp">
 
     <!-- 메세지보낸 시간 View -->
     <TextView
         android:id="@+id/textDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:paddingLeft="8dp"
-        android:paddingTop="4dp"
-        android:paddingRight="8dp"
-        android:paddingBottom="4dp"
+        android:layout_marginTop="8sp"
+        android:paddingLeft="8sp"
+        android:paddingTop="4sp"
+        android:paddingRight="8sp"
+        android:paddingBottom="4sp"
         tools:text="June 10"
         android:textColor="@color/applyMes_textColor"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,17 +25,17 @@
     <!-- 메세지보낸 유저의 프로필 이미지 View -->
     <androidx.cardview.widget.CardView
         android:id="@+id/messageProfileCardView"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="3dp"
-        app:cardCornerRadius="15dp"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_marginStart="12sp"
+        android:layout_marginLeft="12sp"
+        android:layout_marginTop="3sp"
+        app:cardCornerRadius="15sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textDate"
         >
         <ImageView
-            android:id="@+id/User"
+            android:id="@+id/userImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/white"
@@ -47,35 +47,36 @@
         android:id="@+id/userName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        tools:text="@string/userName"
+        android:layout_marginStart="12sp"
+        android:layout_marginLeft="12sp"
+        android:layout_marginBottom="5sp"
         android:textColor="@color/applyMes_textColor"
+        app:layout_constraintBottom_toTopOf="@+id/applyMessageBody"
         app:layout_constraintStart_toEndOf="@+id/messageProfileCardView"
-        app:layout_constraintTop_toBottomOf="@+id/textDate" />
+        app:layout_constraintTop_toBottomOf="@+id/textDate"
+        tools:text="@string/userName" />
     <!-- 유저가 보낸 메세지 View -->
     <TextView
         android:id="@+id/applyMessageBody"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5sp"
         android:background="@drawable/apply_message"
         android:elevation="2dp"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        tools:text="How are you doing? This is a long message that should probably wrap."
+        android:maxWidth="250sp"
+        android:paddingHorizontal="16sp"
+        android:paddingVertical="12sp"
         android:textColor="@color/applyMes_textColor"
-        android:textSize="18dp"
-        app:layout_constraintEnd_toEndOf="@id/textDate"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/userName"
-        tools:layout_editor_absoluteY="65dp"
-        tools:ignore="MissingConstraints" />
+        tools:text="How are you doing? should probably wrap." />
     <!-- 유저가 보낸 메세지 현재 시간 -->
     <TextView
         android:id="@+id/textTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
+        android:layout_marginLeft="2sp"
         tools:text="오전 10:00"
         android:textColor="@color/applyMes_textColor"
         android:textSize="10sp"
