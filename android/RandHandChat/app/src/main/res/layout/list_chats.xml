@@ -4,22 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10sp"
+    android:layout_marginTop="10sp"
     android:clickable="true"
     android:focusable="true"
     >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/chatProfileCardView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="5dp"
+        android:layout_width="60sp"
+        android:layout_height="60sp"
+        android:layout_marginStart="20sp"
+        android:layout_marginLeft="20sp"
+        android:layout_marginTop="2sp"
+        android:layout_marginBottom="2sp"
+        app:cardCornerRadius="20sp"
+        app:cardElevation="5sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -39,8 +39,8 @@
         android:id="@+id/chatProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15sp"
+        android:layout_marginTop="5sp"
         android:text="사용자"
         app:layout_constraintStart_toEndOf="@+id/chatProfileCardView"
         app:layout_constraintTop_toTopOf="@+id/chatProfileCardView">
@@ -48,20 +48,26 @@
 
     <TextView
         android:id="@+id/chatMessage"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:maxLength="100"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:layout_marginRight="5sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/chatProfile"
         app:layout_constraintTop_toBottomOf="@+id/chatProfile"
         tools:text="마지막으로 보낸 메시지 리스트">
+
     </TextView>
 
     <TextView
         android:id="@+id/chatTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="10dp"
-        android:layout_marginRight="8dp"
+        android:textSize="10sp"
+        android:layout_marginRight="8sp"
         app:layout_constraintBottom_toBottomOf="@+id/chatProfile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/chatProfile"
