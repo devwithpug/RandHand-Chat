@@ -4,42 +4,43 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginTop="16dp">
+    android:layout_marginTop="16sp">
 
     <!-- 메세지 보낸 날짜 View -->
     <TextView
         android:id="@+id/textDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="4dp"
-        android:layout_marginTop="8dp"
-        android:paddingLeft="8dp"
-        android:paddingTop="4dp"
-        android:paddingRight="8dp"
-        android:paddingBottom="4dp"
+        android:paddingHorizontal="4sp"
+        android:layout_marginTop="8sp"
+        android:paddingLeft="8sp"
+        android:paddingTop="4sp"
+        android:paddingRight="8sp"
+        android:paddingBottom="4sp"
         tools:text="June 10"
         android:textColor="@color/applyMes_textColor"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="32dp" />
+        app:layout_constraintStart_toStartOf="parent" />
     <!-- 내가 보낸 메세지 View -->
     <TextView
         android:id="@+id/myMessageBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10sp"
+        android:layout_marginRight="10sp"
+        android:layout_marginBottom="5sp"
         android:background="@drawable/my_message"
-        android:elevation="2dp"
-        android:padding="10dp"
-        tools:text ="Placeholder message"
+        android:elevation="2sp"
+        android:maxWidth="250sp"
+        android:padding="10sp"
         android:textColor="@color/myMes_textColor"
         android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDate" />
+        app:layout_constraintTop_toBottomOf="@+id/textDate"
+        tools:text="Placeholder Message" />
     <!-- 메세지 보낸 시간 View -->
     <TextView
         android:id="@+id/text_time"
@@ -50,7 +51,7 @@
         android:textColor="@color/applyMes_textColor"
         app:layout_constraintBottom_toBottomOf="@+id/myMessageBody"
         app:layout_constraintRight_toLeftOf="@+id/myMessageBody"
-        android:layout_marginRight="2dp"
-        android:layout_marginEnd="2dp" />
+        android:layout_marginRight="2sp"
+        android:layout_marginEnd="2sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
