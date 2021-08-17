@@ -1,4 +1,4 @@
-package io.kgu.chatservice.config;
+package io.kgu.chatservice.scheduler;
 
 import io.kgu.chatservice.domain.dto.UserDto;
 import io.kgu.chatservice.domain.request.RequestLogin;
@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class WarmUpService {
+public class WarmUpScheduler {
 
     private final UserService userService;
 

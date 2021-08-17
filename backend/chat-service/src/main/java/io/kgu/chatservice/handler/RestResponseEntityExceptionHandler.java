@@ -1,4 +1,4 @@
-package io.kgu.chatservice.config;
+package io.kgu.chatservice.handler;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

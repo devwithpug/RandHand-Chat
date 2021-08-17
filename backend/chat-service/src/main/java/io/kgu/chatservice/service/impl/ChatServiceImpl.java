@@ -23,7 +23,6 @@ public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
     private final ModelMapper modelMapper;
-    private final KafkaProducer kafkaProducer;
 
     @Override
     public ChatDto createChatRoom(ChatDto chatDto) {
@@ -45,7 +44,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatDto getOneChatRoomBySessionId(String sessionId) {
 
-        ChatEntity chatEntity = chatRepository.findBySessionId(sessionId);
+        ChatEntity chatEntity = chatRepository.findChatEntityBySessionId(sessionId);
 
         if (chatEntity == null) {
             throw new EntityNotFoundException(String.format(
