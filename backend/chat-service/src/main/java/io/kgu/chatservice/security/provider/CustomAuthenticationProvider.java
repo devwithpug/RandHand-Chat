@@ -1,6 +1,5 @@
 package io.kgu.chatservice.security.provider;
 
-import io.kgu.chatservice.domain.dto.UserDto;
 import io.kgu.chatservice.security.token.CustomAuthenticationToken;
 import io.kgu.chatservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +21,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String userId = (String) authentication.getCredentials();
 
         UserDetails userDetails = userService.loadUserByUsername(userId);
-        UserDto userDto = userService.getUserByUserId(userId);
 
-        if (!userDto.getEmail().equals(email)) {
+        if (!userDetails.getUsername().equals(email)) {
             throw new BadCredentialsException("BadCredentialsException");
         }
 

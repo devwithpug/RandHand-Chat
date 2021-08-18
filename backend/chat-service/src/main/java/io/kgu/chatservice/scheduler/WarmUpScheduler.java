@@ -94,14 +94,15 @@ public class WarmUpScheduler {
 
             }
 
+            try {
+                UserDto warmUpUser = userService.getUserByAuthAndEmail("t", "t@t");
+                userService.deleteUser(warmUpUser.getUserId());
+                log.info("Warm up Entity was deleted successfully");
+            } catch (UsernameNotFoundException ex) {
+            }
+
         } else {
             log.info("Chat-service warm up skipped");
-        }
-        try {
-            UserDto warmUpUser = userService.getUserByAuthAndEmail("t", "t@t");
-            userService.deleteUser(warmUpUser.getUserId());
-            log.info("Warm up Entity was deleted successfully");
-        } catch (UsernameNotFoundException ex) {
         }
     }
 

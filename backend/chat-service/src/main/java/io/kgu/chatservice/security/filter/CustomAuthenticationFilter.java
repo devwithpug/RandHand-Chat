@@ -3,7 +3,6 @@ package io.kgu.chatservice.security.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.kgu.chatservice.domain.dto.UserDto;
 import io.kgu.chatservice.domain.request.RequestLogin;
 import io.kgu.chatservice.security.token.CustomAuthenticationToken;
 import io.kgu.chatservice.service.UserService;
@@ -52,19 +51,15 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-
-        String email = (String) authResult.getPrincipal();
-        UserDto userDetails = userService.getUserByEmail(email);
-
         String token = Jwts.builder()
-                .setSubject(userDetails.getUserId())
+                .setSubject((String) authResult.getCredentials())
                 .setExpiration(new Date(System.currentTimeMillis() +
                         Long.parseLong(env.getProperty("token.expiration_time"))))
                 .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))
                 .compact();
 
         response.addHeader("token", token);
-        response.addHeader("userId", userDetails.getUserId());
+        response.addHeader("userId", (String) authResult.getCredentials());
 
     }
 }

@@ -8,7 +8,6 @@ import java.util.Collection;
 public class CustomAuthenticationToken extends AbstractAuthenticationToken {
 
     private final Object principal;
-
     private Object credentials;
 
     public CustomAuthenticationToken(Collection<? extends GrantedAuthority> authorities, Object principal, Object credentials) {
@@ -33,6 +32,5 @@ public class CustomAuthenticationToken extends AbstractAuthenticationToken {
     @Override
     public void eraseCredentials() {
         super.eraseCredentials();
-        this.credentials = null;
     }
 }

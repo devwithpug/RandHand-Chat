@@ -18,9 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
             );
         }
 
-        UserEntity userEntity = userRepository.findByUserId(userDto.getUserId());
+        UserEntity userEntity = userRepository.findByUserId(userId);
         userEntity.update(userDto);
         userRepository.save(userEntity);
 
@@ -286,35 +286,20 @@ public class UserServiceImpl implements UserService {
 
     private List<UserDto> getFriendsList(UserEntity userEntity) {
 
-        List<UserDto> result = new ArrayList<>();
+        List<UserEntity> result = userRepository.findByUserId(userEntity.getUserFriends());
 
-        Iterator<String> iter = userEntity.getUserFriends().iterator();
-
-        return processIter(result, iter);
+        return result.stream()
+                .map(u -> mapper.map(u, UserDto.class))
+                .collect(Collectors.toList());
     }
 
     private List<UserDto> getBlockedList(UserEntity userEntity) {
 
-        List<UserDto> result = new ArrayList<>();
+        List<UserEntity> result = userRepository.findByUserId(userEntity.getUserBlocked());
 
-        Iterator<String> iter = userEntity.getUserBlocked().iterator();
-
-        return processIter(result, iter);
-    }
-
-    private List<UserDto> processIter(List<UserDto> result, Iterator<String> iter) {
-        while (iter.hasNext()) {
-            String id = iter.next();
-            UserEntity byUserId = userRepository.findByUserId(id);
-
-            if (byUserId == null) {
-                iter.remove();
-            } else {
-                result.add(mapper.map(byUserId, UserDto.class));
-            }
-        }
-
-        return result;
+        return result.stream()
+                .map(u -> mapper.map(u, UserDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
