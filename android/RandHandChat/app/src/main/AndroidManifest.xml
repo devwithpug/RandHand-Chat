@@ -16,6 +16,7 @@
         <activity
             android:name=".Fragments.ChatsActivity.ChatActivity"
             android:exported="true"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@style/MessageTheme" />
         <activity
             android:name=".Fragments.UserActivity.EditProfileActivity"
