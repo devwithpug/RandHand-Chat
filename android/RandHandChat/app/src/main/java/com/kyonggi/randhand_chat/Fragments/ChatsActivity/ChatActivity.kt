@@ -247,6 +247,7 @@ class ChatActivity : AppCompatActivity() {
             Log.d("Socket","Error : " + t.message)
         }
 
+       // TEXT MESSAGE
         override fun onMessage(webSocket: WebSocket, text: String) {
             Log.d("Socket","Receiving : $text")
             // EventBus 로 message 를 post 해준다
@@ -254,8 +255,10 @@ class ChatActivity : AppCompatActivity() {
             chatDAO.updatePrefMessage(text, sessionId)
         }
 
+       // BINARY MESSAGE (image)
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
             Log.d("Socket", "Receiving bytes : $bytes")
+           chatDAO.updatePrefMessage("[IMAGE]", sessionId)
         }
 
         override fun onOpen(webSocket: WebSocket, response: Response) {

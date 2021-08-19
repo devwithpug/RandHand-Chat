@@ -111,7 +111,7 @@ interface IRetrofitUser {
     ) : Call<ResponseUser>
 
     // 유저 차단 해제 요청
-    @POST(" users//blocked/{blockId}/remove")
+    @POST("users//blocked/{blockId}/remove")
     fun getBlockUserRemove(
         // Header 에 넣는 userId는 지금 사용자가 누구인지
         @Header("Authorization") userToken: String,

@@ -129,6 +129,10 @@ class ChatListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(FriendFragment.TAG, "ChatFragment -onViewCreated() called")
 
+
+
+
+
         with(chatBinding) {
             // 리사이클러뷰 설정
             chatRoom.apply {
