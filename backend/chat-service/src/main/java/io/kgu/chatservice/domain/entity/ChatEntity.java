@@ -16,15 +16,14 @@ public class ChatEntity {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(columnDefinition = "BINARY(36)")
     private String sessionId;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @JoinTable(name = "chats_users",
-            joinColumns = {@JoinColumn(name = "chat_id")})
+            joinColumns = {@JoinColumn(name = "chat_id", updatable = false)})
     private Set<String> userIds;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime syncTime;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
