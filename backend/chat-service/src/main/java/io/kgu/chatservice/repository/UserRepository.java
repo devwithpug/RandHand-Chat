@@ -11,12 +11,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     boolean existsByUserId(String userId);
     boolean existsByAuthAndEmail(String auth, String email);
 
-    UserEntity findByAuthAndEmail(String auth, String email);
     UserEntity findByUserId(String userId);
-    UserEntity findByEmail(String email);
+    UserEntity findByAuthAndEmail(String auth, String email);
 
     @Query("select u from UserEntity u where u.userId in ?1")
-    List<UserEntity> findByUserId(List<String> userIds);
+    List<UserEntity> findAllByUserIds(List<String> userIds);
 
     void deleteByUserId(String userId);
 }

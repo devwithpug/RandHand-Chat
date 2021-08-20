@@ -86,19 +86,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto getUserByEmail(String email) {
-        UserEntity userEntity = userRepository.findByEmail(email);
-
-        if (userEntity == null) {
-            throw new UsernameNotFoundException(String.format(
-                    "존재하지 않는 유저입니다 'email: %s'", email
-            ));
-        }
-
-        return mapper.map(userEntity, UserDto.class);
-    }
-
-    @Override
     public UserDto modifyUserInfo(String userId, UserDto userDto) {
 
         validateUserByUserId(userId);
@@ -286,7 +273,7 @@ public class UserServiceImpl implements UserService {
 
     private List<UserDto> getFriendsList(UserEntity userEntity) {
 
-        List<UserEntity> result = userRepository.findByUserId(userEntity.getUserFriends());
+        List<UserEntity> result = userRepository.findAllByUserIds(userEntity.getUserFriends());
 
         return result.stream()
                 .map(u -> mapper.map(u, UserDto.class))
@@ -295,7 +282,7 @@ public class UserServiceImpl implements UserService {
 
     private List<UserDto> getBlockedList(UserEntity userEntity) {
 
-        List<UserEntity> result = userRepository.findByUserId(userEntity.getUserBlocked());
+        List<UserEntity> result = userRepository.findAllByUserIds(userEntity.getUserBlocked());
 
         return result.stream()
                 .map(u -> mapper.map(u, UserDto.class))

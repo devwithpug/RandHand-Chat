@@ -1,13 +1,10 @@
 package io.kgu.chatservice.domain.entity;
 
 import io.kgu.chatservice.domain.dto.UserDto;
-import javassist.NotFoundException;
-import javassist.tools.web.BadHttpRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.dao.DuplicateKeyException;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -16,7 +13,10 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"auth", "email"})
+        })
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity implements Serializable {
@@ -25,7 +25,7 @@ public class UserEntity implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, updatable = false)
     private String userId;
 
     @Column(nullable = false, updatable = false)
