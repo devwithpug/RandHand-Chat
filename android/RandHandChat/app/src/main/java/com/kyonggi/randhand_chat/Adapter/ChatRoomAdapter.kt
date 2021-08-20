@@ -1,8 +1,10 @@
 package com.kyonggi.randhand_chat.Adapter
 
 import android.content.Intent
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kyonggi.randhand_chat.Database.*
@@ -13,8 +15,9 @@ import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.DateUtils
 import com.kyonggi.randhand_chat.databinding.ListChatsBinding
 import retrofit2.Retrofit
+import java.time.format.DateTimeFormatter
 
-class ChatRoomAdapter(val chatRoomList: MutableList<ChatRoomTable>, val messageList: MutableList<MessageTable>) : RecyclerView.Adapter<ChatRoomAdapter.Holder>() {
+class ChatRoomAdapter(val chatRoomList: MutableList<ChatRoomTable>) : RecyclerView.Adapter<ChatRoomAdapter.Holder>() {
     private lateinit var retrofit: Retrofit
     private lateinit var supplementService: IRetrofitUser
 
@@ -32,6 +35,7 @@ class ChatRoomAdapter(val chatRoomList: MutableList<ChatRoomTable>, val messageL
     }
 
     // 현재 바인드 되고있는 position의 값을 가져온다
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: Holder, position: Int) {
         initRetrofit()
         holder.apply {
@@ -45,16 +49,20 @@ class ChatRoomAdapter(val chatRoomList: MutableList<ChatRoomTable>, val messageL
                     .load(R.drawable.no_image))
                 .into(userImage)
             // 메시지 리스트
-            if (messageList == null) {
+            if (item.prefMessage == null) {
                 preMessage.text = null
                 time.text = null
             } else {
-                preMessage.text = messageList.last().context
-                time.text = DateUtils.fromMillisToTimeString( messageList.last().time)
+                preMessage.text = item.prefMessage
+                time.text =item.syncTime.format(DateTimeFormatter.ofPattern("HH:mm"))
             }
 
+            /**
+             * 채팅방 접속
+             */
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, ChatActivity::class.java)
+                intent.putExtra("sessionId",item.sessionId)
                 // chatRoom 에 대한 정보를 넘겨준다
                 itemView.context.startActivity(intent)
             }

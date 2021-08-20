@@ -18,6 +18,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.time.format.DateTimeFormatter
 
 
 /**
@@ -93,7 +94,7 @@ class MessageAdapter(private var messages: MutableList<MessageTable>) : Recycler
         override fun bind(message: MessageTable) {
             fromUser = message.fromUser.toString()
             messageText.text = message.context
-            timeText.text = DateUtils.fromMillisToTimeString(message.time)
+            timeText.text = message.time.format(DateTimeFormatter.ofPattern("HH:mm"))
         }
     }
 
@@ -119,7 +120,7 @@ class MessageAdapter(private var messages: MutableList<MessageTable>) : Recycler
             getUserInfo(supplementService, fromUser)
 
             messageText.text = message.context
-            timeText.text = DateUtils.fromMillisToTimeString(message.time)
+            timeText.text = message.time.format(DateTimeFormatter.ofPattern("HH:mm"))
         }
 
         /**
