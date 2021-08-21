@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,6 +26,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 class ChatRepositoryTest {
 
+    @Autowired
+    private EntityManager em;
     @Autowired
     private ChatRepository chatRepository;
     private final ModelMapper mapper = new ModelMapper();
@@ -74,23 +77,6 @@ class ChatRepositoryTest {
     /**
      * READ
      */
-
-    @Test
-    @DisplayName("userId 값을 통해 해당 유저가 속해있는 ChatEntity List 를 조회할 수 있다.")
-    void select_all_ChatEntity_with_findAllByUserId() {
-        // given
-        ChatDto user1_2 = createChatDto("user1Id", "user2Id");
-        ChatDto user2_3 = createChatDto("user2Id", "user3Id");
-        ChatDto user1_3 = createChatDto("user1Id", "user3Id");
-
-        ChatEntity chat1_2 = chatRepository.saveAndFlush(mapper.map(user1_2, ChatEntity.class));
-        ChatEntity chat2_3 = chatRepository.saveAndFlush(mapper.map(user2_3, ChatEntity.class));
-        ChatEntity chat1_3 = chatRepository.saveAndFlush(mapper.map(user1_3, ChatEntity.class));
-        // when
-        List<ChatEntity> result = chatRepository.findAllByUserId("user1Id");
-        // then
-        assertThat(result).hasSize(2).containsOnly(chat1_2, chat1_3).doesNotContain(chat2_3);
-    }
 
     @Test
     @DisplayName("UNIQUE 한 sessionId 값으로 ChatEntity 를 조회할 수 있다.")
