@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,8 +25,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 class ChatRepositoryTest {
 
-    @Autowired
-    private EntityManager em;
     @Autowired
     private ChatRepository chatRepository;
     private final ModelMapper mapper = new ModelMapper();
@@ -123,21 +120,6 @@ class ChatRepositoryTest {
         assertThatThrownBy(() -> chatRepository.saveAndFlush(chatRoom))
                 .isInstanceOf(UnsupportedOperationException.class);
 
-    }
-
-    @Test
-    @DisplayName("ChatEntity 의 syncTime 값은 변경이 불가능하다.")
-    void not_updatable_ChatEntity_syncTime() {
-        // given
-        ChatDto chatDto = createChatDto("user1Id", "user2Id");
-        ChatEntity chatRoom = chatRepository.saveAndFlush(mapper.map(chatDto, ChatEntity.class));
-        // when
-        chatRoom.setSyncTime(LocalDateTime.parse("2021-08-12T12:00:00"));
-        chatRepository.saveAndFlush(chatRoom);
-        // then
-        em.clear();
-        ChatEntity result = chatRepository.findChatEntityBySessionId(chatRoom.getSessionId());
-        assertThat(result.getSyncTime()).isNotEqualTo(LocalDateTime.parse("2021-08-12T12:00:00"));
     }
 
     /**

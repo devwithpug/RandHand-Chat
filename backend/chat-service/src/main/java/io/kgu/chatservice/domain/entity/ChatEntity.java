@@ -1,12 +1,14 @@
 package io.kgu.chatservice.domain.entity;
 
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -24,11 +26,12 @@ public class ChatEntity {
             joinColumns = {@JoinColumn(name = "chat_id", updatable = false)})
     private List<String> userIds;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
+    @ColumnDefault(value = "CURRENT_TIMESTAMP")
     private LocalDateTime syncTime;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<MessageEntity> messages;
+    private List<MessageEntity> messages = new ArrayList<>();
 
 }
