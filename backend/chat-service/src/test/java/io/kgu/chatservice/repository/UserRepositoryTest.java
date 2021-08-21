@@ -162,11 +162,13 @@ class UserRepositoryTest {
 
         UserDto friendA = createUserDto("friendA", "auth", "friendA@email.com");
         UserDto friendB = createUserDto("friendB", "auth", "friendB@email.com");
+        UserDto otherDto = createUserDto("userC", "auth", "userC@email.com");
 
         List<UserEntity> friends = userRepository.saveAllAndFlush(List.of(
                 mapper.map(friendA, UserEntity.class),
                 mapper.map(friendB, UserEntity.class)
         ));
+        UserEntity otherUser = userRepository.saveAndFlush(mapper.map(otherDto, UserEntity.class));
         // when
         userA.setUserFriends(friends.stream()
                 .map(UserEntity::getUserId)
@@ -174,7 +176,7 @@ class UserRepositoryTest {
         userRepository.saveAndFlush(userA);
         // then
         List<UserEntity> result = userRepository.findAllByUserIds(userA.getUserFriends());
-        assertThat(result).isEqualTo(friends);
+        assertThat(result).hasSize(2).doesNotContain(otherUser);
     }
 
     /**

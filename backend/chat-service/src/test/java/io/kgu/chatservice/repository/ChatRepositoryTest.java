@@ -87,20 +87,13 @@ class ChatRepositoryTest {
         ChatDto user2_3 = createChatDto("user2Id", "user3Id");
         ChatDto user1_3 = createChatDto("user1Id", "user3Id");
 
-        List<ChatEntity> chats = chatRepository.saveAllAndFlush(List.of(
-                mapper.map(user1_2, ChatEntity.class),
-                mapper.map(user2_3, ChatEntity.class),
-                mapper.map(user1_3, ChatEntity.class)
-        ));
-
-        List<ChatEntity> chatRoomWithoutUser1 = chats.stream()
-                .filter(c -> !c.getUserIds().contains("user1Id"))
-                .collect(Collectors.toList());
+        ChatEntity chat1_2 = chatRepository.saveAndFlush(mapper.map(user1_2, ChatEntity.class));
+        ChatEntity chat2_3 = chatRepository.saveAndFlush(mapper.map(user2_3, ChatEntity.class));
+        ChatEntity chat1_3 = chatRepository.saveAndFlush(mapper.map(user1_3, ChatEntity.class));
         // when
         List<ChatEntity> result = chatRepository.findAllByUserId("user1Id");
         // then
-        assertThat(chatRoomWithoutUser1).hasSize(1);
-        assertThat(result).hasSize(2).doesNotContain(chatRoomWithoutUser1.get(0));
+        assertThat(result).hasSize(2).containsOnly(chat1_2, chat1_3).doesNotContain(chat2_3);
     }
 
     @Test
