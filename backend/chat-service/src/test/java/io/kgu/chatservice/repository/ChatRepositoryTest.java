@@ -93,13 +93,14 @@ class ChatRepositoryTest {
                 mapper.map(user1_3, ChatEntity.class)
         ));
 
-        List<ChatEntity> user1ChatRoomList = chats.stream()
-                .filter(c -> c.getUserIds().contains("user1Id"))
+        List<ChatEntity> chatRoomWithoutUser1 = chats.stream()
+                .filter(c -> !c.getUserIds().contains("user1Id"))
                 .collect(Collectors.toList());
         // when
         List<ChatEntity> result = chatRepository.findAllByUserId("user1Id");
         // then
-        assertThat(result).hasSize(2).isEqualTo(user1ChatRoomList);
+        assertThat(chatRoomWithoutUser1).hasSize(1);
+        assertThat(result).hasSize(2).doesNotContain(chatRoomWithoutUser1.get(0));
     }
 
     @Test
