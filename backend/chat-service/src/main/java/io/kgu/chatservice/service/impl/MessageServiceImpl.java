@@ -95,9 +95,4 @@ public class MessageServiceImpl implements MessageService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public int trimMessagesByDate(LocalDateTime date) {
-        return messageRepository.deleteAllByCreatedAtBefore(date);
-    }
-
 }

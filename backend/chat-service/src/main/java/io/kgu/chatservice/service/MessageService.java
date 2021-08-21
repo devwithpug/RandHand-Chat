@@ -13,6 +13,5 @@ public interface MessageService {
     MessageDto create(AbstractWebSocketMessage<?> message, ChatEntity chat, String from);
     List<MessageDto> findAllMessagesByChatRoom(ChatDto chatDto);
     List<MessageDto> syncAllMessagesByChatRoomAndDate(ChatDto chatDto, LocalDateTime date);
-    int trimMessagesByDate(LocalDateTime date);
 
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
@@ -21,21 +22,22 @@ public class MessageEntity {
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     @Enumerated(value = EnumType.STRING)
     private MessageContentType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chats_session_id")
+    @JoinColumn(name = "chats_session_id", nullable = false, updatable = false)
     private ChatEntity chat;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private String fromUser;
 
-    @Column(nullable = false)
+    @Size(min = 1, max = 255)
+    @Column(nullable = false, updatable = false)
     private String content;
 
-    @Column(nullable = false, updatable = false, insertable = false)
+    @Column(updatable = false)
     @ColumnDefault(value = "CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
