@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,11 +39,6 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         super.afterConnectionEstablished(session);
         sessions.add(session);
         log.info("client{} connect", session.getRemoteAddress());
-
-        for (WebSocketSession webSocketSession : sessions) {
-            if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
-            webSocketSession.sendMessage(new TextMessage("상대방이 입장했습니다.", true));
-        }
     }
 
     @Override
@@ -63,7 +59,9 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
 
         if (!session.getHandshakeHeaders().containsKey("debug")) {
-            verifyAndSaveMessage(session, message);
+            MessageDto messageDto = verifyAndSaveMessage(session, message);
+            message.getPayload().clear();
+            message.getPayload().put(messageDto.getContent().getBytes(StandardCharsets.UTF_8));
         }
 
         log.info(message.toString());
@@ -80,7 +78,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         log.info("client{} disconnect", session.getRemoteAddress());
     }
 
-    private void verifyAndSaveMessage(WebSocketSession sender, AbstractWebSocketMessage<?> message) {
+    private MessageDto verifyAndSaveMessage(WebSocketSession sender, AbstractWebSocketMessage<?> message) {
 
         String sessionId = sender.getUri().getPath().replace("/websocket/session/", "");
         String from = "";
@@ -108,6 +106,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         chatRoom.setSyncTime(result.getCreatedAt());
         chatRepository.save(chatRoom);
 
+        return result;
     }
 
 }

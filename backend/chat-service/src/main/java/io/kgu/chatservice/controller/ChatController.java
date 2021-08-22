@@ -92,7 +92,7 @@ public class ChatController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
 
-        List<MessageDto> messages = messageService.syncAllMessagesByChatRoomAndDate(chatRoom, date);
+        List<MessageDto> messages = messageService.syncAllMessagesByChatRoomAndDate(chatRoom, date.plusSeconds(1));
 
         return ResponseEntity.status(HttpStatus.OK).body(Map.of(
                 "syncTime", chatRoom.getSyncTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")),
