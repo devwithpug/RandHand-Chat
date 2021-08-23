@@ -1,29 +1,29 @@
 package com.kyonggi.randhand_chat.Fragments.ChatsActivity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kyonggi.randhand_chat.Adapter.MessageAdapter
 import com.kyonggi.randhand_chat.Database.*
+import com.kyonggi.randhand_chat.Domain.Message.MessageInfo
 import com.kyonggi.randhand_chat.Domain.Message.SyncInfo
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitChat
 import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.ActivityChatBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import okhttp3.*
 import okio.ByteString
-import okhttp3.WebSocket
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Retrofit
+import java.nio.charset.Charset
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -81,14 +81,14 @@ class ChatActivity : AppCompatActivity() {
 
     override fun finish() {
         super.finish()
-        webSocket.close(MyWebSocketListener(sessionId, chatId, chatDAO).NORMAL_CLOSURE_STATUS,null)
+        webSocket.close(MyWebSocketListener(sessionId, chatId, chatDAO).NORMAL_CLOSURE_STATUS, null)
     }
 
     private fun getSyncMessages(supplementServiceChat: IRetrofitChat, sessionId: String) {
         val token = AppUtil.prefs.getString("token", null)
         val userId = AppUtil.prefs.getString("userId", null)
         supplementServiceChat.syncMessages(
-            chatRoomInfo.syncTime.format(
+            chatRoomInfo.syncTime.plusSeconds(1).format(
                 DateTimeFormatter.ofPattern(
                     "yyyy-MM-dd'T'HH:mm:ss"
                 )
@@ -105,27 +105,30 @@ class ChatActivity : AppCompatActivity() {
                 // ex) [1,2,3]
                 // have to sync
                 if (syncInfo.messageList.isNotEmpty()) {
-
-
                     // ex) [4,5]
                     for (message in syncInfo.messageList) {
+
+                        // ======== DEBUG =====
+//                        if (LocalDateTime.parse(syncInfo.syncTime, formatter)
+//                                .equals(chatRoomInfo.syncTime)
+//                        ) {
+//                            continue
+//                        }
+                        // =====================
+
+
                         // change each MessageInfo to new MessageTable & save to sqlite
-                        val messageTable = MessageTable(
-                            null,
-                            sessionId,
-                            message.fromUser,
-                            message.type,
-                            message.content,
-                            LocalDateTime.parse(message.createdAt, formatter)
-                        )
+
+                        val messageTable =
+                            createMessageTable(sessionId, message, null, null, null, null)
                         messageList.add(messageTable)
                         messageDAO.insertMessage(messageTable)
                     }
+                    // sync my ChatRoomTable syncTime from syncInfo.syncTime
+                    chatDAO.updateSyncTime(LocalDateTime.parse(syncInfo.syncTime, formatter), sessionId)
                 }
 
                 // ex) [1,2,3,4,5]
-                // sync my ChatRoomTable syncTime from syncInfo.syncTime
-                chatDAO.updateSyncTime(LocalDateTime.parse(syncInfo.syncTime, formatter), sessionId)
 
                 /**
                  *  데이터연결
@@ -140,6 +143,39 @@ class ChatActivity : AppCompatActivity() {
 
         })
     }
+
+    private fun createMessageTable(
+        sessionId: String,
+        message: MessageInfo?,
+        from: String?,
+        type: String?,
+        content: String?,
+        time: LocalDateTime?
+    ): MessageTable {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        // messageInfo O
+        message?.let { messageInfo ->
+            return MessageTable(
+                null,
+                sessionId,
+                messageInfo.fromUser,
+                messageInfo.type,
+                messageInfo.content,
+                LocalDateTime.parse(messageInfo.createdAt, formatter)
+            )
+        }
+
+        // messageInfo X
+        return MessageTable(
+            null,
+            sessionId,
+            from,
+            type!!,
+            content!!,
+            time!!
+        )
+    }
+
     private fun loadChatRoomInfo() {
         /**
          * 테스트용 메시지 들어있는 List 생성
@@ -151,10 +187,14 @@ class ChatActivity : AppCompatActivity() {
          */
         messageAdapter = MessageAdapter(chatList)
         chatBinding.messageList.adapter = messageAdapter
+
         /**
          * 메시지 어뎁터 매니저 설정
          */
         chatBinding.messageList.layoutManager = LinearLayoutManager(this)
+        Handler(Looper.getMainLooper()).postDelayed({
+            chatBinding.messageList.scrollToPosition(messageAdapter.itemCount - 1)
+        }, 200)
 
         val token = AppUtil.prefs.getString("token", null)
         val userId = AppUtil.prefs.getString("userId", null)
@@ -167,7 +207,7 @@ class ChatActivity : AppCompatActivity() {
             .addHeader("Authorization", token)
             .addHeader("userId", userId)
             .build()
-        val listener =  ChatActivity().MyWebSocketListener(sessionId, chatId, chatDAO)
+        val listener = ChatActivity().MyWebSocketListener(sessionId, chatId, chatDAO)
 
         webSocket = client.newWebSocket(request, listener)
         client.dispatcher.executorService.shutdown()
@@ -181,25 +221,25 @@ class ChatActivity : AppCompatActivity() {
             btnSend.setOnClickListener {
                 // 메시지 보내기
                 if (text.isNotEmpty()) {
-                    val message = MessageTable(null,
+                    val message = createMessageTable(
                         sessionId,
+                        null,
                         userId,
                         "TEXT",
                         text,
                         LocalDateTime.now()
                     )
+                    webSocket.send(text)
                     // scroll the RecyclerView to the last added element
                     messageList.scrollToPosition(messageAdapter.itemCount)
                     messageAdapter.addMessage(message)
+                    messageDAO.insertMessage(message)
+
                     // 최신메시지로 바꾸어준다.
                     chatDAO.updatePrefMessage(text, sessionId)
+                    chatDAO.updateSyncTime(message.time, sessionId)
 
-                    /**
-                     * 데이터베이스에 보낸 문자를 넣는다
-                     */
-                    messageDAO.insertMessage(message)
                 }
-                webSocket.send(text)
                 editText.text = null
             }
 
@@ -224,13 +264,18 @@ class ChatActivity : AppCompatActivity() {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventMainThread(message: MessageTable) {
-            message.fromUser = chatId
-            chatBinding.messageList.scrollToPosition(messageAdapter.itemCount)
-            messageAdapter.addMessage(message)
-            messageDAO.insertMessage(message)
+        message.fromUser = chatId
+        chatBinding.messageList.scrollToPosition(messageAdapter.itemCount)
+        messageAdapter.addMessage(message)
+        messageDAO.insertMessage(message)
+        chatDAO.updatePrefMessage(message.context, sessionId)
     }
 
-   inner class MyWebSocketListener(val sessionId: String, val chatId: String, val chatDAO: ChatRoomDAO) : WebSocketListener() {
+    inner class MyWebSocketListener(
+        val sessionId: String,
+        private val chatId: String,
+        private val chatDAO: ChatRoomDAO
+    ) : WebSocketListener() {
 
         val NORMAL_CLOSURE_STATUS = 1000
 
@@ -238,31 +283,46 @@ class ChatActivity : AppCompatActivity() {
         }
 
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-            Log.d("Socket","Closing : $code / $reason")
+            Log.d("Socket", "Closing : $code / $reason")
             webSocket.close(NORMAL_CLOSURE_STATUS, null)
             webSocket.cancel()
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-            Log.d("Socket","Error : " + t.message)
+            Log.d("Socket", "Error : " + t.message)
         }
 
-       // TEXT MESSAGE
+        // TEXT MESSAGE
         override fun onMessage(webSocket: WebSocket, text: String) {
-            Log.d("Socket","Receiving : $text")
+            Log.d("Socket", "Receiving : $text")
             // EventBus 로 message 를 post 해준다
-            EventBus.getDefault().post(MessageTable(null,sessionId,chatId,"TEXT",text, LocalDateTime.now()))
+            val now = LocalDateTime.now()
+            chatDAO.updateSyncTime(now, sessionId)
             chatDAO.updatePrefMessage(text, sessionId)
+            EventBus.getDefault()
+                .post(createMessageTable(sessionId, null, chatId, "TEXT", text, now))
         }
 
-       // BINARY MESSAGE (image)
+        // BINARY MESSAGE (image)
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
             Log.d("Socket", "Receiving bytes : $bytes")
-           chatDAO.updatePrefMessage("[IMAGE]", sessionId)
+            val now = LocalDateTime.now()
+
+            EventBus.getDefault().post(
+                createMessageTable(
+                    sessionId,
+                    null,
+                    chatId,
+                    "IMAGE",
+                    bytes.string(Charset.forName("UTF-8")),
+                    now
+                )
+            )
+            chatDAO.updateSyncTime(now, sessionId)
+            chatDAO.updatePrefMessage("[IMAGE]", sessionId)
         }
 
         override fun onOpen(webSocket: WebSocket, response: Response) {
-//            webSocket.send("{\"type\":\"ticker\", \"symbols\": [\"BTC_KRW\"], \"tickTypes\": [\"30M\"]}")
 //        webSocket.close(NORMAL_CLOSURE_STATUS, null) //없을 경우 끊임없이 서버와 통신함
         }
     }
