@@ -12,8 +12,8 @@ import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
 import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.Util.DateUtils
-import com.kyonggi.randhand_chat.databinding.ApplyMessageBinding
-import com.kyonggi.randhand_chat.databinding.MyMessageBinding
+import com.kyonggi.randhand_chat.databinding.ApplyTextMessageBinding
+import com.kyonggi.randhand_chat.databinding.MyTextMessageBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -62,11 +62,11 @@ class MessageAdapter(private var messages: MutableList<MessageTable>) : Recycler
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         return if (viewType == VIEW_TYPE_MY_MESSAGE) {
             MyMessageViewHolder(
-                MyMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                MyTextMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
         } else {
             OtherMessageViewHolder(
-                ApplyMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ApplyTextMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
         }
     }
@@ -84,7 +84,7 @@ class MessageAdapter(private var messages: MutableList<MessageTable>) : Recycler
     /**
      * 사용자의 MessageViewHolder
      */
-    class MyMessageViewHolder(myMessageBinding: MyMessageBinding) : MessageViewHolder(myMessageBinding.root) {
+    class MyMessageViewHolder(myMessageBinding: MyTextMessageBinding) : MessageViewHolder(myMessageBinding.root) {
         private var fromUser = ""
         private var messageText =  myMessageBinding.myMessageBody
         private var timeText = myMessageBinding.textTime
@@ -101,7 +101,7 @@ class MessageAdapter(private var messages: MutableList<MessageTable>) : Recycler
     /**
      * 상대방의 MessageViewHolder
      */
-    class OtherMessageViewHolder(val applyMessageBinding: ApplyMessageBinding) : MessageViewHolder(applyMessageBinding.root) {
+    class OtherMessageViewHolder(val applyMessageBinding: ApplyTextMessageBinding) : MessageViewHolder(applyMessageBinding.root) {
         private lateinit var retrofit: Retrofit
         private lateinit var supplementService: IRetrofitUser
 

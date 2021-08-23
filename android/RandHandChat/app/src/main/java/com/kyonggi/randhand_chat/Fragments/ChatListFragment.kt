@@ -38,7 +38,7 @@ class ChatListFragment : Fragment() {
     private lateinit var chatInfo: List<ChatInfo>
 
     /**
-     * 테스트용 CharRoom Database
+     * ChatRoom Database
      */
     private lateinit var chatRoomDatabase: ChatRoomDatabase
     private lateinit var chatDAO: ChatRoomDAO
@@ -62,24 +62,6 @@ class ChatListFragment : Fragment() {
         messageDAO = chatRoomDatabase.roomMessageDAO()  // 메시지에 대한 데이터베이스
         initUserRetrofit()
         initChatRetrofit()
-
-        /**
-         *                      테스트용 데이터베이스 데이터
-         *                      채팅관련 테스트 아이디
-         */
-//        val list : MutableList<MessageTable> = mutableListOf(
-//            MessageTable(null,"1","3be6ce8b-5974-47d3-8722-e36e5ca86723","메시지 테스트1입니다.", Calendar.getInstance().timeInMillis),
-//            MessageTable(null,"1","1c4b3282-1007-4cd8-9882-4723ca248779","메시지 테스트2입니다.\n메시지 줄바꿈 입니다", Calendar.getInstance().timeInMillis),
-//            MessageTable(null,"1","1c4b3282-1007-4cd8-9882-4723ca248779","메시지 테스트3입니다.", Calendar.getInstance().timeInMillis),
-//            MessageTable(null,"1","3be6ce8b-5974-47d3-8722-e36e5ca86723","메시지 테스트4입니다.", Calendar.getInstance().timeInMillis),
-//            MessageTable(null,"1","3be6ce8b-5974-47d3-8722-e36e5ca86723","메시지 테스트5입니다.", Calendar.getInstance().timeInMillis),
-//        )
-//        // 메시지 넣어주기
-//        messageDAO.insertMessageList(list)
-
-
-//        chatInfo = ChatInfo("1", listOf("1c4b3282-1007-4cd8-9882-4723ca248779","3be6ce8b-5974-47d3-8722-e36e5ca86723"))
-
     }
 
     private fun getChatRoomInfo(supplementServiceChat: IRetrofitChat, token: String, userId: String) {
@@ -140,9 +122,6 @@ class ChatListFragment : Fragment() {
                 layoutManager = LinearLayoutManager(activity)
                 // 어뎁터 성능을 위해서 추가
                 setHasFixedSize(true)
-                /**
-                 * 채팅방 테스트용 chatId
-                 */
 
                 // TEST
                 val token = AppUtil.prefs.getString("token",null)
@@ -159,22 +138,16 @@ class ChatListFragment : Fragment() {
             Callback<ResponseUser> {
             override fun onResponse(call: Call<ResponseUser>, response: Response<ResponseUser>) {
                 val info = response.body()
-                /**
-                 * 채팅방 관련한 테이블들
-                 */
-//                val chatList = messageDAO.getChatRoomMessage("1")
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+
+                val syncTime = LocalDateTime.parse(chatInfo.syncTime, formatter)
                 /**
                  *                        테스트용 데이터베이스 데이터
                  *          채팅하고 있는 상대방의 seesionID, 상대방ID와 프로필정보를 넣어준다
                  */
-
-                // "e867d63c-a02e-477b-8297-ec2e4f3f5fe7"
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-                val syncTime = LocalDateTime.parse(chatInfo.syncTime, formatter)
-
                 chatDAO.insertRoomInfo(
                     ChatRoomTable(chatInfo.sessionId,
-                        chatId,info?.name!!, info?.picture,syncTime,"테스트용")
+                        chatId,info?.name!!, info.picture,syncTime,"테스트용")
                 )
             }
 
