@@ -1,8 +1,16 @@
 package com.kyonggi.randhand_chat.Fragments.UserActivity
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCaller
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
 import com.kyonggi.randhand_chat.Domain.User.Client
@@ -13,12 +21,13 @@ import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.Util.BitmapRequestBody
 import com.kyonggi.randhand_chat.databinding.ActivityEditProfileBinding
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 
-class EditProfileActivity : AppCompatActivity() {
+class EditProfileActivity : AppCompatActivity(), ActivityResultCaller {
     private lateinit var retrofit: Retrofit
     private lateinit var supplementService: IRetrofitUser
 
@@ -26,6 +35,26 @@ class EditProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
+        // callback
+        val getImage =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+                if (result.resultCode == Activity.RESULT_OK) {
+
+                    val imagePath = result.data?.data
+
+                    val selectedImage =
+                        imagePath?.let {
+                            contentResolver.openInputStream(it)?.use { inputStream ->
+                                BitmapFactory.decodeStream(inputStream)
+                            }
+                        }
+
+                    getEditProfileImage(supplementService, selectedImage!!)
+                }
+
+            }
+
         initRetrofit()
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -130,8 +159,9 @@ class EditProfileActivity : AppCompatActivity() {
                     finish()
                 }
 
-            override fun onFailure(call: Call<ResponseUser>, t: Throwable) {
-            }
+                override fun onFailure(call: Call<ResponseUser>, t: Throwable) {
+                    Log.d("ERROR", "오류: EditProfileActivity.editProfile")
+                }
 
             })
     }

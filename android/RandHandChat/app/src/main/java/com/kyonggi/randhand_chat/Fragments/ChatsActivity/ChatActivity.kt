@@ -1,8 +1,14 @@
 package com.kyonggi.randhand_chat.Fragments.ChatsActivity
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -199,7 +205,7 @@ class ChatActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<SyncInfo>, t: Throwable) {
-                Log.d("ERROR", "SyncTime Error")
+                Log.d("ERROR", "오류: ChatActivity.getSyncMessage")
             }
 
         })
@@ -303,7 +309,6 @@ class ChatActivity : AppCompatActivity() {
                 }
                 editText.text = null
             }
-
             /**
              * SEND IMAGE
              */
@@ -370,6 +375,15 @@ class ChatActivity : AppCompatActivity() {
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
             Log.d("Socket", "Receiving bytes : $bytes")
             val now = LocalDateTime.now()
+
+            // 1. byteARRAY (image)
+
+            // 2. amazon upload -> url
+
+            // 3. onMessage(url // byteArray)
+
+            val url = bytes.string(Charset.forName("UTF-8"))
+            // amazon.com/{userId}image{UUID}
 
             EventBus.getDefault().post(
                 createMessageTable(

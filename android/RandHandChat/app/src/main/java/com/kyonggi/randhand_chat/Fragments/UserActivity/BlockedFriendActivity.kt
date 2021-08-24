@@ -2,6 +2,7 @@ package com.kyonggi.randhand_chat.Fragments.UserActivity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kyonggi.randhand_chat.Adapter.BlockedUserAdapter
 import com.kyonggi.randhand_chat.Domain.User.ResponseUser
@@ -41,6 +42,7 @@ class BlockedFriendActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<List<ResponseUser>>, t: Throwable) {
+                    Log.d("ERROR", "오류: BlockedFriendActivity.getBlockedList")
                 }
 
             })

@@ -97,6 +97,35 @@ class ChatListFragment : Fragment(){
         }
     }
 
+    private fun getChatRoomInfo(supplementServiceChat: IRetrofitChat, token: String, userId: String) {
+        supplementServiceChat.getChatRoomInfoByUserId(token, userId).enqueue(object : Callback<List<ChatInfo>> {
+            override fun onResponse(call: Call<List<ChatInfo>>, response: Response<List<ChatInfo>>) {
+                val list = response.body()
+                if (list != null) {
+                    chatInfo = list
+                    // 채팅하는 유저 아이디
+                    for (info in chatInfo) {
+                        val chatId = info.userIds.filter { it != AppUtil.prefs.getString("userId", null) }[0]
+                        getUserInfo(supplementServiceUser, chatId, info)
+                    }
+
+                    chatRoomList = chatDAO.getAll() as MutableList<ChatRoomTable>
+                } else {
+                    chatInfo = listOf()
+                }
+                // 어뎁터 붙여주기
+                chatRoomAdapter = ChatRoomAdapter(chatRoomList)
+                chatBinding.chatRoom.adapter = chatRoomAdapter
+                // 리사이클러 뷰에 context menu 붙여준다
+                registerForContextMenu(chatBinding.chatRoom)
+            }
+
+            override fun onFailure(call: Call<List<ChatInfo>>, t: Throwable) {
+                Log.d("ERROR", "오류: ChatListFragment.getChatRoomInfo")
+            }
+        })
+    }
+
     private fun getUserInfo(supplementServiceUser: IRetrofitUser, chatId: String, chatInfo: ChatInfo) {
         val token = AppUtil.prefs.getString("token",null)
         val userId = AppUtil.prefs.getString("userId", null)
@@ -104,7 +133,10 @@ class ChatListFragment : Fragment(){
             Callback<ResponseUser> {
             override fun onResponse(call: Call<ResponseUser>, response: Response<ResponseUser>) {
                 val info = response.body()
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                info?.let {
+                    //
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                    val syncTime = LocalDateTime.parse(chatInfo.syncTime, formatter)
 
                     val name = it.name
                     val picture = it.picture
@@ -127,6 +159,7 @@ class ChatListFragment : Fragment(){
 
 
             override fun onFailure(call: Call<ResponseUser>, t: Throwable) {
+                Log.d("ERROR", "오류: ChatListFragment.getUserInfo")
             }
 
         })
