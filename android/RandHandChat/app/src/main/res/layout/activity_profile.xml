@@ -21,9 +21,9 @@
             android:id="@+id/profile_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/mes_background"
             android:longClickable="false"
-            android:src="@drawable/hand_icon" />
+            android:scaleType="center"
+            tools:src="@drawable/hand_icon"/>
 
     </androidx.cardview.widget.CardView>
 
@@ -48,10 +48,8 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/editProfile"
         app:layout_constraintEnd_toEndOf="@+id/profile_name"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/profile_name"
         app:layout_constraintTop_toBottomOf="@+id/profile_name"
-        app:layout_constraintVertical_bias="0.0"
         tools:text="상태메세지" />
 
     <ImageButton
@@ -60,12 +58,11 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:contextClickable="true"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
+        android:minWidth="30dp"
+        android:minHeight="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_edit"
-        tools:ignore="SpeakableTextPresentCheck" />
+        android:background="@android:drawable/ic_menu_edit" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
