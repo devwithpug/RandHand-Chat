@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,18 +15,22 @@ import com.kyonggi.randhand_chat.Adapter.MessageAdapter
 import com.kyonggi.randhand_chat.Database.*
 import com.kyonggi.randhand_chat.Domain.Message.MessageInfo
 import com.kyonggi.randhand_chat.Domain.Message.SyncInfo
+import com.kyonggi.randhand_chat.R
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitChat
 import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.ActivityChatBinding
 import okhttp3.*
 import okio.ByteString
+import okio.ByteString.Companion.toByteString
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Retrofit
+import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -43,16 +51,22 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var sessionId: String // 채팅방에 대한 sessionId
     private lateinit var chatRoomInfo: ChatRoomTable
 
-    /**
-     * 테스트용 client
-     */
     private lateinit var client: OkHttpClient
+
+    private lateinit var getImage: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 자동으로 완성된 Activity Chat Binding 클래스를 인스턴스로 가져온다
         chatBinding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(chatBinding.root)
+        /**
+         * 툴바 설정해준다
+         */
+        setSupportActionBar(chatBinding.toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        chatBinding.toolbar.title = "채팅방"
+
         initChatRetrofit()
         sessionId = intent.getStringExtra("sessionId").toString()
 
@@ -71,6 +85,38 @@ class ChatActivity : AppCompatActivity() {
 
         // SyncInfo 에 message 리스트가 비어있지 않으면(sync 해야하는 메세지가 있으면)
         getSyncMessages(supplementServiceChat, sessionId)
+
+        /**
+         * SEND IMAGE REQUEST
+         */
+        // callback
+        getImage =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+                if (result.resultCode == Activity.RESULT_OK) {
+
+                    val imagePath = result.data?.data
+
+                    val image =
+                        imagePath?.let {
+                            contentResolver.openInputStream(it)?.use { inputStream ->
+                                BitmapFactory.decodeStream(inputStream)
+                            }
+                        }
+
+                    val stream = ByteArrayOutputStream()
+                    image?.compress(Bitmap.CompressFormat.JPEG, 70, stream)
+                    val bytes = stream.toByteArray()
+                    val imageString = Base64.encodeToString(bytes, Base64.NO_WRAP)
+
+                    val byteArray = imageString.toByteArray(Charset.forName("UTF-8"))
+                    // ByteBuffer
+                    val byteBuffer = ByteBuffer.wrap(byteArray)
+
+                    webSocket.send(byteBuffer.toByteString())
+                }
+
+            }
     }
 
     override fun onDestroy() {
@@ -82,6 +128,30 @@ class ChatActivity : AppCompatActivity() {
     override fun finish() {
         super.finish()
         webSocket.close(MyWebSocketListener(sessionId, chatId, chatDAO).NORMAL_CLOSURE_STATUS, null)
+    }
+
+    // 커스텀한 toolbar actionBar에 넣어준다
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.message_toolbar_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.contextOutChatRoom -> {
+                /**
+                 * 채팅방 나가기
+                 */
+                super.onOptionsItemSelected(item)
+            }
+            R.id.search_message -> {
+                /**
+                 * 메시지 찾기
+                 */
+                super.onOptionsItemSelected(item)
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun getSyncMessages(supplementServiceChat: IRetrofitChat, sessionId: String) {
@@ -107,15 +177,6 @@ class ChatActivity : AppCompatActivity() {
                 if (syncInfo.messageList.isNotEmpty()) {
                     // ex) [4,5]
                     for (message in syncInfo.messageList) {
-
-                        // ======== DEBUG =====
-//                        if (LocalDateTime.parse(syncInfo.syncTime, formatter)
-//                                .equals(chatRoomInfo.syncTime)
-//                        ) {
-//                            continue
-//                        }
-                        // =====================
-
 
                         // change each MessageInfo to new MessageTable & save to sqlite
 
@@ -246,9 +307,11 @@ class ChatActivity : AppCompatActivity() {
             /**
              * SEND IMAGE
              */
-            // 1. send Image
-            // 2. receive result (image url)
-            // 3. create MessageTable with image url
+            btnGallery.setOnClickListener {
+                val intent = Intent(Intent.ACTION_PICK)
+                intent.type = MediaStore.Images.Media.CONTENT_TYPE
+                getImage.launch(intent)
+            }
 
         }
     }
@@ -314,12 +377,10 @@ class ChatActivity : AppCompatActivity() {
                     null,
                     chatId,
                     "IMAGE",
-                    bytes.string(Charset.forName("UTF-8")),
+                    url,
                     now
                 )
             )
-            chatDAO.updateSyncTime(now, sessionId)
-            chatDAO.updatePrefMessage("[IMAGE]", sessionId)
         }
 
         override fun onOpen(webSocket: WebSocket, response: Response) {

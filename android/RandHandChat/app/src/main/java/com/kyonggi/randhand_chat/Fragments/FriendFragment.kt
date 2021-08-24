@@ -127,13 +127,12 @@ class FriendFragment : Fragment() {
                     myProfileName.text = info?.name
                     myStatusMessage.text = info?.message
 
-                    activity?.let {
-                        Glide.with(it)
-                            .load(info?.picture)
-                            .error(Glide.with(this@FriendFragment)
-                                .load(R.drawable.no_image))
-                            .into(myProfileImage)
-                    }
+                    Glide.with(this@FriendFragment)
+                        .load(info?.picture)
+                        .error(Glide.with(this@FriendFragment)
+                            .load(R.drawable.no_image)
+                            .into(myProfileImage))
+                        .into(myProfileImage)
 
 
                     // 내 정보 클릭시

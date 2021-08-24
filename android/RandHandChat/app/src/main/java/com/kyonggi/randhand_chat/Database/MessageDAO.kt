@@ -1,9 +1,6 @@
 package com.kyonggi.randhand_chat.Database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface MessageDAO {
@@ -21,4 +18,10 @@ interface MessageDAO {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertMessageList(message: MutableList<MessageTable>)
+
+    /**
+     * 메시지 삭제
+     */
+    @Delete
+    fun deleteMessage(message: MessageTable)
 }
