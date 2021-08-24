@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/listChatHolder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="10sp"
@@ -15,7 +16,6 @@
         android:layout_width="60sp"
         android:layout_height="60sp"
         android:layout_marginStart="20sp"
-        android:layout_marginLeft="20sp"
         android:layout_marginTop="2sp"
         android:layout_marginBottom="2sp"
         app:cardCornerRadius="20sp"
@@ -28,7 +28,7 @@
             android:id="@+id/chatUserImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/mes_background"
+            android:scaleType="center"
             android:longClickable="false"
             android:src="@drawable/hand_icon" />
 
@@ -39,7 +39,7 @@
         android:id="@+id/chatProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15sp"
+        android:layout_marginStart="15sp"
         android:layout_marginTop="5sp"
         android:text="사용자"
         app:layout_constraintStart_toEndOf="@+id/chatProfileCardView"
