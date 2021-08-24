@@ -115,6 +115,7 @@ class SettingFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("ERROR", "오류: SettingFragment.userWithdrawal")
             }
 
         })

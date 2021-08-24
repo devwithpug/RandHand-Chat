@@ -3,6 +3,7 @@ package com.kyonggi.randhand_chat.Fragments.UserActivity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.bumptech.glide.Glide
 import com.kyonggi.randhand_chat.Domain.User.ResponseUser
 import com.kyonggi.randhand_chat.R
@@ -74,6 +75,7 @@ class ProfileActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<ResponseUser>, t: Throwable) {
+                Log.d("ERROR", "오류: ProfileActivity.getMyInfo")
             }
 
         })

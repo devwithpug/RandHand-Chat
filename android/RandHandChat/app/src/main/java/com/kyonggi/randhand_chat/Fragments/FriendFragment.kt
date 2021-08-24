@@ -146,6 +146,7 @@ class FriendFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<ResponseUser>, t: Throwable) {
+                Log.d("ERROR", "오류: FriendFragment.getMyInfo")
             }
 
         })
@@ -161,6 +162,7 @@ class FriendFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<List<ResponseUser>>, t: Throwable) {
+                    Log.d("ERROR", "오류: FriendFragment.addFriend")
                 }
 
             })
