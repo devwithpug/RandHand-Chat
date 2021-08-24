@@ -60,8 +60,8 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
 
         if (!session.getHandshakeHeaders().containsKey("debug")) {
             MessageDto messageDto = verifyAndSaveMessage(session, message);
-            message.getPayload().clear();
-            message.getPayload().put(messageDto.getContent().getBytes(StandardCharsets.UTF_8));
+            // receiver 에게 S3에 업로드된 Image url 전송
+            message = new BinaryMessage(messageDto.getContent().getBytes(StandardCharsets.UTF_8));
         }
 
         log.info(message.toString());
