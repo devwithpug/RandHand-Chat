@@ -108,9 +108,12 @@ public class UserServiceImpl implements UserService {
 
         validateUserByUserId(userId);
 
-        String picture = amazonS3Service.upload(image, userId);
-
         UserEntity userEntity = userRepository.findByUserId(userId);
+        String[] split = userEntity.getPicture().split("/");
+        String key = split[split.length-1];
+        amazonS3Service.delete(key);
+
+        String picture = amazonS3Service.upload(image, userId + "profile" + UUID.randomUUID());
         userEntity.setPicture(picture);
 
         return mapper.map(userRepository.save(userEntity), UserDto.class);
