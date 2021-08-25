@@ -234,7 +234,7 @@ public class WarmUpService {
 
 HTTP 요청을 통해 Warm Up 하는 것이 최선의 선택은 아닐 수 있지만 원하는 결과를 얻었고 웹 애플리케이션에 적용하기에는 좋은 방법인 것 같다.
 
-구현된 코드는 [WarmUpService.java](https://github.com/devwithpug/RandHand-Chat/blob/main/backend/chat-service/src/main/java/io/kgu/chatservice/config/WarmUpService.java) 에서 확인하실 수 있습니다.
+구현된 코드는 [WarmUpScheduler.java](https://github.com/devwithpug/RandHand-Chat/blob/main/backend/chat-service/src/main/java/io/kgu/chatservice/scheduler/WarmUpScheduler.java) 에서 확인하실 수 있습니다.
 
 ## References
 
