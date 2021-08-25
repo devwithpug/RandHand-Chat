@@ -12,10 +12,8 @@ import io.kgu.chatservice.service.AmazonS3Service;
 import io.kgu.chatservice.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.AbstractWebSocketMessage;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
@@ -38,7 +36,7 @@ public class MessageServiceImpl implements MessageService {
     private final ModelMapper mapper;
 
     @Override
-    public MessageDto create(AbstractWebSocketMessage<?> message, ChatEntity chat, String from) {
+    public MessageDto create(AbstractWebSocketMessage<?> message, ChatEntity chat, String from) throws IOException {
 
         MessageEntity messageEntity = new MessageEntity();
 
@@ -52,13 +50,9 @@ public class MessageServiceImpl implements MessageService {
             ByteBuffer payload = (ByteBuffer) message.getPayload();
 
             byte[] decodedBase64String = Base64.decode(payload.array());
+            String url = amazonS3Service.upload(decodedBase64String, from +"image"+ UUID.randomUUID());
+            messageEntity.setContent(url);
 
-            try {
-                String url = amazonS3Service.upload(decodedBase64String, from +"image"+ UUID.randomUUID());
-                messageEntity.setContent(url);
-            } catch (IOException ex) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-            }
         } else {
             throw new ClassFormatError("잘못된 메세지 포맷");
         }

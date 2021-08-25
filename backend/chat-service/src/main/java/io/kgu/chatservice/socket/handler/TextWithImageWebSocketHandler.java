@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.util.Set;
@@ -65,8 +66,8 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         }
 
         log.info(message.toString());
+        // 업로드가 완료된 이미지의 Image url 이므로 sender 에게도 전송
         for (WebSocketSession webSocketSession : sessions) {
-            if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
             webSocketSession.sendMessage(message);
         }
     }
@@ -102,9 +103,15 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
             }
         }
 
-        MessageDto result = messageService.create(message, chatRoom, from);
-        chatRoom.setSyncTime(result.getCreatedAt());
-        chatRepository.save(chatRoom);
+        MessageDto result = null;
+        try {
+            result = messageService.create(message, chatRoom, from);
+
+            chatRoom.setSyncTime(result.getCreatedAt());
+            chatRepository.save(chatRoom);
+        } catch (IllegalArgumentException | IOException | ClassFormatError ex) {
+            log.error(ex.getMessage());
+        }
 
         return result;
     }
