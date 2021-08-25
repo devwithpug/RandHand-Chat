@@ -53,7 +53,11 @@ class ChatRoomAdapter(var chatRoomList: MutableList<ChatRoomTable>) : RecyclerVi
                 preMessage.text = null
                 time.text = null
             } else {
-                preMessage.text = item.prefMessage
+                if (item.type == "IMAGE") {
+                    preMessage.text = "[IMAGE]"
+                } else {
+                    preMessage.text = item.prefMessage
+                }
                 time.text =item.syncTime.format(DateTimeFormatter.ofPattern("a K:mm"))
             }
 

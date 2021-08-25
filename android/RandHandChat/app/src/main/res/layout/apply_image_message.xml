@@ -38,7 +38,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="center"
-            android:background="@color/white"
             tools:src="@drawable/hand_icon" />
     </androidx.cardview.widget.CardView>
 

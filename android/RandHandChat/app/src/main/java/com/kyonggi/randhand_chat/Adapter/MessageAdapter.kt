@@ -158,7 +158,7 @@ class MessageAdapter(private var messages: MutableList<MessageTable>) : Recycler
             fromUser = message.fromUser.toString()
             messageText.text = message.context
             timeText.text = message.time.format(DateTimeFormatter.ofPattern("a K:mm"))
-            dateText.text = message.time.format(DateTimeFormatter.ofPattern("M월 dd일"))
+//            dateText.text = message.time.format(DateTimeFormatter.ofPattern("M월 dd일"))
         }
     }
     /**
@@ -174,7 +174,7 @@ class MessageAdapter(private var messages: MutableList<MessageTable>) : Recycler
         override fun bind(message: MessageTable) {
             fromUser = message.fromUser.toString()
             timeText.text = message.time.format(DateTimeFormatter.ofPattern("a K:mm"))
-            dateText.text = message.time.format(DateTimeFormatter.ofPattern("M월 dd일"))
+//            dateText.text = message.time.format(DateTimeFormatter.ofPattern("M월 dd일"))
 
             // Glide 이미지 로드
             Glide.with(itemView)
@@ -217,7 +217,7 @@ class MessageAdapter(private var messages: MutableList<MessageTable>) : Recycler
             }
             messageText.text = message.context
             timeText.text = message.time.format(DateTimeFormatter.ofPattern("a K:mm"))
-            dateText.text = message.time.format(DateTimeFormatter.ofPattern("M월 dd일"))
+//            dateText.text = message.time.format(DateTimeFormatter.ofPattern("M월 dd일"))
         }
     }
 
@@ -258,7 +258,7 @@ class MessageAdapter(private var messages: MutableList<MessageTable>) : Recycler
                 .into(imageView)
 
             timeText.text = message.time.format(DateTimeFormatter.ofPattern("a K:mm"))
-            dateText.text = message.time.format(DateTimeFormatter.ofPattern("M월 dd일"))
+//            dateText.text = message.time.format(DateTimeFormatter.ofPattern("M월 dd일"))
         }
     }
 

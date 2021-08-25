@@ -1,6 +1,7 @@
 package com.kyonggi.randhand_chat.Fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -21,6 +22,7 @@ import retrofit2.Retrofit
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import android.view.*
+import com.kyonggi.randhand_chat.ProgressActivity
 
 class ChatListFragment : Fragment(){
     private lateinit var retrofit: Retrofit
@@ -62,6 +64,14 @@ class ChatListFragment : Fragment(){
         initChatRetrofit()
     }
 
+    override fun onResume() {
+        super.onResume()
+        val token = AppUtil.prefs.getString("token",null)
+        val userId = AppUtil.prefs.getString("userId",null)
+        getChatRoomInfo(supplementServiceChat, token, userId)
+
+    }
+
     // Fragment 를 안고 있는 Activity 에 붙였을때
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -72,8 +82,11 @@ class ChatListFragment : Fragment(){
     // Fragment 와 레이아웃을 연결시켜준다
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         Log.d(TAG, "ChatFragment -onCreateView() called")
-//        val view = inflater.inflate(R.layout.fragment_chattings, container, false )
         chatBinding = FragmentChatsBinding.inflate(inflater, container, false)
+
+        // 리사이클러 뷰에 context menu 붙여준다
+        registerForContextMenu(chatBinding.chatRoom)
+
         return chatBinding.root
     }
 
@@ -89,10 +102,13 @@ class ChatListFragment : Fragment(){
                 // 어뎁터 성능을 위해서 추가
                 setHasFixedSize(true)
 
-                // TEST
-                val token = AppUtil.prefs.getString("token",null)
-                val userId = AppUtil.prefs.getString("userId",null)
-                getChatRoomInfo(supplementServiceChat, token, userId)
+                floatingActionButtonMenu.setOnClickListener {
+                    /**
+                     * Mediapipe와 연결하여 인식
+                     *
+                     */
+                    startActivity(Intent(context, ProgressActivity::class.java))
+                }
             }
         }
     }
@@ -108,16 +124,10 @@ class ChatListFragment : Fragment(){
                         val chatId = info.userIds.filter { it != AppUtil.prefs.getString("userId", null) }[0]
                         getUserInfo(supplementServiceUser, chatId, info)
                     }
-
-                    chatRoomList = chatDAO.getAll() as MutableList<ChatRoomTable>
                 } else {
                     chatInfo = listOf()
                 }
-                // 어뎁터 붙여주기
-                chatRoomAdapter = ChatRoomAdapter(chatRoomList)
-                chatBinding.chatRoom.adapter = chatRoomAdapter
-                // 리사이클러 뷰에 context menu 붙여준다
-                registerForContextMenu(chatBinding.chatRoom)
+
             }
 
             override fun onFailure(call: Call<List<ChatInfo>>, t: Throwable) {
@@ -133,35 +143,47 @@ class ChatListFragment : Fragment(){
             Callback<ResponseUser> {
             override fun onResponse(call: Call<ResponseUser>, response: Response<ResponseUser>) {
                 val info = response.body()
-                info?.let {
+                info?.let { info ->
                     //
                     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
                     val syncTime = LocalDateTime.parse(chatInfo.syncTime, formatter)
 
-                    val name = it.name
-                    val picture = it.picture
-                    if (name != null && picture != null) {
-                        chatDAO.updateChatRoom(chatInfo.sessionId, name, picture)
+//                    val name = it.name
+//                    val picture = it.picture
+//                    if (name != null && picture != null) {
+//                        chatDAO.updateChatRoom(chatInfo.sessionId, name, picture)
+//                    }
+                    val result = messageDAO.getRecentMessage(chatInfo.sessionId)
+
+                    if (result != null) {
+                        val type = result.type
+                        val prefMessage = chatDAO.getChatRoomTable(chatInfo.sessionId).prefMessage
+
+                        /**
+                         *                        데이터베이스 데이터
+                         *          채팅하고 있는 상대방의 seesionID, 상대방ID와 프로필정보를 넣어준다
+                         *          충돌되는 부분이있으면 자동 업데이트 시켜준다
+                         */
+
+                        chatDAO.insertRoomInfo(
+                            ChatRoomTable(chatInfo.sessionId,
+                                chatId,info.name!!, info.picture,syncTime,type,prefMessage)
+                        )
+                    } else {
+                        chatDAO.insertRoomInfo(
+                            ChatRoomTable(chatInfo.sessionId,
+                                chatId,info.name!!, info.picture,syncTime,"",null)
+                        )
                     }
-
-                    /**
-                     *                        테스트용 데이터베이스 데이터
-                     *          채팅하고 있는 상대방의 seesionID, 상대방ID와 프로필정보를 넣어준다
-                     */
-                    chatDAO.insertRoomInfo(
-                        ChatRoomTable(chatInfo.sessionId,
-                            chatId,info?.name!!, info.picture,syncTime,"테스트용")
-                    )
-
+                    // 어뎁터 붙여주기 :D
+                    chatRoomList = chatDAO.getAll() as MutableList<ChatRoomTable>
+                    chatRoomAdapter = ChatRoomAdapter(chatRoomList)
+                    chatBinding.chatRoom.adapter = chatRoomAdapter
                 }
             }
-
-
-
             override fun onFailure(call: Call<ResponseUser>, t: Throwable) {
                 Log.d("ERROR", "오류: ChatListFragment.getUserInfo")
             }
-
         })
     }
 

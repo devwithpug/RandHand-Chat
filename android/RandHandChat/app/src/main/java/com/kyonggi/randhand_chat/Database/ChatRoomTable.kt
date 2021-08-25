@@ -12,5 +12,6 @@ data class ChatRoomTable(
     var userName: String,
     var userImage: String?,
     var syncTime: LocalDateTime,
-    var prefMessage: String
+    val type: String?,
+    var prefMessage: String?
 )
