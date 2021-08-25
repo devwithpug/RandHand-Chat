@@ -100,19 +100,7 @@ class FriendFragment : Fragment() {
                     layoutManager = LinearLayoutManager(activity)
                     // 어뎁터 성능을 위해서 추가
                     setHasFixedSize(true)
-                    // 친구 목록 List 설정
-                    val userId = AppUtil.prefs.getString("userId", null)
-                    val token = AppUtil.prefs.getString("token", null)
-                    friendList(supplementService, token, userId)
-                    // 로그인 사용자 정보 가져오기
-                    getMyInfo(supplementService, userId)
             }
-                /**
-                 *  테스트용 친구 추가 메소드 -> 채팅쪽에서 매칭된 유저때 다시 설정
-                 */
-                testAddFriend.setOnClickListener {
-                    addFriend(supplementService, "599f11f5-a6a8-45c7-a902-628911dc9e46")
-                }
         }
     }
 
@@ -151,22 +139,6 @@ class FriendFragment : Fragment() {
         })
     }
 
-    private fun addFriend(supplementService: IRetrofitUser, friendId: String) {
-        supplementService.addUser(AppUtil.prefs.getString("token",null), AppUtil.prefs.getString("userId",null), friendId)
-            .enqueue(object: Callback<List<ResponseUser>> {
-                override fun onResponse(call: Call<List<ResponseUser>>, response: Response<List<ResponseUser>>) {
-                    val body = response.body() as MutableList<ResponseUser>
-                    // 추가된 친구 adapter 에 반영
-                    addData(body.last())
-                }
-
-                override fun onFailure(call: Call<List<ResponseUser>>, t: Throwable) {
-                    Log.d("ERROR", "오류: FriendFragment.addFriend")
-                }
-
-            })
-    }
-
     private fun friendList(supplementService: IRetrofitUser, token: String, userId: String) {
         supplementService.getUserFriendsList(token, userId).enqueue(object: Callback<List<ResponseUser>>{
             override fun onResponse(call: Call<List<ResponseUser>>, response: Response<List<ResponseUser>>) {
@@ -182,17 +154,6 @@ class FriendFragment : Fragment() {
             }
 
         })
-    }
-
-
-    /**
-     *  테스트용 친구 추가 메소드 -> 채팅쪽에서 매칭된 유저때 다시 설정
-     */
-    fun addData(user: ResponseUser) {
-        profileList.add(user)
-        // 갱신처리를 해주어야한다.
-        friendsBinding.friendsList.adapter?.notifyDataSetChanged()
-
     }
 
     private fun initRetrofit() {
