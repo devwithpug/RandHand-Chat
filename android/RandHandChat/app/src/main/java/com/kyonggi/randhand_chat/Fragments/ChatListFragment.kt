@@ -3,9 +3,6 @@ package com.kyonggi.randhand_chat.Fragments
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kyonggi.randhand_chat.Adapter.ChatRoomAdapter
@@ -23,15 +20,16 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import android.view.*
 
-class ChatListFragment : Fragment() {
+class ChatListFragment : Fragment(){
     private lateinit var retrofit: Retrofit
     private lateinit var supplementServiceUser: IRetrofitUser
     private lateinit var supplementServiceChat: IRetrofitChat
 
     private lateinit var chatBinding: FragmentChatsBinding
     private var chatRoomList: MutableList<ChatRoomTable> = mutableListOf()
+    private lateinit var chatRoomAdapter: ChatRoomAdapter
 
 
     // 채팅방 정보에대한 sessionId 와 List<String>
@@ -64,34 +62,6 @@ class ChatListFragment : Fragment() {
         initChatRetrofit()
     }
 
-    private fun getChatRoomInfo(supplementServiceChat: IRetrofitChat, token: String, userId: String) {
-        supplementServiceChat.getChatRoomInfoByUserId(token, userId).enqueue(object : Callback<List<ChatInfo>> {
-            override fun onResponse(call: Call<List<ChatInfo>>, response: Response<List<ChatInfo>>) {
-                val list = response.body()
-                if (list != null) {
-                    chatInfo = list
-                    // 채팅하는 유저 아이디
-                    for (info in chatInfo) {
-                        val chatId = info.userIds.filter { it != AppUtil.prefs.getString("userId", null) }[0]
-                        getUserInfo(supplementServiceUser, chatId, info)
-                    }
-
-                    chatRoomList = chatDAO.getAll() as MutableList<ChatRoomTable>
-                } else {
-                    chatInfo = listOf()
-                }
-                // 어뎁터 붙여주기
-                chatBinding.chatRoom.adapter = ChatRoomAdapter(chatRoomList)
-            }
-
-            override fun onFailure(call: Call<List<ChatInfo>>, t: Throwable) {
-                Log.d("ERROR", "오류")
-            }
-
-        })
-
-    }
-
     // Fragment 를 안고 있는 Activity 에 붙였을때
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -100,7 +70,7 @@ class ChatListFragment : Fragment() {
 
     // View 가 생성되었을때
     // Fragment 와 레이아웃을 연결시켜준다
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         Log.d(TAG, "ChatFragment -onCreateView() called")
 //        val view = inflater.inflate(R.layout.fragment_chattings, container, false )
         chatBinding = FragmentChatsBinding.inflate(inflater, container, false)
@@ -110,10 +80,6 @@ class ChatListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(FriendFragment.TAG, "ChatFragment -onViewCreated() called")
-
-
-
-
 
         with(chatBinding) {
             // 리사이클러뷰 설정
@@ -131,6 +97,35 @@ class ChatListFragment : Fragment() {
         }
     }
 
+    private fun getChatRoomInfo(supplementServiceChat: IRetrofitChat, token: String, userId: String) {
+        supplementServiceChat.getChatRoomInfoByUserId(token, userId).enqueue(object : Callback<List<ChatInfo>> {
+            override fun onResponse(call: Call<List<ChatInfo>>, response: Response<List<ChatInfo>>) {
+                val list = response.body()
+                if (list != null) {
+                    chatInfo = list
+                    // 채팅하는 유저 아이디
+                    for (info in chatInfo) {
+                        val chatId = info.userIds.filter { it != AppUtil.prefs.getString("userId", null) }[0]
+                        getUserInfo(supplementServiceUser, chatId, info)
+                    }
+
+                    chatRoomList = chatDAO.getAll() as MutableList<ChatRoomTable>
+                } else {
+                    chatInfo = listOf()
+                }
+                // 어뎁터 붙여주기
+                chatRoomAdapter = ChatRoomAdapter(chatRoomList)
+                chatBinding.chatRoom.adapter = chatRoomAdapter
+                // 리사이클러 뷰에 context menu 붙여준다
+                registerForContextMenu(chatBinding.chatRoom)
+            }
+
+            override fun onFailure(call: Call<List<ChatInfo>>, t: Throwable) {
+                Log.d("ERROR", "오류: ChatListFragment.getChatRoomInfo")
+            }
+        })
+    }
+
     private fun getUserInfo(supplementServiceUser: IRetrofitUser, chatId: String, chatInfo: ChatInfo) {
         val token = AppUtil.prefs.getString("token",null)
         val userId = AppUtil.prefs.getString("userId", null)
@@ -138,20 +133,33 @@ class ChatListFragment : Fragment() {
             Callback<ResponseUser> {
             override fun onResponse(call: Call<ResponseUser>, response: Response<ResponseUser>) {
                 val info = response.body()
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                info?.let {
+                    //
+                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                    val syncTime = LocalDateTime.parse(chatInfo.syncTime, formatter)
 
-                val syncTime = LocalDateTime.parse(chatInfo.syncTime, formatter)
-                /**
-                 *                        테스트용 데이터베이스 데이터
-                 *          채팅하고 있는 상대방의 seesionID, 상대방ID와 프로필정보를 넣어준다
-                 */
-                chatDAO.insertRoomInfo(
-                    ChatRoomTable(chatInfo.sessionId,
-                        chatId,info?.name!!, info.picture,syncTime,"테스트용")
-                )
+                    val name = it.name
+                    val picture = it.picture
+                    if (name != null && picture != null) {
+                        chatDAO.updateChatRoom(chatInfo.sessionId, name, picture)
+                    }
+
+                    /**
+                     *                        테스트용 데이터베이스 데이터
+                     *          채팅하고 있는 상대방의 seesionID, 상대방ID와 프로필정보를 넣어준다
+                     */
+                    chatDAO.insertRoomInfo(
+                        ChatRoomTable(chatInfo.sessionId,
+                            chatId,info?.name!!, info.picture,syncTime,"테스트용")
+                    )
+
+                }
             }
 
+
+
             override fun onFailure(call: Call<ResponseUser>, t: Throwable) {
+                Log.d("ERROR", "오류: ChatListFragment.getUserInfo")
             }
 
         })

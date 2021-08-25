@@ -30,4 +30,6 @@ interface ChatRoomDAO {
     @Query("update chatroom_list set prefMessage = :message where sessionId = :sessionId")
     fun updatePrefMessage(message: String, sessionId: String)
 
+    @Query("update chatroom_list set userName = :userName, userImage = :userImage where sessionId = :sessionId")
+    fun updateChatRoom(sessionId: String, userName: String, userImage: String)
 }

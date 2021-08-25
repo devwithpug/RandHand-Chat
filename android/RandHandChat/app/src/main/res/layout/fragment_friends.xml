@@ -33,9 +33,9 @@
                 android:id="@+id/myProfile_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/mes_background"
+                android:scaleType="center"
                 android:longClickable="false"
-                android:src="@drawable/hand_icon" />
+                tools:src="@drawable/hand_icon"/>
 
         </androidx.cardview.widget.CardView>
 

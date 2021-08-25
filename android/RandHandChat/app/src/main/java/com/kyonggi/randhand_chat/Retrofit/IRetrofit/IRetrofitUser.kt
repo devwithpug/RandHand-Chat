@@ -2,6 +2,7 @@ package com.kyonggi.randhand_chat.Retrofit.IRetrofit
 
 import com.kyonggi.randhand_chat.Domain.User.Client
 import com.kyonggi.randhand_chat.Domain.User.ResponseUser
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -26,6 +27,15 @@ interface IRetrofitUser {
         @Header("Authorization") userToken: String,
         @Header("userId") userId: String,
         @Body client: Client
+    ) : Call<ResponseUser>
+
+    // 회원이미지 변경
+    @Multipart
+    @POST("users/update/image")
+    fun editImage(
+        @Header("Authorization") userToken: String,
+        @Header("userId") userId: String,
+        @Part image: MultipartBody.Part
     ) : Call<ResponseUser>
 
     // 로그인 확인 -> 토큰을 내부에서 확인하여 로그인 유지하기

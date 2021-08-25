@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -12,12 +13,11 @@ import com.kyonggi.randhand_chat.Fragments.ChatsActivity.ChatActivity
 import com.kyonggi.randhand_chat.R
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
 import com.kyonggi.randhand_chat.Retrofit.ServiceURL
-import com.kyonggi.randhand_chat.Util.DateUtils
 import com.kyonggi.randhand_chat.databinding.ListChatsBinding
 import retrofit2.Retrofit
 import java.time.format.DateTimeFormatter
 
-class ChatRoomAdapter(val chatRoomList: MutableList<ChatRoomTable>) : RecyclerView.Adapter<ChatRoomAdapter.Holder>() {
+class ChatRoomAdapter(var chatRoomList: MutableList<ChatRoomTable>) : RecyclerView.Adapter<ChatRoomAdapter.Holder>(){
     private lateinit var retrofit: Retrofit
     private lateinit var supplementService: IRetrofitUser
 
@@ -54,7 +54,7 @@ class ChatRoomAdapter(val chatRoomList: MutableList<ChatRoomTable>) : RecyclerVi
                 time.text = null
             } else {
                 preMessage.text = item.prefMessage
-                time.text =item.syncTime.format(DateTimeFormatter.ofPattern("HH:mm"))
+                time.text =item.syncTime.format(DateTimeFormatter.ofPattern("a K:mm"))
             }
 
             /**
@@ -76,8 +76,34 @@ class ChatRoomAdapter(val chatRoomList: MutableList<ChatRoomTable>) : RecyclerVi
         supplementService = retrofit.create(IRetrofitUser::class.java)
     }
 
+    // 채팅방의 내용이 바뀌었을때
+    fun dataSetChanged(changeList: MutableList<ChatRoomTable>) {
+        chatRoomList = changeList
+        notifyDataSetChanged()
+    }
+
     // 내부클래스 뷰홀더를위한 클래스 -> 차단된 유저에 대한 View를 잡아준다.
     class Holder(val binding: ListChatsBinding) : RecyclerView.ViewHolder(binding.root) {
+        init{
+            binding.root.setOnLongClickListener {
+                val pop= PopupMenu(binding.root.context,it)
+                pop.inflate(R.menu.messagelist_context_menu)
+
+                pop.setOnMenuItemClickListener {item->
+                    when (item.itemId) {
+                        R.id.contextOutChatRoom -> {
+                            /**
+                             * 채팅방 나가기
+                             * 데이터베이스에서 chatRoomInfo, Message삭제, 서버에서 websocket 삭제
+                             */
+                        }
+                    }
+                    true
+                }
+                pop.show()
+                true
+            }
+        }
         // 받은 데이터를 화면에 출력한다
         val userName = binding.chatProfile
         val userImage = binding.chatUserImage

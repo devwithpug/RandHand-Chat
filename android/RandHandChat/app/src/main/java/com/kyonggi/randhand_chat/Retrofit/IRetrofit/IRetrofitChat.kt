@@ -2,11 +2,9 @@ package com.kyonggi.randhand_chat.Retrofit.IRetrofit
 
 import com.kyonggi.randhand_chat.Domain.Chat.ChatInfo
 import com.kyonggi.randhand_chat.Domain.Message.SyncInfo
+import okhttp3.MultipartBody
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 import java.time.LocalDateTime
 
 interface IRetrofitChat {
@@ -42,4 +40,12 @@ interface IRetrofitChat {
         @Header("userId") userId: String,
         @Header("sessionId") session: String
     ) : Call<SyncInfo>
+
+    // 채팅방 이미지보내기 요청
+    @POST
+    fun sendImageMessage(
+        @Header("Authorization") userToken: String,
+        @Header("userId") userId: String,
+        @Part image: MultipartBody.Part
+    ) : Call<Void>
 }

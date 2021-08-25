@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/deleteMessage"
+        android:title="메시지 삭제"/>
+    <item
+        android:id="@+id/copyMessage"
+        android:title="메시지 복사"/>
+</menu>

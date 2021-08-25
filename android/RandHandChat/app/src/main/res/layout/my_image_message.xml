@@ -7,6 +7,8 @@
     android:layout_marginTop="16sp">
 
     <!-- 메세지 보낸 날짜 View -->
+
+
     <TextView
         android:id="@+id/textDate"
         android:layout_width="wrap_content"
@@ -22,35 +24,36 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-    <!-- 내가 보낸 메세지 View -->
-    <TextView
-        android:id="@+id/myMessageBody"
+    <!-- 메세지 이미지 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/messageImageCardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="10sp"
-        android:layout_marginBottom="5sp"
-        android:background="@drawable/my_message"
-        android:elevation="2sp"
-        android:maxWidth="250sp"
-        android:padding="10sp"
-        android:textColor="@color/myMes_textColor"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardCornerRadius="15sp"
+        app:layout_constraintHeight_max="200dp"
+        app:layout_constraintWidth_max="200dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textDate"
-        tools:text="Placeholder Message" />
+        android:layout_marginEnd="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/textDate">
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        tools:src="@drawable/hand_icon"/>
+    </androidx.cardview.widget.CardView>
+
     <!-- 메세지 보낸 시간 View -->
     <TextView
         android:id="@+id/text_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="오전 10:00"
-        android:textSize="10sp"
         android:textColor="@color/applyMes_textColor"
-        app:layout_constraintBottom_toBottomOf="@+id/myMessageBody"
-        app:layout_constraintRight_toLeftOf="@+id/myMessageBody"
-        android:layout_marginRight="2sp"
-        android:layout_marginEnd="2sp" />
+        android:textSize="10sp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/messageImageCardView"
+        app:layout_constraintEnd_toStartOf="@+id/messageImageCardView"
+        tools:ignore="SmallSp"
+        tools:text="오전 10:00" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

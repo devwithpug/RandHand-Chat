@@ -127,13 +127,12 @@ class FriendFragment : Fragment() {
                     myProfileName.text = info?.name
                     myStatusMessage.text = info?.message
 
-                    activity?.let {
-                        Glide.with(it)
-                            .load(info?.picture)
-                            .error(Glide.with(this@FriendFragment)
-                                .load(R.drawable.no_image))
-                            .into(myProfileImage)
-                    }
+                    Glide.with(this@FriendFragment)
+                        .load(info?.picture)
+                        .error(Glide.with(this@FriendFragment)
+                            .load(R.drawable.no_image)
+                            .into(myProfileImage))
+                        .into(myProfileImage)
 
 
                     // 내 정보 클릭시
@@ -146,6 +145,7 @@ class FriendFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<ResponseUser>, t: Throwable) {
+                Log.d("ERROR", "오류: FriendFragment.getMyInfo")
             }
 
         })
@@ -161,6 +161,7 @@ class FriendFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<List<ResponseUser>>, t: Throwable) {
+                    Log.d("ERROR", "오류: FriendFragment.addFriend")
                 }
 
             })
