@@ -72,36 +72,4 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
-    <Button
-        android:id="@+id/test_addFriend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="친구추가"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/test_deleteFriend"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/test_deleteFriend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="친구삭제"
-        app:layout_constraintBottom_toBottomOf="@+id/test_addFriend"
-        app:layout_constraintEnd_toStartOf="@+id/test_blockFriend"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/test_addFriend"
-        app:layout_constraintTop_toTopOf="@+id/test_addFriend"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/test_blockFriend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="친구차단"
-        app:layout_constraintBottom_toBottomOf="@+id/test_deleteFriend"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/test_deleteFriend"
-        app:layout_constraintTop_toTopOf="@+id/test_deleteFriend"
-        app:layout_constraintVertical_bias="0.0" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

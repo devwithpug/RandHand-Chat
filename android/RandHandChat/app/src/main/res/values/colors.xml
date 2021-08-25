@@ -7,6 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="accent">#FFCA28</color>
 
     <!-- 메시지 입력화면에서의 사용할 컬러 -->
     <color name="colorMyMessage">#FFCC80</color>

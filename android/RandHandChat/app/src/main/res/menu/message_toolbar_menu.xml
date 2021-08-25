@@ -10,4 +10,8 @@
         android:id="@+id/outChatRoom"
         android:title="채팅방 나가기"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/addFriend"
+        android:title="친구추가"
+        app:showAsAction="never"/>
 </menu>
