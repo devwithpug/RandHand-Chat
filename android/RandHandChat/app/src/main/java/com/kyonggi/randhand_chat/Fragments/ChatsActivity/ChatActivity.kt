@@ -12,6 +12,7 @@ import android.util.Base64
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -21,8 +22,11 @@ import com.kyonggi.randhand_chat.Adapter.MessageAdapter
 import com.kyonggi.randhand_chat.Database.*
 import com.kyonggi.randhand_chat.Domain.Message.MessageInfo
 import com.kyonggi.randhand_chat.Domain.Message.SyncInfo
+import com.kyonggi.randhand_chat.Domain.User.ResponseUser
+import com.kyonggi.randhand_chat.Fragments.FriendFragment
 import com.kyonggi.randhand_chat.R
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitChat
+import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
 import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.ActivityChatBinding
@@ -45,6 +49,7 @@ import java.time.format.DateTimeFormatter
 class ChatActivity : AppCompatActivity() {
     private lateinit var retrofit: Retrofit
     private lateinit var supplementServiceChat: IRetrofitChat
+    private lateinit var supplementServiceUser: IRetrofitUser
 
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var chatBinding: ActivityChatBinding
@@ -71,9 +76,8 @@ class ChatActivity : AppCompatActivity() {
          */
         setSupportActionBar(chatBinding.toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
-        chatBinding.toolbar.title = "채팅방"
 
-        initChatRetrofit()
+        initRetrofit()
         sessionId = intent.getStringExtra("sessionId").toString()
 
         EventBus.getDefault().register(this)
@@ -119,6 +123,7 @@ class ChatActivity : AppCompatActivity() {
                     // ByteBuffer
                     val byteBuffer = ByteBuffer.wrap(byteArray)
 
+                    // 웹소켓으로 이미지 전송
                     webSocket.send(byteBuffer.toByteString())
                 }
 
@@ -156,8 +161,37 @@ class ChatActivity : AppCompatActivity() {
                  */
                 super.onOptionsItemSelected(item)
             }
+            R.id.addFriend -> {
+                addFriend(supplementServiceUser, chatId)
+                super.onOptionsItemSelected(item)
+            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    /**
+     * 친구 추가
+     */
+    private fun addFriend(supplementServiceUser: IRetrofitUser, friendId: String) {
+        supplementServiceUser.addUser(AppUtil.prefs.getString("token",null), AppUtil.prefs.getString("userId",null), friendId)
+            .enqueue(object: Callback<List<ResponseUser>> {
+                override fun onResponse(call: Call<List<ResponseUser>>, response: retrofit2.Response<List<ResponseUser>>) {
+                    // null 값이 아니라면 친구 추가
+                    when (response.code()) {
+                        200 -> {
+                            Toast.makeText(this@ChatActivity, "친구추가 되었습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                        400 -> {
+                            Toast.makeText(this@ChatActivity, "이미 친구입니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<List<ResponseUser>>, t: Throwable) {
+                    Log.d("ERROR", "오류: FriendFragment.addFriend")
+                }
+
+            })
     }
 
     private fun getSyncMessages(supplementServiceChat: IRetrofitChat, sessionId: String) {
@@ -321,9 +355,10 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun initChatRetrofit() {
+    private fun initRetrofit() {
         retrofit = ServiceURL.getInstance()
         supplementServiceChat = retrofit.create(IRetrofitChat::class.java)
+        supplementServiceUser = retrofit.create(IRetrofitUser::class.java)
     }
 
     /**
@@ -332,7 +367,6 @@ class ChatActivity : AppCompatActivity() {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEventMainThread(message: MessageTable) {
-        message.fromUser = chatId
         chatBinding.messageList.scrollToPosition(messageAdapter.itemCount)
         messageAdapter.addMessage(message)
         messageDAO.insertMessage(message)
@@ -384,12 +418,14 @@ class ChatActivity : AppCompatActivity() {
 
             val url = bytes.string(Charset.forName("UTF-8"))
             // amazon.com/{userId}image{UUID}
+            val splits = url.split("/")
+            val fromUser = splits[splits.size - 1].split("image")[0]
 
             EventBus.getDefault().post(
                 createMessageTable(
                     sessionId,
                     null,
-                    chatId,
+                    fromUser,
                     "IMAGE",
                     url,
                     now

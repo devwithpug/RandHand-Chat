@@ -3,15 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.kyonggi.randhand_chat">
     <!-- 인터넷을 사용하기 위하여 추가 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 갤러리 권한 설정하기 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
-
-    <!--갤러리 권한-->
-    <uses-permission android:name="android.permission.CAMERA"/>
-
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 갤러리 권한 설정하기 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> <!-- 갤러리 권한 -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:name=".Util.AppUtil"
@@ -23,10 +19,17 @@
         android:theme="@style/Theme.RandHandChat"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".MediaPipe.MediaPipeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ProgressActivity"
+            android:exported="true"
+            android:theme="@style/MessageTheme"></activity>
+        <activity
             android:name=".Fragments.ChatsActivity.ChatActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustPan"
-            android:theme="@style/MessageTheme" />
+            android:theme="@style/MessageTheme"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".Fragments.UserActivity.EditProfileActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
@@ -46,7 +49,6 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- Login Activity 등록 -->

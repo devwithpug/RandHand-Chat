@@ -24,4 +24,10 @@ interface MessageDAO {
      */
     @Delete
     fun deleteMessage(message: MessageTable)
+
+    /**
+     * find recently
+     */
+    @Query("select * from chatroom_message_list where sessionId = :sessionId order by messageId desc limit 1")
+    fun getRecentMessage(sessionId: String) : MessageTable
 }
