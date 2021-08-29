@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ public class ChatServiceImpl implements ChatService {
         }
 
         chatDto.setSessionId(LocalDate.now() + ":" + UUID.randomUUID());
+        chatDto.setSyncTime(LocalDateTime.now());
 
         ChatEntity entity = mapper.map(chatDto, ChatEntity.class);
         chatRepository.save(entity);
