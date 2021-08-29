@@ -3,6 +3,7 @@ package io.kgu.chatservice.service.impl;
 import io.kgu.chatservice.domain.dto.ChatDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
 import io.kgu.chatservice.repository.ChatRepository;
+import io.kgu.chatservice.repository.MessageRepository;
 import io.kgu.chatservice.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
+    private final MessageRepository messageRepository;
     private final ModelMapper mapper;
 
     @Override
@@ -77,13 +79,12 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public void removeChatRoomBySessionId(String sessionId) {
 
-        if (!chatRepository.existsById(sessionId)) {
-            throw new EntityNotFoundException(String.format(
-                    "삭제하려는 채팅방이 없습니다 'sessionId: %s'", sessionId
-            ));
-        }
+        ChatEntity chatRoom = chatRepository.findById(sessionId).orElseThrow(
+                () -> new EntityNotFoundException(String.format(
+                        "삭제하려는 채팅방이 없습니다 'sessionId: %s'", sessionId
+                )));
 
+        messageRepository.deleteAllByChat(chatRoom);
         chatRepository.deleteBySessionId(sessionId);
-
     }
 }

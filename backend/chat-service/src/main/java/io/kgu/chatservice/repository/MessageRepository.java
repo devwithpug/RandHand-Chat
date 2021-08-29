@@ -11,5 +11,6 @@ public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
 
     List<MessageEntity> findAllByChat(ChatEntity chat);
     List<MessageEntity> findAllByChatAndCreatedAtAfter(ChatEntity chat, LocalDateTime date);
+    void deleteAllByChat(ChatEntity chat);
 
 }
