@@ -58,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="10dp"
         app:cardCornerRadius="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_max="200sp"

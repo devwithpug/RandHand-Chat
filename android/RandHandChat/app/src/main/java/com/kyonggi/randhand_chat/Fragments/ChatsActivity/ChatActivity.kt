@@ -292,7 +292,9 @@ class ChatActivity : AppCompatActivity() {
         /**
          * 메시지 어뎁터 매니저 설정
          */
-        chatBinding.messageList.layoutManager = LinearLayoutManager(this)
+        val manager = LinearLayoutManager(this)
+        manager.stackFromEnd = true
+        chatBinding.messageList.layoutManager = manager
         Handler(Looper.getMainLooper()).postDelayed({
             chatBinding.messageList.scrollToPosition(messageAdapter.itemCount - 1)
         }, 200)
