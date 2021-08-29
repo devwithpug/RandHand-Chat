@@ -22,7 +22,7 @@ import retrofit2.Retrofit
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import android.view.*
-import com.kyonggi.randhand_chat.ProgressActivity
+import com.kyonggi.randhand_chat.MediaPipe.MediaPipeActivity
 
 class ChatListFragment : Fragment(){
     private lateinit var retrofit: Retrofit
@@ -104,10 +104,9 @@ class ChatListFragment : Fragment(){
 
                 floatingActionButtonMenu.setOnClickListener {
                     /**
-                     * Mediapipe와 연결하여 인식
-                     *
+                     * Mediapipe와 연결
                      */
-                    startActivity(Intent(context, ProgressActivity::class.java))
+                    startActivity(Intent(context, MediaPipeActivity::class.java))
                 }
             }
         }
@@ -148,11 +147,6 @@ class ChatListFragment : Fragment(){
                     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
                     val syncTime = LocalDateTime.parse(chatInfo.syncTime, formatter)
 
-//                    val name = it.name
-//                    val picture = it.picture
-//                    if (name != null && picture != null) {
-//                        chatDAO.updateChatRoom(chatInfo.sessionId, name, picture)
-//                    }
                     val result = messageDAO.getRecentMessage(chatInfo.sessionId)
 
                     if (result != null) {

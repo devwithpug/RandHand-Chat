@@ -1,0 +1,173 @@
+package com.kyonggi.randhand_chat.MediaPipe
+
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.util.Base64
+import android.util.Log
+import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import com.google.mediapipe.solutions.hands.HandLandmark
+import com.google.mediapipe.solutions.hands.Hands
+import com.google.mediapipe.solutions.hands.HandsOptions
+import com.google.mediapipe.solutions.hands.HandsResult
+import com.kyonggi.randhand_chat.Retrofit.GestureServiceURL
+import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitChat
+import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitGesture
+import com.kyonggi.randhand_chat.Retrofit.ServiceURL
+import com.kyonggi.randhand_chat.Util.AppUtil
+import com.kyonggi.randhand_chat.databinding.ActivitySendRequestBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import java.io.ByteArrayOutputStream
+
+class SendRequestActivity : AppCompatActivity() {
+
+    companion object {
+        private const val TAG = "MainActivity"
+
+        // Run the pipeline and the model inference on GPU or CPU.
+        private const val RUN_ON_GPU = true
+    }
+
+    private lateinit var retrofit: Retrofit
+    private lateinit var supplementServiceGesture: IRetrofitGesture
+
+    private var hands: Hands? = null
+    private var imageView: HandsResultImageView? = null
+
+    val binding by lazy { ActivitySendRequestBinding.inflate(layoutInflater) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(binding.root)
+
+        imageView = HandsResultImageView(this)
+        // initialize MediaPipe
+        setupStaticImageModePipeline()
+        initGestureRetrofit()
+
+        // get byteArrayImage from MediaPipeActivity
+        val byteArrayImage = intent.getByteArrayExtra("ByteArrayImage")
+
+        // byteArray to Bitmap & send to MediaPipe
+        val bitmap = BitmapFactory.decodeByteArray(byteArrayImage, 0, byteArrayImage?.size!!)
+        hands?.send(bitmap)
+
+        // 1. SEND TO SERVER
+        binding.imageSend.setOnClickListener {
+            val gesture = bitmap.toBase64String()
+            sendGestureMatching(supplementServiceGesture, gesture)
+            /**
+             * Progress bar에서 매칭까지 대기
+             * 매칭 취소도 progres bar에서 서버로 요청
+             * 매칭이 되면 지금은 바로 채팅방으로 이동
+             */
+        }
+
+        // 2. CANCEL
+        binding.cancel.setOnClickListener {
+            finish()
+        }
+    }
+
+    /** The core MediaPipe Hands setup workflow for its static image mode.  */
+    private fun setupStaticImageModePipeline() {
+        // Initializes a new MediaPipe Hands instance in the static image mode.
+        hands = Hands(
+            this,
+            HandsOptions.builder()
+                .setMode(HandsOptions.STATIC_IMAGE_MODE)
+                .setMaxNumHands(1)
+                .setRunOnGpu(false)
+                .build()
+        )
+
+        // Connects MediaPipe Hands to the user-defined HandsResultImageView.
+        hands!!.setResultListener { handsResult ->
+            logWristLandmark(handsResult,  /*showPixelValues=*/true)
+            imageView?.setHandsResult(handsResult)
+            runOnUiThread { imageView?.update() }
+        }
+        hands!!.setErrorListener { message, e ->
+            Log.e(
+                SendRequestActivity.TAG,
+                "MediaPipe Hands error:$message"
+            )
+        }
+
+
+        // Updates the preview layout. HandsResultImageView
+        val frameLayout = binding.previewDisplayLayout
+        frameLayout.removeAllViewsInLayout()
+        imageView?.setImageDrawable(null)
+        frameLayout.addView(imageView)
+        imageView?.visibility = View.VISIBLE
+    }
+
+    private fun logWristLandmark(result: HandsResult, showPixelValues: Boolean) {
+        val wristLandmark = Hands.getHandLandmark(result, 0, HandLandmark.WRIST)
+        // For Bitmaps, show the pixel values. For texture inputs, show the normalized coordinates.
+        if (showPixelValues) {
+            val width: Int = result.inputBitmap().width
+            val height: Int = result.inputBitmap().height
+            Log.i(
+                SendRequestActivity.TAG,
+                String.format(
+                    "MediaPipe Hand wrist coordinates (pixel values): x=%f, y=%f",
+                    wristLandmark.x * width, wristLandmark.y * height
+                )
+            )
+        } else {
+            Log.i(
+                SendRequestActivity.TAG,
+                String.format(
+                    "MediaPipe Hand wrist normalized coordinates (value range: [0, 1]): x=%f, y=%f, z=%f",
+                    wristLandmark.x, wristLandmark.y, wristLandmark.z
+                )
+            )
+        }
+    }
+
+    /**
+     * 서버로 Base64 인코딩된 이미지 보내기
+     * 10초마다 요청 받은 제스처들에 대해 동일한 제스처가 있는지 판별
+     * 매칭된 경우 매칭된 유저들의 정보를 kafka 를 통해 chat-service으로 전송
+     * chat-service 에서 해당 정보를 수신(consume) 한 뒤 채팅방 생성(sessionId 값이 생성되며 DB에 채팅방 정보가 저장됨)
+     * 생성된 채팅방 정보를 kafka 를 통해 앱으로 전송
+     * 앱에서는 해당 정보를 consume 한 후에 sessionId로 웹소켓에 접속
+     */
+    private fun sendGestureMatching(supplementServiceGesture: IRetrofitGesture, gesture: String) {
+        val token = AppUtil.prefs.getString("token", null)
+        val userId = AppUtil.prefs.getString("userId", null)
+        val body = mapOf("gesture" to gesture)
+        supplementServiceGesture.getGestureMatching(token, userId, body).enqueue(object:
+            Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                Log.d("GESTURE RESPONSE", "RESPONSE")
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("GESTURE ERROR", "ERROR")
+            }
+
+        })
+    }
+
+    // extension function to convert bitmap to base64 string
+    private fun Bitmap.toBase64String():String {
+        ByteArrayOutputStream().apply {
+            compress(Bitmap.CompressFormat.JPEG, 70, this)
+            return Base64.encodeToString(toByteArray(), Base64.DEFAULT)
+        }
+    }
+
+    private fun initGestureRetrofit() {
+        retrofit = GestureServiceURL.getInstance()
+        supplementServiceGesture = retrofit.create(IRetrofitGesture::class.java)
+    }
+}
