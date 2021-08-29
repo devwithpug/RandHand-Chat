@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.google.auto.value:auto-value:1.8.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.auto.value/auto-value/1.8.1/aacb85fe6fd2a7e6619448efcde89360bda701e9/auto-value-1.8.1.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.auto.value/auto-value/1.8.1/63834052b0972141ee17a1239eb8796a28bc67d/auto-value-1.8.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.auto.value/auto-value/1.8.1/d6c7919d4fe3ec6cff86cefdf10c6eedf55cebcb/auto-value-1.8.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

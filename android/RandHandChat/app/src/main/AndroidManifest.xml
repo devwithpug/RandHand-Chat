@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" /> <!-- 갤러리 권한 -->
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <uses-feature android:name="android.hardware.camera.any" />
+
     <application
         android:name=".Util.AppUtil"
         android:allowBackup="true"
@@ -19,17 +21,24 @@
         android:theme="@style/Theme.RandHandChat"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".MediaPipe.MediaPipeActivity"
+            android:name=".MediaPipe.SendRequestActivity"
+            android:theme="@style/MessageTheme"
             android:exported="true" />
+        <activity
+            android:name=".MediaPipe.MediaPipeActivity"
+            android:exported="true"
+            android:screenOrientation="fullSensor"
+            android:theme="@style/MessageTheme" />
         <activity
             android:name=".ProgressActivity"
             android:exported="true"
-            android:theme="@style/MessageTheme"></activity>
+            android:theme="@style/MessageTheme">
+        </activity>
         <activity
             android:name=".Fragments.ChatsActivity.ChatActivity"
             android:exported="true"
             android:theme="@style/MessageTheme"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".Fragments.UserActivity.EditProfileActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
@@ -49,6 +58,7 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- Login Activity 등록 -->
