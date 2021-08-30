@@ -1,37 +1,38 @@
 package com.kyonggi.randhand_chat.MediaPipe
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
-import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.impl.utils.Exif
 import com.google.mediapipe.solutions.hands.HandLandmark
 import com.google.mediapipe.solutions.hands.Hands
 import com.google.mediapipe.solutions.hands.HandsOptions
 import com.google.mediapipe.solutions.hands.HandsResult
+import com.kyonggi.randhand_chat.ProgressActivity
 import com.kyonggi.randhand_chat.Retrofit.GestureServiceURL
-import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitChat
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitGesture
-import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
 import com.kyonggi.randhand_chat.databinding.ActivitySendRequestBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+
 
 class SendRequestActivity : AppCompatActivity() {
 
     companion object {
-        private const val TAG = "MainActivity"
-
-        // Run the pipeline and the model inference on GPU or CPU.
-        private const val RUN_ON_GPU = true
+        private const val TAG = "SendRequestActivity"
     }
 
     private lateinit var retrofit: Retrofit
@@ -42,6 +43,7 @@ class SendRequestActivity : AppCompatActivity() {
 
     val binding by lazy { ActivitySendRequestBinding.inflate(layoutInflater) }
 
+    @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -56,12 +58,17 @@ class SendRequestActivity : AppCompatActivity() {
 
         // byteArray to Bitmap & send to MediaPipe
         val bitmap = BitmapFactory.decodeByteArray(byteArrayImage, 0, byteArrayImage?.size!!)
-        hands?.send(bitmap)
+        val rotateBitmap = rotateBitmap(bitmap, rotation)
+
+        hands?.send(rotateBitmap)
 
         // 1. SEND TO SERVER
         binding.imageSend.setOnClickListener {
             val gesture = bitmap.toBase64String()
+
+            // SEND MATCH REQUEST TO SERVER
             sendGestureMatching(supplementServiceGesture, gesture)
+
             /**
              * Progress bar에서 매칭까지 대기
              * 매칭 취소도 progres bar에서 서버로 요청
@@ -71,6 +78,7 @@ class SendRequestActivity : AppCompatActivity() {
 
         // 2. CANCEL
         binding.cancel.setOnClickListener {
+            startActivity(Intent(this, MediaPipeActivity::class.java))
             finish()
         }
     }
@@ -133,29 +141,37 @@ class SendRequestActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 서버로 Base64 인코딩된 이미지 보내기
-     * 10초마다 요청 받은 제스처들에 대해 동일한 제스처가 있는지 판별
-     * 매칭된 경우 매칭된 유저들의 정보를 kafka 를 통해 chat-service으로 전송
-     * chat-service 에서 해당 정보를 수신(consume) 한 뒤 채팅방 생성(sessionId 값이 생성되며 DB에 채팅방 정보가 저장됨)
-     * 생성된 채팅방 정보를 kafka 를 통해 앱으로 전송
-     * 앱에서는 해당 정보를 consume 한 후에 sessionId로 웹소켓에 접속
-     */
-    private fun sendGestureMatching(supplementServiceGesture: IRetrofitGesture, gesture: String) {
-        val token = AppUtil.prefs.getString("token", null)
-        val userId = AppUtil.prefs.getString("userId", null)
-        val body = mapOf("gesture" to gesture)
-        supplementServiceGesture.getGestureMatching(token, userId, body).enqueue(object:
-            Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                Log.d("GESTURE RESPONSE", "RESPONSE")
+    fun rotateBitmap(bitmap: Bitmap, orientation: Int): Bitmap? {
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_NORMAL -> return bitmap
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.setScale(-1F, 1F)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.setRotate(180F)
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> {
+                matrix.setRotate(180F)
+                matrix.postScale(-1F, 1F)
             }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Log.d("GESTURE ERROR", "ERROR")
+            ExifInterface.ORIENTATION_TRANSPOSE -> {
+                matrix.setRotate(90F)
+                matrix.postScale(-1F, 1F)
             }
-
-        })
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.setRotate(90F)
+            ExifInterface.ORIENTATION_TRANSVERSE -> {
+                matrix.setRotate(-90F)
+                matrix.postScale(-1F, 1F)
+            }
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.setRotate(-90F)
+            else -> return bitmap
+        }
+        return try {
+            val bmRotated =
+                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+            bitmap.recycle()
+            bmRotated
+        } catch (e: OutOfMemoryError) {
+            e.printStackTrace()
+            null
+        }
     }
 
     // extension function to convert bitmap to base64 string
@@ -169,5 +185,9 @@ class SendRequestActivity : AppCompatActivity() {
     private fun initGestureRetrofit() {
         retrofit = GestureServiceURL.getInstance()
         supplementServiceGesture = retrofit.create(IRetrofitGesture::class.java)
+    }
+
+    private fun stopCurrentPipeline() {
+        hands?.close()
     }
 }
