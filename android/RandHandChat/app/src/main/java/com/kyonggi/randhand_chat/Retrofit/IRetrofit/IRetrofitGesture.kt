@@ -7,7 +7,7 @@ interface IRetrofitGesture {
     // 추가되는 url를 넣는다
     // 채팅 매칭 생성 요청
     @POST("queue")
-    fun getGestureMatching(
+    fun sendGestureMatching(
         @Header("Authorization") userToken: String,
         @Header("userId") userId: String,
         @Body gesture: Map<String, String>

@@ -75,7 +75,6 @@ class ChatActivity : AppCompatActivity() {
          * 툴바 설정해준다
          */
         setSupportActionBar(chatBinding.toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(true)
 
         initRetrofit()
         sessionId = intent.getStringExtra("sessionId").toString()
@@ -149,10 +148,13 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.contextOutChatRoom -> {
+            R.id.outChatRoom -> {
                 /**
                  * 채팅방 나가기
                  */
+                val token = AppUtil.prefs.getString("token", null)
+                val userId = AppUtil.prefs.getString("userId", null)
+                deleteChatRoom(supplementServiceChat, token, userId)
                 super.onOptionsItemSelected(item)
             }
             R.id.search_message -> {
@@ -167,6 +169,31 @@ class ChatActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    /**
+     * 채팅방 나가기
+     */
+    private fun deleteChatRoom(supplementServiceChat: IRetrofitChat, token: String, userId: String) {
+        supplementServiceChat.removeChatRoom(sessionId ,token, userId).enqueue(object: Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
+
+                when (response.code()) {
+                    200 -> {
+                        chatDAO.deleteRoomInfo(chatRoomInfo)
+                        Toast.makeText(this@ChatActivity, "채팅방을 나갔습니다.", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                    400 -> {
+                        Log.d("ERROR", "오류: ChatActivity.deleteChatRoom STATUS CODE 400")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("ERROR", "오류: ChatActivity.deleteChatRoom")
+            }
+        })
     }
 
     /**
@@ -188,7 +215,7 @@ class ChatActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<List<ResponseUser>>, t: Throwable) {
-                    Log.d("ERROR", "오류: FriendFragment.addFriend")
+                    Log.d("ERROR", "오류: ChatActivity.addFriend")
                 }
 
             })
