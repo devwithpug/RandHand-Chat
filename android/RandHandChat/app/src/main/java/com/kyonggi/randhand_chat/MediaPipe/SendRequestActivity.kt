@@ -56,6 +56,9 @@ class SendRequestActivity : AppCompatActivity() {
         // get byteArrayImage from MediaPipeActivity
         val byteArrayImage = intent.getByteArrayExtra("ByteArrayImage")
 
+        val exif = Exif.createFromInputStream(ByteArrayInputStream(byteArrayImage))
+        val rotation = exif.rotation
+
         // byteArray to Bitmap & send to MediaPipe
         val bitmap = BitmapFactory.decodeByteArray(byteArrayImage, 0, byteArrayImage?.size!!)
         val rotateBitmap = rotateBitmap(bitmap, rotation)
@@ -81,6 +84,31 @@ class SendRequestActivity : AppCompatActivity() {
             startActivity(Intent(this, MediaPipeActivity::class.java))
             finish()
         }
+    }
+
+    private fun sendGestureMatching(supplementServiceGesture: IRetrofitGesture, gesture: String) {
+        val token = AppUtil.prefs.getString("token", null)
+        val userId = AppUtil.prefs.getString("userId", null)
+        val body = mapOf("gesture" to gesture)
+        supplementServiceGesture.sendGestureMatching(token, userId, body).enqueue(object :
+            Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                when (response.code()) {
+                    200 -> {
+                        val intent = Intent(this@SendRequestActivity, ProgressActivity::class.java)
+                        startActivity(intent)
+                        stopCurrentPipeline()
+                        finish()
+                        Log.d("GESTURE RESPONSE", "RESPONSE")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.d("GESTURE ERROR", "ERROR")
+            }
+
+        })
     }
 
     /** The core MediaPipe Hands setup workflow for its static image mode.  */
