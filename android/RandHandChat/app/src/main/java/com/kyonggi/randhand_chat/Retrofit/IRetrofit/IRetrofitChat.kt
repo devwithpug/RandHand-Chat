@@ -27,6 +27,7 @@ interface IRetrofitChat {
     // 채팅방 나가기 요청
     @GET("chats/leave")
     fun removeChatRoom(
+        @Header("sessionId") sessionId: String,
         @Header("Authorization") userToken: String,
         @Header("userId") userId: String,
     ) : Call<Void>
