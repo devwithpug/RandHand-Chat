@@ -6,10 +6,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Bundle
 import android.util.Log
-import android.view.Surface.ROTATION_0
-import android.view.Surface.ROTATION_270
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -79,10 +78,10 @@ class MediaPipeActivity : AppCompatActivity() {
                 override fun onCaptureSuccess(imageproxy: ImageProxy) {
                     val stream = ByteArrayOutputStream()
                     var bitmap = decodeBitmap(imageproxy)
-
+                    val rotation = imageproxy.imageInfo.rotationDegrees
                     bitmap = Bitmap.createScaledBitmap(bitmap!!, 800,600,true)
-
-                    bitmap?.compress(Bitmap.CompressFormat.JPEG, 70, stream)
+                    val rotateBitmap = getRotatedBitmap(bitmap, rotation)
+                    rotateBitmap?.compress(Bitmap.CompressFormat.JPEG, 70, stream)
                     val bytes = stream.toByteArray()
                     val intent = Intent(this@MediaPipeActivity, SendRequestActivity::class.java )
                     intent.putExtra("ByteArrayImage", bytes)
@@ -111,14 +110,12 @@ class MediaPipeActivity : AppCompatActivity() {
 
             // Preview
             val preview = Preview.Builder()
-                .setTargetRotation(ROTATION_0)
                 .build()
                 .also {
                     it.setSurfaceProvider(binding.cameraPreview.surfaceProvider)
                 }
 
             imageCapture = ImageCapture.Builder()
-                .setTargetRotation(ROTATION_270)
                 .build()
 
             // Select back camera as a default
@@ -165,5 +162,13 @@ class MediaPipeActivity : AppCompatActivity() {
                 finish()
             }
         }
+    }
+
+    fun getRotatedBitmap(bitmap: Bitmap?, degrees: Int): Bitmap? {
+        if (bitmap == null) return null
+        if (degrees == 0) return bitmap
+        val m = Matrix()
+        m.setRotate(degrees.toFloat(), bitmap.width.toFloat() / 2, bitmap.height.toFloat() / 2)
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, m, true)
     }
 }

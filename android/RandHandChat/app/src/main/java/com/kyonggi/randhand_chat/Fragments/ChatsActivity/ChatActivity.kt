@@ -157,12 +157,7 @@ class ChatActivity : AppCompatActivity() {
                 deleteChatRoom(supplementServiceChat, token, userId)
                 super.onOptionsItemSelected(item)
             }
-            R.id.search_message -> {
-                /**
-                 * 메시지 찾기
-                 */
-                super.onOptionsItemSelected(item)
-            }
+
             R.id.addFriend -> {
                 addFriend(supplementServiceUser, chatId)
                 super.onOptionsItemSelected(item)

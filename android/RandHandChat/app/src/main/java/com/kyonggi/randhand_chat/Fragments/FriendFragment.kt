@@ -60,7 +60,6 @@ class FriendFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_toolbar_menu, menu)
 
-        val search = menu?.findItem(R.id.search_user)?.actionView as SearchView
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -104,7 +103,7 @@ class FriendFragment : Fragment() {
         }
     }
 
-    fun getMyInfo(supplementService: IRetrofitUser, userId: String) {
+    private fun getMyInfo(supplementService: IRetrofitUser, userId: String) {
         val token = AppUtil.prefs.getString("token",null)
         val userId = AppUtil.prefs.getString("userId", null)
         supplementService.getUserInfo(token, userId, userId).enqueue(object : Callback<ResponseUser> {
@@ -127,6 +126,7 @@ class FriendFragment : Fragment() {
                     myProfile.setOnClickListener {
                         val intent = Intent(activity, ProfileActivity::class.java)
                         intent.putExtra("userId", AppUtil.prefs.getString("userId", null))
+                        intent.putExtra("myProfile","myProfile")
                         startActivity(intent)
                     }
                 }

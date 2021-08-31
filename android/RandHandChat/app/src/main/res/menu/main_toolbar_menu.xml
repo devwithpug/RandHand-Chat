@@ -3,11 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
    <item
-       android:id="@+id/search_user"
-       android:title="searchTitle"
-       app:actionViewClass="android.widget.SearchView"
-       app:showAsAction="ifRoom"/>
-   <item
        android:id="@+id/blockedList"
        android:title="차단목록"
        app:showAsAction="never"/>

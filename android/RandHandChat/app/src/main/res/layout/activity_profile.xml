@@ -46,23 +46,22 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/editProfile"
         app:layout_constraintEnd_toEndOf="@+id/profile_name"
         app:layout_constraintStart_toStartOf="@+id/profile_name"
         app:layout_constraintTop_toBottomOf="@+id/profile_name"
         tools:text="상태메세지" />
 
-    <ImageButton
+    <Button
         android:id="@+id/editProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:contextClickable="true"
-        android:minWidth="30dp"
-        android:minHeight="30dp"
+        android:visibility="gone"
+        android:text="편집"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@android:drawable/ic_menu_edit" />
+        tools:ignore="SpeakableTextPresentCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

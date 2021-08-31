@@ -16,7 +16,7 @@
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/layout/activity_main.xml" value="0.18110236220472442" />
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/layout/activity_media_pipe.xml" value="0.4" />
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/layout/activity_message_recycler_view.xml" value="0.264" />
-        <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/layout/activity_profile.xml" value="0.176" />
+        <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/layout/activity_profile.xml" value="0.33" />
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/layout/activity_progess.xml" value="0.264" />
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/layout/activity_progress.xml" value="0.23541666666666666" />
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/layout/activity_send_request.xml" value="0.34791666666666665" />
@@ -41,7 +41,7 @@
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/menu/main_navigation_menu.xml" value="0.264" />
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/menu/main_toolbar_menu.xml" value="0.33" />
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/menu/message_context_menu.xml" value="0.29010416666666666" />
-        <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/menu/message_toolbar_menu.xml" value="0.15208333333333332" />
+        <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/menu/message_toolbar_menu.xml" value="0.25" />
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/menu/messagelist_context_menu.xml" value="0.1" />
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/menu/messagelist_toolbar_menu.xml" value="0.29010416666666666" />
         <entry key="..\:/Users/mnc5/Documents/RandHand-Chat/android/RandHandChat/app/src/main/res/menu/user_context_menu.xml" value="0.23541666666666666" />

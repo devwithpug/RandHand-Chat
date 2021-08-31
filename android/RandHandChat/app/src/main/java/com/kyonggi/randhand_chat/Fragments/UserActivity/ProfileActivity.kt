@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import com.bumptech.glide.Glide
 import com.kyonggi.randhand_chat.Domain.User.ResponseUser
 import com.kyonggi.randhand_chat.R
@@ -29,15 +30,20 @@ class ProfileActivity : AppCompatActivity() {
 
         initRetrofit()
         val userId = intent.getStringExtra("userId")
+        val check = intent.getStringExtra("myProfile")
         val intent = Intent(this@ProfileActivity, EditProfileActivity::class.java)
         getMyInfo(supplementService, userId!!, intent)
 
         with(binding) {
+            if (check != null) {
+                editProfile.visibility = View.VISIBLE
+            }
             // Edit 버튼 클릭시
             editProfile.setOnClickListener {
                 startActivity(intent)
             }
         }
+
     }
 
     override fun onRestart() {
