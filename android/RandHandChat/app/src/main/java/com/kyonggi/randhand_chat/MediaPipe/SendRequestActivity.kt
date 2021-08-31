@@ -56,14 +56,10 @@ class SendRequestActivity : AppCompatActivity() {
         // get byteArrayImage from MediaPipeActivity
         val byteArrayImage = intent.getByteArrayExtra("ByteArrayImage")
 
-        val exif = Exif.createFromInputStream(ByteArrayInputStream(byteArrayImage))
-        val rotation = exif.rotation
-
         // byteArray to Bitmap & send to MediaPipe
         val bitmap = BitmapFactory.decodeByteArray(byteArrayImage, 0, byteArrayImage?.size!!)
-        val rotateBitmap = rotateBitmap(bitmap, rotation)
 
-        hands?.send(rotateBitmap)
+        hands?.send(bitmap)
 
         // 1. SEND TO SERVER
         binding.imageSend.setOnClickListener {
@@ -166,39 +162,6 @@ class SendRequestActivity : AppCompatActivity() {
                     wristLandmark.x, wristLandmark.y, wristLandmark.z
                 )
             )
-        }
-    }
-
-    fun rotateBitmap(bitmap: Bitmap, orientation: Int): Bitmap? {
-        val matrix = Matrix()
-        when (orientation) {
-            ExifInterface.ORIENTATION_NORMAL -> return bitmap
-            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.setScale(-1F, 1F)
-            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.setRotate(180F)
-            ExifInterface.ORIENTATION_FLIP_VERTICAL -> {
-                matrix.setRotate(180F)
-                matrix.postScale(-1F, 1F)
-            }
-            ExifInterface.ORIENTATION_TRANSPOSE -> {
-                matrix.setRotate(90F)
-                matrix.postScale(-1F, 1F)
-            }
-            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.setRotate(90F)
-            ExifInterface.ORIENTATION_TRANSVERSE -> {
-                matrix.setRotate(-90F)
-                matrix.postScale(-1F, 1F)
-            }
-            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.setRotate(-90F)
-            else -> return bitmap
-        }
-        return try {
-            val bmRotated =
-                Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
-            bitmap.recycle()
-            bmRotated
-        } catch (e: OutOfMemoryError) {
-            e.printStackTrace()
-            null
         }
     }
 
