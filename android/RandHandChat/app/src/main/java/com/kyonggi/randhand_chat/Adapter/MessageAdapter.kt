@@ -124,9 +124,6 @@ class MessageAdapter(private var messages: MutableList<MessageTable>) : Recycler
                         R.id.deleteMessage -> {
                             deleteMessage(message)
                         }
-                        R.id.copyMessage -> {
-//                            copyMessage(message)
-                        }
                     }
                     true
                 }

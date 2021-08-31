@@ -3,7 +3,4 @@
     <item
         android:id="@+id/deleteMessage"
         android:title="메시지 삭제"/>
-    <item
-        android:id="@+id/copyMessage"
-        android:title="메시지 복사"/>
 </menu>

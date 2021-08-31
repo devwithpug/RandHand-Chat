@@ -3,13 +3,10 @@ package com.kyonggi.randhand_chat
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Looper
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.kyonggi.randhand_chat.databinding.ActivitySplashBinding
-import java.util.logging.Handler
 
 class SplashActivity : AppCompatActivity() {
-//    private val SPLASH_VIEW_TIME: Long by lazy { 1500 }
     private lateinit var splashBinding: ActivitySplashBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,11 +31,5 @@ class SplashActivity : AppCompatActivity() {
             }
 
         })
-
-//        Handler(Looper.getMainLooper()).postDelayed({
-//            val intent = Intent(this@SplashActivity, LoginActivity::class.java)
-//            startActivity(intent)
-//            finish()
-//        }, SPLASH_VIEW_TIME)
     }
 }

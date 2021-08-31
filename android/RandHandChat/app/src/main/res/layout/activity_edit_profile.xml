@@ -32,8 +32,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="사용자"
+        android:layout_marginTop="32dp"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/statusMessage"
         app:layout_constraintEnd_toEndOf="@+id/profileCardView"
         app:layout_constraintStart_toStartOf="@+id/profileCardView"
         app:layout_constraintTop_toBottomOf="@+id/btnGallery">
@@ -44,14 +44,14 @@
         android:id="@+id/statusMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
         android:hint="상태메시지를 입력해 주세요."
         android:maxLength="60"
+        android:minHeight="48dp"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/editButton"
         app:layout_constraintEnd_toEndOf="@+id/profileName"
-        app:layout_constraintHorizontal_bias="0.507"
-        app:layout_constraintStart_toStartOf="@+id/profileName" />
+        app:layout_constraintStart_toStartOf="@+id/profileName"
+        app:layout_constraintTop_toBottomOf="@+id/profileName" />
 
     <ImageButton
         android:id="@+id/btnGallery"
