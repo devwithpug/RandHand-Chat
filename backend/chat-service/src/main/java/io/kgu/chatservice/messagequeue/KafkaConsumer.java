@@ -17,7 +17,6 @@ public class KafkaConsumer {
 
     private final ChatService chatService;
     private final ObjectMapper objectMapper;
-    private final KafkaProducer kafkaProducer;
 
     @KafkaListener(topics = "${kafka.topic.match}")
     public void handleMatchingQueue(String kafkaMessage) throws JsonProcessingException {
@@ -26,8 +25,7 @@ public class KafkaConsumer {
 
         ChatDto chatDto = objectMapper.readValue(kafkaMessage, ChatDto.class);
 
-        chatDto = chatService.createChatRoom(chatDto);
-        kafkaProducer.sendMatchedInfo(chatDto);
+        chatService.createChatRoom(chatDto);
 
     }
 

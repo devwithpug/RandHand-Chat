@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -47,28 +45,12 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ProducerFactory<String, String> producerFactory() {
-        Map<String, Object> properties = new HashMap<>();
-
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("kafka.address"));
-        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-
-        return new DefaultKafkaProducerFactory<>(properties);
-    }
-
-    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
 
         ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<>();
         kafkaListenerContainerFactory.setConsumerFactory(consumerFactory());
 
         return kafkaListenerContainerFactory;
-    }
-
-    @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
     }
 
     /**
@@ -82,14 +64,4 @@ public class KafkaConfig {
                 .replicas(1)
                 .build();
     }
-
-    @Bean
-    public NewTopic chatTopic() {
-        return TopicBuilder.name("chat-topic")
-                .partitions(1)
-                .replicas(1)
-                .build();
-    }
-
-
 }
