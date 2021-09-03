@@ -28,6 +28,9 @@ ext {
 
 dependencies {
 
+    // for Push-service
+    implementation 'com.google.firebase:firebase-admin:8.0.1'
+
     // for Amazon S3
     implementation 'commons-io:commons-io:2.5'
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
@@ -65,7 +68,7 @@ dependencies {
     testImplementation 'com.h2database:h2:1.4.200'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    
+
 }
 
 dependencyManagement {
