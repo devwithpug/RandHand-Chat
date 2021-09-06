@@ -107,8 +107,8 @@ for idx, file in enumerate(IMAGE_FILES):
 # =======================================================================================
 #%%
 
-thumb_false=angle_data[angle_data['angle0']*180/np.pi<90].iloc[:]
-thumb_false.iloc[:,:4] *= 2
+thumb_false=angle_data[angle_data['angle0']*180/np.pi<90].iloc[:,1:]
+thumb_false.iloc[:,0:3] *= 2
 predict = fit_predict(thumb_false, limit=1.5)
 
 print(predict)
