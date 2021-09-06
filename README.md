@@ -1,5 +1,85 @@
 # 👋 랜손챗 : RandHand-Chat 👋
 
+<img src = "https://user-images.githubusercontent.com/63226023/132185973-58a4ea78-a256-45b9-89ee-06c40cd53b3a.gif">
+
+### 01. Welcome, 로그인, 설정 / 프로필 및 변경
+<img src = "https://user-images.githubusercontent.com/63226023/132186204-6bb481e3-c429-4853-b8fc-161334ac04ee.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/132176392-cda026ba-3953-4080-9cb3-309daffe3724.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/132186299-37d1ec92-13ec-4243-849b-01d2e559e300.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/132186811-4826f896-920d-4cca-8273-b0229a883082.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/132186817-9af91391-7bd8-4b74-8856-2f8f75fe3b9e.png" width="15%" height="15%">
+
+### 03. 채팅방, 채팅화면
+<img src = "https://user-images.githubusercontent.com/63226023/132188667-edfb6b59-e191-404f-b15b-c2f203653436.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/132188678-95811e6e-e61c-4297-9617-7c8ebba9352d.png" width="15%" height="15%">
+
+### 04. 랜손채팅, 매칭, 채팅방, 채팅화면
+<img src = "https://user-images.githubusercontent.com/63226023/132188919-15ddf4f5-e09c-40ea-9a62-4ba8e26525ae.jpg" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/132189489-3c122182-c90f-4733-b0b3-b292b712f6f7.gif" width="15.8%" height="15.8%">
+
+### _1. 사용 라이브러리_
+
+* Retrofit
+
+```groovy
+def retrofit_version = '2.9.0' 
+implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+```
+
+* Glide & okhttp
+```groovy
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+```
+
+* Room
+```groovy
+def room_version = "2.2.6"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+```
+
+* Mediapipe
+```groovy
+    // MediaPipe hands solution API and solution-core.
+    implementation 'com.google.mediapipe:solution-core:latest.release'
+    implementation 'com.google.mediapipe:hands:latest.release'
+    // MediaPipe deps
+    implementation 'com.google.flogger:flogger:latest.release'
+    implementation 'com.google.flogger:flogger-system-backend:latest.release'
+    implementation 'com.google.guava:guava:27.0.1-android'
+    implementation 'com.google.protobuf:protobuf-java:3.11.4'
+```
+
+* CameraX
+```groovy
+    // CameraX core library
+    def camerax_version = "1.0.1"
+    implementation "androidx.camera:camera-core:$camerax_version"
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+```
+
+* Event Bus
+```groovy
+    implementation 'org.greenrobot:eventbus:3.2.0'
+```
+---
+
+### _2. 프로그램 Package 구조_
+Package | Detail
+|---|:---
+`Adapter`| 리사이클러뷰 adapter를 위한 패키지
+`Database`|room database 및 db domain 위한 패키지
+`Domain`|서버 통신시 domain 위한 패키지
+`Fragments`|메인 페이지에서 각 fragment를 위한 패키지
+`MediaPipe`|Mediapipe 사용 및 인식된 손 preview를 위한 패키지
+`Retrofit`|서버와 통신을 위한 패키지
+`Util`|앱에 전적으로 사용을 위한 패키지
+
+
 ## 개요
 
 손가락을 통해 임의로 만든 수신호를 인식하여 동일한 수신호를 입력한 상대방과 랜덤으로 매칭해주는 채팅 어플리케이션
@@ -12,7 +92,14 @@
 
 ### Android
 
+* [안드로이드 Debug SHA Key 추출하기](./android/안드로이드%20정리/Android%20Debug%20SHA%20Key.md)
+* [안드로이드 EventBus로 메시지 이벤트 관리](./android/안드로이드%20정리/Android%20EventBus%20사용하기.md)
+* [안드로이드 프로필, 사진 보내기 위한 Glide 라이브러리 사용](./android/안드로이드%20정리/Android%20Glide%20사용하기.md)
+* [안드로이드 백앤드 서버와 통신을 위한 Retrofit 사용](./android/안드로이드%20정리/Android%20Retrofit%20사용하기.md)
+
 ### Object Detection
+
+* [handDetection & matching Algorithm](./handDetection/README.md)
 
 ### Backend
 

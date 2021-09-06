@@ -2,7 +2,7 @@
 https://bumptech.github.io/glide/
 
 ![image](https://user-images.githubusercontent.com/63226023/132191940-6893d6dc-7dba-45b0-a816-c5200f30092d.png)
-    
+
 * Google에서 공개한 이미지 로딩 라이브러리이다.
 * 성능이 가장 좋다고 알려져있다.
 * 사진, 동영상, gif 파일 로딩도 가능하다.
