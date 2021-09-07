@@ -4,7 +4,15 @@
 
 ## 개요
 
-손 모양을 통해 임의로 만든 수신호(Hand gesture)를 인식하여 동일한 수신호를 입력한 상대방과 랜덤으로 매칭해주는 채팅 애플리케이션
+손 모양을 통해 임의로 만든 수신호(Hand gesture)를 인식하여 동일한 수신호를 입력한 상대방과 랜덤으로 매칭해주는 채팅 애플리케이션입니다. [Mediapipe - Hands](https://google.github.io/mediapipe/solutions/hands)를 이용하여 개발했습니다.
+
+## 팀원
+
+| 팀원                                          | 역할                                     |
+| :-------------------------------------------- | :--------------------------------------- |
+| 😆 [최준규(PM)](https://github.com/devwithpug) | Backend (Spring framworks, AWS, CICD)    |
+| 😎 [박준후](https://github.com/ppeper)         | 안드로이드 애플리케이션 with Kotlin      |
+| 🤢 [한동현](https://github.com/DongHyun99)     | Object Detection (Mediapipe, Tensorflow) |
 
 ## 애플리케이션 구성
 
@@ -31,81 +39,18 @@
 <img src = "https://user-images.githubusercontent.com/63226023/132189489-3c122182-c90f-4733-b0b3-b292b712f6f7.gif" width="15.8%" height="15.8%">
 </div>
 
-### _1. 사용 라이브러리_
-
-* Retrofit
-
-```groovy
-def retrofit_version = '2.9.0' 
-implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
-```
-
-* Glide & okhttp
-```groovy
-implementation 'com.github.bumptech.glide:glide:4.12.0'
-annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
-```
-
-* Room
-```groovy
-def room_version = "2.2.6"
-
-implementation "androidx.room:room-runtime:$room_version"
-kapt "androidx.room:room-compiler:$room_version"
-implementation "androidx.room:room-ktx:$room_version"
-```
-
-* Mediapipe
-```groovy
-// MediaPipe hands solution API and solution-core.
-implementation 'com.google.mediapipe:solution-core:latest.release'
-implementation 'com.google.mediapipe:hands:latest.release'
-// MediaPipe deps
-implementation 'com.google.flogger:flogger:latest.release'
-implementation 'com.google.flogger:flogger-system-backend:latest.release'
-implementation 'com.google.guava:guava:27.0.1-android'
-implementation 'com.google.protobuf:protobuf-java:3.11.4'
-```
-
-* CameraX
-```groovy
-// CameraX core library
-def camerax_version = "1.0.1"
-
-implementation "androidx.camera:camera-core:$camerax_version"
-implementation "androidx.camera:camera-camera2:$camerax_version"
-implementation "androidx.camera:camera-lifecycle:$camerax_version"
-```
-
-* Event Bus
-```groovy
-implementation 'org.greenrobot:eventbus:3.2.0'
-```
----
-
-### _2. 프로그램 Package 구조_
-| Package     | Detail                                            |
-| ----------- | :------------------------------------------------ |
-| `Adapter`   | 리사이클러뷰 adapter를 위한 패키지                |
-| `Database`  | room database 및 db domain 위한 패키지            |
-| `Domain`    | 서버 통신시 domain 위한 패키지                    |
-| `Fragments` | 메인 페이지에서 각 fragment를 위한 패키지         |
-| `MediaPipe` | Mediapipe 사용 및 인식된 손 preview를 위한 패키지 |
-| `Retrofit`  | 서버와 통신을 위한 패키지                         |
-| `Util`      | 앱에 전적으로 사용을 위한 패키지                  |
-
 ## 기술 스택
 
 ![stack](https://user-images.githubusercontent.com/69145799/132272891-444f8c9a-9fd6-472b-9d92-b5980741aa0e.png)
 
-> Spring Cloud 프레임워크 및 AMQP 생략(Spring Cloud Eureka, Spring Cloud Config, Kafka)
+> Spring Cloud 프레임워크 및 AMQP 생략(Spring Cloud Eureka, Spring Cloud Config, Kafka)   
 > 스프링 프로젝트의 `application.properties` 설정 파일 외부 관리 : [RandHand-config](https://github.com/devwithpug/RandHand-config)
 
 ## 개발 일지
 
 ### Android
 
+* [안드로이드 사용 라이브러리 및 패키지 구조](./android/안드로이드%20정리/README.md)
 * [안드로이드 Debug SHA Key 추출하기](./android/안드로이드%20정리/Android%20Debug%20SHA%20Key.md)
 * [안드로이드 EventBus로 메시지 이벤트 관리](./android/안드로이드%20정리/Android%20EventBus%20사용하기.md)
 * [안드로이드 프로필, 사진 보내기 위한 Glide 라이브러리 사용](./android/안드로이드%20정리/Android%20Glide%20사용하기.md)
