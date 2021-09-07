@@ -116,9 +116,10 @@ class FriendFragment : Fragment() {
 
                     Glide.with(this@FriendFragment)
                         .load(info?.picture)
-                        .error(Glide.with(this@FriendFragment)
+                        .error(
+                            Glide.with(this@FriendFragment)
                             .load(R.drawable.no_image)
-                            .into(myProfileImage))
+                        )
                         .into(myProfileImage)
 
 

@@ -15,7 +15,7 @@ interface IRetrofitGesture {
 
     // 채팅 매칭 취소
     @POST("queue/cancel")
-    fun getCancelMatching(
+    fun sendCancelMatching(
         @Header("Authorization") userToken: String,
         @Header("userId") userId: String
     ): Call<Void>
