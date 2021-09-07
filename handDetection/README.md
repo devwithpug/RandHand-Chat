@@ -10,7 +10,7 @@ mediapipe를 이용한 손을 인식하고, 인식한 손에 대한 landmark를 
 
 ### 구성도  
 
-<img src="img/1.png">  
+![img](./img/1.png)  
 
 간단하게 정리하자면 mediapipe를 통해 손의 Landmark 좌표를 추출하고 벡터로 변환한 다음 각 Landmark의 각도를 구해서 비지도 학습으로 clustering 하는 알고리즘이다.  
 (PCA 알고리즘은 보기 쉽게 하기 위해 사용했고 실제로 값을 계산할때는 사용하지 않는다.)  
@@ -53,7 +53,7 @@ if result.multi_hand_landmarks is not None:
 `joint`에는 x, y, z 좌표가 기록되어있는데 구해야 할 벡터들은 parent joint에 child joint를 빼주어 생성한다.  
 각 Landmark에 대한 위치는 아래의 그림에 나타내었다.  
 
-<img src = "img/2.png">  
+![img](./img/2.png)  
 
 우리가 구하고자 하는 각도는 0에서부터 뻗어 나가는 각 손가락 끝 점까지의 각도이므로 벡터 사이의 내적에 대한 `arccos` 값을 구해서 각도에 대한 절대 값을 구한다. 여기서 손가락은 항상 안쪽으로 구부리므로 벡터의 방향을 생각해서 절대값 그대로의 각도를 사용한다.  
 
@@ -81,7 +81,7 @@ angle = np.concatenate((angle, angle2),axis=0)
 (각 각 각도가 90도 이상인지 아닌지로 판별했다.)  
 총 38장의 데이터에 대해서 비굫 보았을 때 결과는 다음과 같다.    
 
-<img src="img/3.png">  
+![img](./img/3.png)  
 
 이 방법은 엄지를 핀 것과 굽힌 것에 대해 정확히 구분해 내었고 더 군집으로 묶기가 용이해 졌다.  
 그 후 군집으로 묶을 방법을 생각해보았다.  
@@ -109,4 +109,4 @@ angle = np.concatenate((angle, angle2),axis=0)
 전체적으로 볼 때 90% 가량의 Accracy를 보여줬으나 다른 사진에 대해서 비슷한 성능을 낼 수 있을 것이라는 보장이 없다.  
 따라서 앞으로 알고리즘을 개선할 필요성이 있다.  
 
-<img src = "img/4.png">  
+![img](./img/4.png)  
