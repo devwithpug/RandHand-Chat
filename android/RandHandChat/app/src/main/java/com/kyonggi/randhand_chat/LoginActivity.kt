@@ -51,12 +51,7 @@ class LoginActivity : AppCompatActivity() {
 
         loginBinding.googleLoginButton.setOnClickListener {
             signIn()
-
         }
-        loginBinding.testButton.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
-        }
-
 
     }
 
@@ -103,8 +98,14 @@ class LoginActivity : AppCompatActivity() {
             val googleFirstName = account?.givenName ?: ""
             val googleLastName = account?.familyName ?: ""
             val name = googleLastName+googleFirstName
-            val picture = account?.photoUrl.toString()
-            val client = Client(null, auth, email, name, null, picture)
+            val picture = account?.photoUrl
+            val photo : String?
+            if (picture == null) {
+                photo = null
+            } else {
+                photo = picture.toString()
+            }
+            val client = Client(null, auth, email, name, null, photo)
 
             // 이메일 저장
             email?.let { AppUtil.prefs.setString("email", it) }
