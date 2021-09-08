@@ -36,7 +36,7 @@
 ### 03. 랜손채팅, 매칭, 채팅방, 채팅화면
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
 <img src = "https://user-images.githubusercontent.com/63226023/132188919-15ddf4f5-e09c-40ea-9a62-4ba8e26525ae.jpg" width="15%" height="15%">
-<img src = "https://user-images.githubusercontent.com/63226023/132189489-3c122182-c90f-4733-b0b3-b292b712f6f7.gif" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/132189489-3c122182-c90f-4733-b0b3-b292b712f6f7.gif" width="15.8%" height="15.8%">
 </div>
 
 > 시연 영상: [https://youtu.be/46Wa7FWnS6k](https://youtu.be/46Wa7FWnS6k)
