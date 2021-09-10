@@ -23,7 +23,7 @@ HOST_IP = args.host
 rabbitmq_host = args.rabbitmq_host
 username = args.username
 password = args.password
-log(HOST_IP, rabbitmq_host, username, password)
+log("{} {} {} {}".format(HOST_IP, rabbitmq_host, username, password))
 
 channel = None
 credentials = pika.PlainCredentials(username=username, password=password)
