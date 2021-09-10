@@ -12,10 +12,6 @@ docker pull devwithpug/gesture-service:0.1
 /home/ec2-user/sleep.sh
 /usr/local/bin/docker-compose -f /home/ec2-user/docker-compose.yml up -d gateway-service
 /home/ec2-user/sleep.sh
-/usr/local/bin/docker-compose -f /home/ec2-user/docker-compose.yml up -d zookeeper
-/home/ec2-user/sleep.sh
-/usr/local/bin/docker-compose -f /home/ec2-user/docker-compose.yml up -d kafka
-/home/ec2-user/sleep.sh
 /usr/local/bin/docker-compose -f /home/ec2-user/docker-compose.yml up -d chat-service
 /home/ec2-user/sleep.sh
 /usr/local/bin/docker-compose -f /home/ec2-user/docker-compose.yml up -d gesture-service
