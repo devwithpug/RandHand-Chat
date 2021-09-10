@@ -1,9 +1,8 @@
 from flask import Flask, request, Response
 from flask_apscheduler import APScheduler, scheduler
 import py_eureka_client.eureka_client as eureka_client
-import socket, argparse, time, json
+import socket, argparse, time, json, pika
 from contextlib import closing
-from kafka import KafkaProducer, errors
 from gesture import Gesture_Predict
 
 def log(msg):
@@ -15,24 +14,30 @@ def log(msg):
 gesture_dict = {}
 parser = argparse.ArgumentParser()
 parser.add_argument('host', nargs='?', type=str, default='localhost', help='ex) "localhost"')
+parser.add_argument('rabbitmq_host', nargs='?', type=str, default='localhost', help='ex) "localhost"')
+parser.add_argument('username', nargs='?', type=str, default='guest', help='ex) "guest"')
+parser.add_argument('password', nargs='?', type=str, default='guest', help='ex) "guest"')
 args = parser.parse_args()
 
-EUREKA_IP = args.host
+HOST_IP = args.host
+rabbitmq_host = args.rabbitmq_host
+username = args.username
+password = args.password
 
-producer = None
+channel = None
+credentials = pika.PlainCredentials(username=username, password=password)
 
-while producer is None:
+while channel is None:
     try:
-        producer = KafkaProducer(acks=0,
-                                compression_type='gzip', 
-                                bootstrap_servers=[EUREKA_IP+':9092'],
-                                value_serializer=lambda x: json.dumps(x).encode('utf-8'))
-    except errors.NoBrokersAvailable:
-        log("NoBrokersAvailable! retry in 1m")
+        connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host, '5672', credentials=credentials))
+        channel = connection.channel()
+    except RuntimeError as err:
+        log(err + "\nretry in 1m")
         time.sleep(60.0)
 
-predict = Gesture_Predict(limit=1.5)
+channel.exchange_declare(exchange='match.direct.exchange', exchange_type='fanout', durable=False)
 
+predict = Gesture_Predict(limit=1.5)
 rest_port = 5000
 
 # 랜덤 포트 설정
@@ -41,7 +46,7 @@ with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     rest_port = s.getsockname()[1]
 
-eureka_client.init(eureka_server=EUREKA_IP+":8761/eureka",
+eureka_client.init(eureka_server=HOST_IP+":8761/eureka",
                     app_name="gesture-service",
                     instance_port=rest_port)
 
@@ -51,7 +56,8 @@ scheduler.api_enabled = True
 scheduler.init_app(app)
 scheduler.start()
 
-@scheduler.task('interval', id='predict_gesture', seconds=15)
+
+@scheduler.task('interval', id='predict_gesture', seconds=10)
 def do_predict():
 
     if len(gesture_dict) > 0:
@@ -71,14 +77,16 @@ def do_predict():
                 log("New chat room created! : {}".format(ids))
 
                 value = {'userIds': ids}
-                producer.send('match-topic', value=value)
+                body = json.dumps(value)
+
+                channel.basic_publish(
+                    exchange='match.direct.exchange',
+                    routing_key='match.queue',
+                    body=body
+                )
 
             log("gesture_queue : {}".format(list(gesture_dict.keys())))
 
-# TODO - chat room 생성한뒤에 chat-service [match-topic] 전송까지 완료
-# TODO - chat-service 에서 [match-topic] consume하여 chatroom 싱글턴 리스트로 관리하고
-# TODO - [chat-topic] 으로 chatroom 전송 & 안드에서 컨슘하여 채팅방 접속
-# TODO - 안드에서 큐 삭제 요청이 오거나 채팅방 나가기 요청이 오는 경우 chatroom 리스트에서 sessionId삭제
 
 # create Queue
 @app.route("/queue", methods=['POST'])
@@ -129,13 +137,4 @@ def health():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port= rest_port)
-
-
-# 참고할 것
-# KAFKA
-# https://pypi.org/project/kafka-python/
-# https://kafka-python.readthedocs.io/en/master/usage.html
-# https://ichi.pro/ko/socketioleul-sayonghayeo-kafka-mesijileul-saengseong-sobihaneun-flask-api-bildeu-164520298467772
-
-# DOCKER
-# https://runnable.com/docker/python/dockerize-your-flask-application
+    connection.close()
