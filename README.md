@@ -10,7 +10,7 @@
 
 | 팀원                                          | 역할                                     |
 | :-------------------------------------------- | :--------------------------------------- |
-| 😆 [최준규(PM)](https://github.com/devwithpug) | Backend (Spring framworks, AWS, CICD)    |
+| 😆 [최준규(PM)](https://github.com/devwithpug) | Backend (Spring frameworks, AWS, CI/CD)  |
 | 😎 [박준후](https://github.com/ppeper)         | 안드로이드 애플리케이션 with Kotlin      |
 | 🤢 [한동현](https://github.com/DongHyun99)     | Object Detection (Mediapipe, Tensorflow) |
 
