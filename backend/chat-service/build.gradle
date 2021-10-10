@@ -28,6 +28,9 @@ ext {
 
 dependencies {
 
+    // for Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.5.2'
+
     // for Push-service
     implementation 'com.google.firebase:firebase-admin:8.0.1'
 

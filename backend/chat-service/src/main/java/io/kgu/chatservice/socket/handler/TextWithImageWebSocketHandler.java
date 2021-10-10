@@ -6,6 +6,10 @@ import io.kgu.chatservice.repository.ChatRepository;
 import io.kgu.chatservice.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.connection.Message;
+import org.springframework.data.redis.connection.MessageListener;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,7 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,21 +28,43 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Transactional
 @RequiredArgsConstructor
-public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
+public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler implements MessageListener {
 
     private final MessageService messageService;
     private final ChatRepository chatRepository;
 
-    private static Set<WebSocketSession> sessions = new ConcurrentHashMap().newKeySet();
+    private final RedisMessageListenerContainer container;
+
+    // 웹소켓 세션 관리
+    private static final Set<WebSocketSession> sessions = ConcurrentHashMap.newKeySet();
+
+    // ELB 를 통해 현재 EC2 인스턴스에 접속한 유저 관리
+    private static final Map<String, Set<String>> users = new ConcurrentHashMap<>();
+
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
         if (session.getUri().getPath().equals("/websocket/session/")) {
             throw new AccessDeniedException("sessionId 가 없습니다.");
+        } else if (!session.getHandshakeHeaders().containsKey("userId")) {
+            throw new AccessDeniedException("userId 가 없습니다.");
         }
-        
+        String sessionId = session.getUri().getPath().replace("/websocket/session/", "");
+        String userId = session.getHandshakeHeaders().get("userId").get(0);
         super.afterConnectionEstablished(session);
+
+        // 유저가 동일한 웹소켓 서버에 접속한 경우
+        if (users.containsKey(sessionId)) {
+            Set<String> set = users.get(sessionId);
+            set.add(userId);
+            users.put(sessionId, set);
+        } else {
+            users.put(sessionId, Set.of(userId));
+
+            // TODO - Subscribe new Redis topic
+        }
+
         sessions.add(session);
         log.info("client{} connect", session.getRemoteAddress());
     }
@@ -49,6 +76,10 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         if (!session.getHandshakeHeaders().containsKey("debug")) {
             verifyAndSaveMessage(session, message);
         }
+
+        // 동일한 웹소켓 서버에 접속하지 않은 경우
+        // Redis 통하여 메시지 publish
+        // TODO -
 
         for (WebSocketSession webSocketSession : sessions) {
             if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
@@ -65,7 +96,10 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
             message = new BinaryMessage(messageDto.getContent().getBytes(StandardCharsets.UTF_8));
         }
 
-        log.info(message.toString());
+        // TODO
+        // 동일한 웹소켓 서버에 접속하지 않은 경우
+        // Redis 통하여 메시지 publish
+
         // 업로드가 완료된 이미지의 Image url 이므로 sender 에게도 전송
         for (WebSocketSession webSocketSession : sessions) {
             webSocketSession.sendMessage(message);
@@ -75,6 +109,27 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
+
+        String sessionId = session.getUri().getPath().replace("/websocket/session/", "");
+        String userId = session.getHandshakeHeaders().get("userId").get(0);
+
+        if (userId == null) {
+            throw new IllegalStateException("웹소켓 연결을 닫는 중 예외 발생 : userId 값이 없습니다.");
+        }
+
+        Set<String> set = users.get(sessionId);
+        // 두 클라이언트 모두 웹소켓에 연결 해제한 경우
+        if (set.size() == 1) {
+            users.remove(sessionId);
+
+            // TODO - Unsubscribe Redis topic
+
+
+        } else {
+            set.remove(userId);
+            users.put(sessionId, set);
+        }
+
         sessions.remove(session);
         log.info("client{} disconnect", session.getRemoteAddress());
     }
@@ -116,4 +171,18 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler {
         return result;
     }
 
+    @Override
+    public void onMessage(Message message, byte[] pattern) {
+
+        // TODO - sessions 를 순환하면서 유저에게 웹소켓 메시지 전송
+
+    }
+
+    private void subscribeNewTopic(String topic) {
+        container.addMessageListener(this, ChannelTopic.of(topic));
+    }
+
+    private void unsubscribeTopic(String topic) {
+        container.removeMessageListener(this, ChannelTopic.of(topic));
+    }
 }

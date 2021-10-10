@@ -6,6 +6,7 @@ import io.kgu.chatservice.socket.handler.TextWithImageWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
@@ -19,10 +20,11 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     private final MessageService messageService;
     private final ChatRepository chatRepository;
+    private final RedisMessageListenerContainer container;
 
     @Bean
     public WebSocketHandler webSocketHandler() {
-        return new TextWithImageWebSocketHandler(messageService, chatRepository);
+        return new TextWithImageWebSocketHandler(messageService, chatRepository, container);
     }
 
     @Bean
