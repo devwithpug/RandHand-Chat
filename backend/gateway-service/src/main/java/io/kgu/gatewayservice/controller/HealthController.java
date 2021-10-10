@@ -1,4 +1,4 @@
-package io.kgu.gatewayservice.webflux;
+package io.kgu.gatewayservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
