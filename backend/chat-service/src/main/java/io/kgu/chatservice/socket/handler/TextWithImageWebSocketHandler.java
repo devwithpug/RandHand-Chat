@@ -4,8 +4,10 @@ import io.kgu.chatservice.domain.dto.MessageDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
 import io.kgu.chatservice.repository.ChatRepository;
 import io.kgu.chatservice.service.MessageService;
+import io.kgu.chatservice.service.RedisService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -32,7 +34,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
 
     private final MessageService messageService;
     private final ChatRepository chatRepository;
-
+    private final RedisService redisService;
     private final RedisMessageListenerContainer container;
 
     // 웹소켓 세션 관리
@@ -61,8 +63,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
             users.put(sessionId, set);
         } else {
             users.put(sessionId, Set.of(userId));
-
-            // TODO - Subscribe new Redis topic
+            subscribeNewTopic(sessionId);
         }
 
         sessions.add(session);
@@ -79,12 +80,24 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
 
         // 동일한 웹소켓 서버에 접속하지 않은 경우
         // Redis 통하여 메시지 publish
-        // TODO -
+        String sessionId = session.getUri().getPath().replace("/websocket/session/", "");
 
-        for (WebSocketSession webSocketSession : sessions) {
-            if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
-            webSocketSession.sendMessage(message);
+        if (users.get(sessionId).size() != 2) {
+
+            // 해당 로직으로 구현 불가
+            String base64String = Base64.encodeBase64String(message.getPayload().getBytes(StandardCharsets.UTF_8));
+            redisService.publishNewMessage(sessionId, base64String);
+
+            // TODO - message.getPayload() 뿐만 아니라 WebSocketSession, TextMessage 모두 레디스로 넘겨줘야함.
+            // TODO - ObjectMapper 를 이용해서 Serialize 해야할 듯
+
+        } else {
+            for (WebSocketSession webSocketSession : sessions) {
+                if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
+                webSocketSession.sendMessage(message);
+            }
         }
+
     }
 
     @Override
@@ -96,14 +109,25 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
             message = new BinaryMessage(messageDto.getContent().getBytes(StandardCharsets.UTF_8));
         }
 
-        // TODO
         // 동일한 웹소켓 서버에 접속하지 않은 경우
         // Redis 통하여 메시지 publish
+        String sessionId = session.getUri().getPath().replace("/websocket/session/", "");
 
+        if (users.get(sessionId).size() != 2) {
+
+            // 해당 로직으로 구현 불가
+            String base64String = Base64.encodeBase64String(message.getPayload().array());
+            redisService.publishNewMessage(sessionId, "image" + base64String);
+
+            // TODO - TextMessage 와 동일한 방법(ObjectMapper) 사용하여 구현 예정
+
+        } else {
         // 업로드가 완료된 이미지의 Image url 이므로 sender 에게도 전송
-        for (WebSocketSession webSocketSession : sessions) {
-            webSocketSession.sendMessage(message);
+            for (WebSocketSession webSocketSession : sessions) {
+                webSocketSession.sendMessage(message);
+            }
         }
+
     }
 
     @Override
@@ -121,10 +145,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
         // 두 클라이언트 모두 웹소켓에 연결 해제한 경우
         if (set.size() == 1) {
             users.remove(sessionId);
-
-            // TODO - Unsubscribe Redis topic
-
-
+            unsubscribeTopic(sessionId);
         } else {
             set.remove(userId);
             users.put(sessionId, set);
@@ -174,8 +195,10 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
     @Override
     public void onMessage(Message message, byte[] pattern) {
 
-        // TODO - sessions 를 순환하면서 유저에게 웹소켓 메시지 전송
+        // 해당 로직으로 구현 불가능
+        String payload = new String(Base64.decodeBase64(message.getBody()));
 
+        // TODO - ObjectMapper 통해서 Deserialize 한 후에 session, message 모두 사용할 예정
     }
 
     private void subscribeNewTopic(String topic) {
