@@ -7,6 +7,7 @@ import io.kgu.chatservice.domain.response.ResponseUser;
 import io.kgu.chatservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -20,6 +21,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
+import java.util.UUID;
 
 
 @Slf4j
@@ -57,11 +61,17 @@ public class WarmUpScheduler {
             log.info("Chat-service was registered and Connected with Gateway-service");
             log.info("Warm up with RestTemplate call");
 
+            String email = (RandomStringUtils.randomAlphabetic(3)
+                            + "@" + RandomStringUtils.randomAlphabetic(3)
+                            + "." + RandomStringUtils.randomAlphabetic(3)
+            ).toLowerCase();
+
             try {
 
                 long startTime = System.currentTimeMillis();
 
-                RequestUser requestCreateUser = RequestUser.builder().email("t@t").auth("t").name("t").build();
+
+                RequestUser requestCreateUser = RequestUser.builder().email(email).auth("t").name("t").build();
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Content-Type", "application/json");
                 headers.add("Accept", "application/json");
@@ -73,7 +83,7 @@ public class WarmUpScheduler {
 
                 RequestLogin requestLoginUser = new RequestLogin();
                 requestLoginUser.setUserId(userId);
-                requestLoginUser.setEmail("t@t");
+                requestLoginUser.setEmail(email);
 
                 resp = warmUpLoginUser(rt, headers, requestLoginUser);
 
@@ -82,7 +92,7 @@ public class WarmUpScheduler {
                 headers.add("userId", userId);
                 headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
-                warmUpGetUserInfoWithAuthAndEmail(rt, headers);
+                warmUpGetUserInfoWithAuthAndEmail(email, rt, headers);
                 warmUpGetUserInfoWithUserId(rt, headers, userId);
                 warmUpDeleteUser(rt, headers);
 
@@ -95,7 +105,7 @@ public class WarmUpScheduler {
             }
 
             try {
-                UserDto warmUpUser = userService.getUserByAuthAndEmail("t", "t@t");
+                UserDto warmUpUser = userService.getUserByAuthAndEmail("t", email);
                 userService.deleteUser(warmUpUser.getUserId());
                 log.info("Warm up Entity was deleted successfully");
             } catch (UsernameNotFoundException ex) {
@@ -139,10 +149,10 @@ public class WarmUpScheduler {
         return response;
     }
 
-    private void warmUpGetUserInfoWithAuthAndEmail(RestTemplate rt, HttpHeaders headers) {
+    private void warmUpGetUserInfoWithAuthAndEmail(String email, RestTemplate rt, HttpHeaders headers) {
 
         headers.add("auth", "t");
-        headers.add("email", "t@t");
+        headers.add("email", email);
 
         rt.exchange(
                 "http://" + host + ":8000/chat-service/users",

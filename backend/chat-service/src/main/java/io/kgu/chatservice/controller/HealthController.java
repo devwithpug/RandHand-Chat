@@ -1,10 +1,10 @@
-package io.kgu.gatewayservice.controller;
+package io.kgu.chatservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -13,14 +13,14 @@ import java.net.UnknownHostException;
 @RequiredArgsConstructor
 public class HealthController {
 
-    private final Environment env;
+    private final ServletWebServerApplicationContext context;
 
     @GetMapping("/health")
-    public Flux<String> healthCheck() {
+    public ResponseEntity<String> healthCheck() {
 
         InetAddress localHost = null;
         String host;
-        String port = env.getProperty("server.port");
+        int port = context.getWebServer().getPort();
 
         try {
             localHost = InetAddress.getLocalHost();
@@ -29,7 +29,6 @@ public class HealthController {
             host = "unknown";
         }
 
-        return Flux.just(String.format("Host: %s\nPort: %s", host, port));
+        return ResponseEntity.ok(String.format("Host: %s\nPort: %s", host, port));
     }
-
 }

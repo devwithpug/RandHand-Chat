@@ -1,7 +1,5 @@
 package io.kgu.chatservice.socket.config;
 
-import io.kgu.chatservice.repository.ChatRepository;
-import io.kgu.chatservice.service.MessageService;
 import io.kgu.chatservice.socket.handler.TextWithImageWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,12 +15,9 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    private final MessageService messageService;
-    private final ChatRepository chatRepository;
-
     @Bean
     public WebSocketHandler webSocketHandler() {
-        return new TextWithImageWebSocketHandler(messageService, chatRepository);
+        return new TextWithImageWebSocketHandler();
     }
 
     @Bean
