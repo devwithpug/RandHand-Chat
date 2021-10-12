@@ -1,8 +1,10 @@
 package io.kgu.chatservice.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kgu.chatservice.service.RedisService;
+import io.kgu.chatservice.socket.custom.WebSocketDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,17 +13,15 @@ import org.springframework.stereotype.Service;
 public class RedisServiceImpl implements RedisService {
 
     private final RedisTemplate<String, String> redisTemplate;
+    private final ObjectMapper mapper;
 
     @Override
-    public void publishNewMessage(String topic, String base64String) {
+    public void publishNewMessage(String topic, WebSocketDto webSocketDto) throws JsonProcessingException {
 
-        // 해당 로직으로 구현 불가능
-        if (!Base64.isBase64(base64String)) {
-            throw new IllegalArgumentException("Base64 인코딩 된 데이터가 아닙니다.");
+        if (!webSocketDto.checkValidation()) {
+            throw new IllegalArgumentException("Invalid WebSocketDto : " + webSocketDto);
         }
 
-        // TODO - ObjectMapper 사용하여 구현
-
-        redisTemplate.convertAndSend(topic, base64String);
+        redisTemplate.convertAndSend(topic, mapper.writeValueAsString(webSocketDto));
     }
 }
