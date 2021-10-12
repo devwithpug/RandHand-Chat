@@ -1,13 +1,16 @@
 package io.kgu.chatservice.socket.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kgu.chatservice.domain.dto.MessageDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
+import io.kgu.chatservice.domain.entity.MessageContentType;
 import io.kgu.chatservice.repository.ChatRepository;
 import io.kgu.chatservice.service.MessageService;
 import io.kgu.chatservice.service.RedisService;
-import lombok.RequiredArgsConstructor;
+import io.kgu.chatservice.socket.custom.WebSocketDto;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -17,31 +20,36 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.socket.*;
+import org.springframework.web.socket.adapter.standard.StandardWebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
 @Transactional
-@RequiredArgsConstructor
 public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler implements MessageListener {
 
-    private final MessageService messageService;
-    private final ChatRepository chatRepository;
-    private final RedisService redisService;
-    private final RedisMessageListenerContainer container;
+    @Autowired
+    private MessageService messageService;
+    @Autowired
+    private ChatRepository chatRepository;
+    @Autowired
+    private RedisService redisService;
+    @Autowired
+    private RedisMessageListenerContainer container;
+    @Autowired
+    private ServletWebServerApplicationContext context;
+    @Autowired
+    private ObjectMapper mapper;
 
-    // 웹소켓 세션 관리
-    private static final Set<WebSocketSession> sessions = ConcurrentHashMap.newKeySet();
 
-    // ELB 를 통해 현재 EC2 인스턴스에 접속한 유저 관리
-    private static final Map<String, Set<String>> users = new ConcurrentHashMap<>();
+    // ELB 를 통해 현재 EC2 인스턴스에 접속한 유저의 세션 관리
+    private static final Map<String, WebSocketSession> users = new ConcurrentHashMap<>();
 
 
     @Override
@@ -56,17 +64,11 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
         String userId = session.getHandshakeHeaders().get("userId").get(0);
         super.afterConnectionEstablished(session);
 
-        // 유저가 동일한 웹소켓 서버에 접속한 경우
-        if (users.containsKey(sessionId)) {
-            Set<String> set = users.get(sessionId);
-            set.add(userId);
-            users.put(sessionId, set);
-        } else {
-            users.put(sessionId, Set.of(userId));
-            subscribeNewTopic(sessionId);
-        }
+        // Subscribe Redis Topic (chat room sessionId)
+        container.addMessageListener(this, ChannelTopic.of(sessionId));
 
-        sessions.add(session);
+        // 웹소켓 서버에 접속한 경우 WsSession 값 매핑하여 저장
+        users.put(userId, session);
         log.info("client{} connect", session.getRemoteAddress());
     }
 
@@ -80,24 +82,20 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
 
         // 동일한 웹소켓 서버에 접속하지 않은 경우
         // Redis 통하여 메시지 publish
-        String sessionId = session.getUri().getPath().replace("/websocket/session/", "");
+        String toUser = session.getHandshakeHeaders().get("toUser").get(0);
 
-        if (users.get(sessionId).size() != 2) {
-
-            // 해당 로직으로 구현 불가
-            String base64String = Base64.encodeBase64String(message.getPayload().getBytes(StandardCharsets.UTF_8));
-            redisService.publishNewMessage(sessionId, base64String);
-
-            // TODO - message.getPayload() 뿐만 아니라 WebSocketSession, TextMessage 모두 레디스로 넘겨줘야함.
-            // TODO - ObjectMapper 를 이용해서 Serialize 해야할 듯
-
+        // 현재 인스턴스에 유저가 있는 경우
+        if (users.containsKey(toUser)) {
+            WebSocketSession toSession = users.get(toUser);
+            toSession.sendMessage(message);
         } else {
-            for (WebSocketSession webSocketSession : sessions) {
-                if (session == webSocketSession || !session.getUri().equals(webSocketSession.getUri())) continue;
-                webSocketSession.sendMessage(message);
-            }
+            // publish Message with Redis
+            String sessionId = session.getUri().getPath().replace("/websocket/session/", "");
+            int serviceId = context.getWebServer().getPort();
+            redisService.publishNewMessage(
+                    sessionId,  WebSocketDto.of(serviceId, toUser, (StandardWebSocketSession) session, message)
+            );
         }
-
     }
 
     @Override
@@ -111,47 +109,37 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
 
         // 동일한 웹소켓 서버에 접속하지 않은 경우
         // Redis 통하여 메시지 publish
-        String sessionId = session.getUri().getPath().replace("/websocket/session/", "");
+        String toUser = session.getHandshakeHeaders().get("to").get(0);
 
-        if (users.get(sessionId).size() != 2) {
-
-            // 해당 로직으로 구현 불가
-            String base64String = Base64.encodeBase64String(message.getPayload().array());
-            redisService.publishNewMessage(sessionId, "image" + base64String);
-
-            // TODO - TextMessage 와 동일한 방법(ObjectMapper) 사용하여 구현 예정
-
+        if (users.containsKey(toUser)) {
+            WebSocketSession toSession = users.get(toUser);
+            toSession.sendMessage(message);
         } else {
-        // 업로드가 완료된 이미지의 Image url 이므로 sender 에게도 전송
-            for (WebSocketSession webSocketSession : sessions) {
-                webSocketSession.sendMessage(message);
-            }
+            String sessionId = session.getUri().getPath().replace("/websocket/session/", "");
+            int serviceId = context.getWebServer().getPort();
+            redisService.publishNewMessage(
+                    sessionId,  WebSocketDto.of(serviceId, toUser, (StandardWebSocketSession) session, message)
+            );
         }
-
+        // 업로드가 완료된 이미지의 Image url 이므로 sender 에게도 전송
+        session.sendMessage(message);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
 
-        String sessionId = session.getUri().getPath().replace("/websocket/session/", "");
         String userId = session.getHandshakeHeaders().get("userId").get(0);
 
         if (userId == null) {
             throw new IllegalStateException("웹소켓 연결을 닫는 중 예외 발생 : userId 값이 없습니다.");
         }
+        String sessionId = session.getUri().getPath().replace("/websocket/session/", "");
 
-        Set<String> set = users.get(sessionId);
-        // 두 클라이언트 모두 웹소켓에 연결 해제한 경우
-        if (set.size() == 1) {
-            users.remove(sessionId);
-            unsubscribeTopic(sessionId);
-        } else {
-            set.remove(userId);
-            users.put(sessionId, set);
-        }
+        // Subscribe Redis Topic (chat room sessionId)
+        container.removeMessageListener(this, ChannelTopic.of(sessionId));
 
-        sessions.remove(session);
+        users.remove(userId);
         log.info("client{} disconnect", session.getRemoteAddress());
     }
 
@@ -192,20 +180,28 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
         return result;
     }
 
+
+    // Redis subscribe message
     @Override
     public void onMessage(Message message, byte[] pattern) {
+        try {
+            WebSocketDto dto = mapper.readValue(message.toString(), WebSocketDto.class);
 
-        // 해당 로직으로 구현 불가능
-        String payload = new String(Base64.decodeBase64(message.getBody()));
+            String toUser = dto.getDestinationId();
 
-        // TODO - ObjectMapper 통해서 Deserialize 한 후에 session, message 모두 사용할 예정
+            if (context.getWebServer().getPort() != dto.getServiceId()) {
+                if (users.containsKey(toUser)) {
+                    WebSocketSession session = users.get(toUser);
+                    Object msg = dto.getMessage().toMessage();
+                    session.sendMessage(
+                            dto.getType() == MessageContentType.TEXT ? (TextMessage) msg : (BinaryMessage) msg
+                    );
+                }
+            }
+
+        } catch (IOException e) {
+            throw new IllegalArgumentException("JSON mapper 파싱 에러 : " + e);
+        }
     }
 
-    private void subscribeNewTopic(String topic) {
-        container.addMessageListener(this, ChannelTopic.of(topic));
-    }
-
-    private void unsubscribeTopic(String topic) {
-        container.removeMessageListener(this, ChannelTopic.of(topic));
-    }
 }
