@@ -15,11 +15,11 @@ public class RedisConfig {
     @Value("redis.host")
     private String host;
     @Value("redis.port")
-    private Integer port;
+    private String port;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(host, port);
+        return new LettuceConnectionFactory(host, Integer.parseInt(port));
     }
 
     @Bean
