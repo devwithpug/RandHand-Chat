@@ -5,7 +5,6 @@ on:
     paths:
       - 'backend/**'
       - '!backend/개발일지/**'
-  workflow_dispatch:
 
 jobs:
 
