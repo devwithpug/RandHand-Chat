@@ -60,6 +60,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     // for etc.
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'org.modelmapper:modelmapper:2.4.2'
     compileOnly 'org.projectlombok:lombok'
