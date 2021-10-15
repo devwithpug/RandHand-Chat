@@ -6,7 +6,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
 
 # For static images:
-path = 'C:\\Users\\dh\\Desktop\\Git\\RandHand-Chat\\handDetection\\static_image\\original_images' # 파일 경로 지정
+path = 'C:\\Users\\dh\\Desktop\\Git\\RandHand-Chat\\handDetection\\static_image\\original_images\\resize' # 파일 경로 지정
 os.chdir(path)
 IMAGE_FILES = os.listdir(path)
 # --------------------------------------<파일 순서 개선>---------------------------------------
@@ -68,6 +68,6 @@ with mp_hands.Hands(
       df.loc[idx]=locate
 
     cv2.imwrite(
-        '../annotated_images/annotated_image' + str(idx) + '.png', cv2.flip(annotated_image, 1))
+        'C:/Users/dh/Desktop/Git/RandHand-Chat/handDetection/static_image/annotated_images/' + str(idx) + '.png', cv2.flip(annotated_image, 1))
         
-df.to_csv('../dataSets/mediapipe.csv',mode='w')
+df.to_csv('C:/Users/dh/Desktop/Git/RandHand-Chat/handDetection/static_image/dataSets/mediapipe.csv',mode='w')
