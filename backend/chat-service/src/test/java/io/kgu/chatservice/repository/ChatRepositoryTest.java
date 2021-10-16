@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -28,8 +27,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 class ChatRepositoryTest {
 
-    @Autowired
-    private EntityManager em;
     @Autowired
     private ChatRepository chatRepository;
     private final ModelMapper mapper = new ModelMapper();

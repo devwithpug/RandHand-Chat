@@ -132,7 +132,7 @@ class UserControllerTest {
         Mockito.when(userService.modifyUserInfo("UUID", userDto)).thenReturn(userDto);
         Mockito.when(modelMapper.map(userDto, ResponseUserDto.class)).thenReturn(responseUserDto);
 
-        mvc.perform(post("/users/update").header("userId", "UUID")
+        mvc.perform(put("/users/update").header("userId", "UUID")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(requestUserDto)))
                 .andDo(print())
@@ -185,7 +185,7 @@ class UserControllerTest {
         Mockito.when(userService.addFriend("UUID", "F1")).thenReturn(List.of(friends1));
         Mockito.when(modelMapper.map(friends1, ResponseUserDto.class)).thenReturn(resp1);
 
-        mvc.perform(post("/users/friends/F1").header("userId", "UUID"))
+        mvc.perform(patch("/users/friends/F1").header("userId", "UUID"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
@@ -203,7 +203,7 @@ class UserControllerTest {
         Mockito.when(userService.removeFriend("UUID", "F1")).thenReturn(List.of(friends2));
         Mockito.when(modelMapper.map(friends2, ResponseUserDto.class)).thenReturn(resp2);
 
-        mvc.perform(post("/users/friends/F1/remove").header("userId", "UUID"))
+        mvc.perform(delete("/users/friends/F1").header("userId", "UUID"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
@@ -233,7 +233,7 @@ class UserControllerTest {
 
         Mockito.when(modelMapper.map(requestUserDto, UserDto.class)).thenReturn(userDto);
 
-        doThrow(new DuplicateKeyException("createUserFailTest"))
+        doThrow(new DuplicateKeyException("error 'createUserFailTest'"))
                 .when(userService).createUser(userDto);
 
         mvc.perform(post("/users")
@@ -241,7 +241,7 @@ class UserControllerTest {
                 .content(objectMapper.writeValueAsString(requestUserDto)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.*").value("createUserFailTest"));
+                .andExpect(jsonPath("$.error").value("createUserFailTest"));
 
     }
 
@@ -249,13 +249,13 @@ class UserControllerTest {
     @DisplayName("친구 추가 요청 실패")
     void addFriendsFail() throws Exception {
 
-        doThrow(new IllegalArgumentException("addFriendsFailTest"))
+        doThrow(new IllegalArgumentException("error 'addFriendsFailTest'"))
                 .when(userService).addFriend("UUID", "DuplicatedFriends");
 
-        mvc.perform(post("/users/friends/DuplicatedFriends").header("userId", "UUID"))
+        mvc.perform(patch("/users/friends/DuplicatedFriends").header("userId", "UUID"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.*").value("addFriendsFailTest"));
+                .andExpect(jsonPath("$.error").value("addFriendsFailTest"));
 
     }
 
@@ -263,12 +263,13 @@ class UserControllerTest {
     @DisplayName("회원 서비스 탈퇴 실패")
     void deleteUserFail() throws Exception {
 
-        doThrow(new UsernameNotFoundException("deleteUserFailTest"))
+        doThrow(new UsernameNotFoundException("error 'deleteUserFailTest'"))
                 .when(userService).deleteUser("illegalUserId");
 
-        mvc.perform(get("/users/delete").header("userId", "illegalUserId"))
+        mvc.perform(delete("/users/illegalUserId"))
                 .andDo(print())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("deleteUserFailTest"));
     }
 
 }

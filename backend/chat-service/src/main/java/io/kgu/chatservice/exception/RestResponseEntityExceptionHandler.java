@@ -1,20 +1,28 @@
-package io.kgu.chatservice.handler;
+package io.kgu.chatservice.exception;
 
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class RestResponseEntityExceptionHandler {
 
-    @ExceptionHandler(ResponseStatusException.class)
-    protected Map<String, String> handleConflict(ResponseStatusException ex, HttpServletResponse resp) {
+    @ExceptionHandler(Exception.class)
+    protected Map<String, String> handleException(Exception ex, HttpServletResponse resp) {
 
-        resp.setStatus(ex.getRawStatusCode());
+        if (ex instanceof EntityNotFoundException) resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        else if (ex instanceof UsernameNotFoundException) resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        else if (ex instanceof IllegalArgumentException) resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        else if (ex instanceof DuplicateKeyException) resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        else if (ex instanceof IOException) resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        else resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         return trimErrorMessage(ex.getMessage());
     }
@@ -25,7 +33,7 @@ public class RestResponseEntityExceptionHandler {
             return new HashMap<>();
         }
 
-        String[] error = msg.split("\"");
+        String[] error = msg.split("\'");
         error[0] = error[0].substring(0, error[0].length()-1);
 
         return Map.of(error[0], error[1]);
