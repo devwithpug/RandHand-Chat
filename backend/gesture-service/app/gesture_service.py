@@ -111,7 +111,7 @@ def create_queue():
     return Response(status=200)
 
 # cancel queue
-@app.route("/queue/cancel", methods=['POST'])
+@app.route("/queue", methods=['DELETE'])
 def cancel_queue():
 
     try:

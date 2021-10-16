@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -31,7 +31,7 @@ public class UserController {
     private final ModelMapper mapper;
 
     // 회원 생성(UserDto.userId == null 인 경우)
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<ResponseUser> createUser(@Valid @RequestBody RequestUser requestUser) {
 
         UserDto userDto = mapper.map(requestUser, UserDto.class);
@@ -46,7 +46,7 @@ public class UserController {
     }
 
     // auth, email 회원 조회
-    @GetMapping("/users")
+    @GetMapping
     public ResponseEntity<ResponseUser> findUser(@RequestHeader("auth") String auth, @RequestHeader("email") String email) {
 
         UserDto userDto;
@@ -61,7 +61,7 @@ public class UserController {
     }
 
     // userId 회원 조회
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<ResponseUser> user(@PathVariable String userId) {
 
         UserDto userDto;
@@ -76,7 +76,7 @@ public class UserController {
     }
 
     // 회원 정보 변경 요청
-    @PostMapping("/users/update")
+    @PutMapping("/update")
     public ResponseEntity<ResponseUser> modifyUser(@RequestHeader String userId, @Valid @RequestBody RequestUser requestUser) {
 
         UserDto userDto;
@@ -93,7 +93,7 @@ public class UserController {
     }
 
     // 회원 프로필 사진 변경 요청
-    @PostMapping("/users/update/image")
+    @PutMapping("/update/image")
     public ResponseEntity<ResponseUser> modifyUserPicture(@RequestHeader String userId, @RequestParam MultipartFile image) {
 
         UserDto userDto;
@@ -110,7 +110,7 @@ public class UserController {
     }
 
     // 친구 목록 조회
-    @GetMapping("/users/friends")
+    @GetMapping("/friends")
     public ResponseEntity<List<ResponseUser>> friends(@RequestHeader("userId") String userId) {
 
         List<UserDto> friends;
@@ -125,7 +125,7 @@ public class UserController {
     }
 
     // 친구 단일 조회
-    @GetMapping("/users/friends/{friendId}")
+    @GetMapping("/friends/{friendId}")
     public ResponseEntity<ResponseUser> getOneFriends(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
         UserDto friend;
@@ -140,7 +140,7 @@ public class UserController {
     }
 
     // 친구 추가 요청
-    @PostMapping("/users/friends/{friendId}")
+    @PatchMapping("/friends/{friendId}")
     public ResponseEntity<List<ResponseUser>> addFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
         List<UserDto> friends;
@@ -157,7 +157,7 @@ public class UserController {
     }
 
     // 친구 삭제 요청
-    @PostMapping("/users/friends/{friendId}/remove")
+    @DeleteMapping("/friends/{friendId}")
     public ResponseEntity<List<ResponseUser>> removeFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
         List<UserDto> friends;
@@ -174,7 +174,7 @@ public class UserController {
     }
 
     // 차단 목록 조회
-    @GetMapping("/users/blocked")
+    @GetMapping("/blocked")
     public ResponseEntity<List<ResponseUser>> blocked(@RequestHeader("userId") String userId) {
 
         List<UserDto> blockedList;
@@ -189,7 +189,7 @@ public class UserController {
     }
 
     // 차단 유저 단일 조회
-    @GetMapping("/users/blocked/{blockId}")
+    @GetMapping("/blacklist/{blockId}")
     public ResponseEntity<ResponseUser> getOneBlocked(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
         UserDto blocked;
@@ -204,7 +204,7 @@ public class UserController {
     }
 
     // 유저 차단 요청
-    @PostMapping("/users/blocked/{blockId}")
+    @PatchMapping("/blacklist/{blockId}")
     public ResponseEntity<List<ResponseUser>> blockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
         List<UserDto> blockedList;
@@ -221,7 +221,7 @@ public class UserController {
     }
 
     // 유저 차단 해제 요청
-    @PostMapping("/users/blocked/{blockId}/remove")
+    @DeleteMapping("/blacklist/{blockId}")
     public ResponseEntity<List<ResponseUser>> unblockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
         List<UserDto> blockedList;
@@ -238,8 +238,8 @@ public class UserController {
     }
 
     // 회원 서비스 탈퇴
-    @GetMapping("/users/delete")
-    public ResponseEntity<?> deleteUser(@RequestHeader("userId") String userId) {
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<?> deleteUser(@PathVariable("userId") String userId) {
 
         try {
             userService.deleteUser(userId);

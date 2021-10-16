@@ -18,14 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/chats")
 @RequiredArgsConstructor
 public class ChatController {
 
     private final ChatService chatService;
     private final MessageService messageService;
 
-    @GetMapping("/chats/{sessionId}")
+    @GetMapping("/{sessionId}")
     public ResponseEntity<ChatDto> getOneChatRoom(@PathVariable String sessionId) {
 
         ChatDto chatRoom;
@@ -39,7 +39,7 @@ public class ChatController {
         return ResponseEntity.status(HttpStatus.OK).body(chatRoom);
     }
 
-    @GetMapping("/chats/session")
+    @GetMapping("/session")
     public ResponseEntity<List<ChatDto>> getAllChatRoomByUserId(@RequestHeader("userId") String userId) {
 
         List<ChatDto> chatRoomList;
@@ -53,8 +53,8 @@ public class ChatController {
         return ResponseEntity.status(HttpStatus.OK).body(chatRoomList);
     }
 
-    @GetMapping("/chats/leave")
-    public ResponseEntity<Object> removeChatRoom(@RequestHeader("sessionId") String sessionId) {
+    @DeleteMapping("/{sessionId}")
+    public ResponseEntity<Object> removeChatRoom(@PathVariable("sessionId") String sessionId) {
 
         try {
             chatService.removeChatRoomBySessionId(sessionId);
@@ -65,7 +65,7 @@ public class ChatController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/chats/messages")
+    @GetMapping("/messages")
     public ResponseEntity<Object> findAllMessages(@RequestHeader("sessionId") String sessionId) {
 
         ChatDto chatRoom;
@@ -81,7 +81,7 @@ public class ChatController {
         return ResponseEntity.status(HttpStatus.OK).body(messages);
     }
 
-    @GetMapping("/chats/sync")
+    @GetMapping("/sync")
     public ResponseEntity<Object> syncChatRoom(@RequestHeader("sessionId") String sessionId,
                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime date) {
         ChatDto chatRoom;
