@@ -1,8 +1,8 @@
 package io.kgu.chatservice.controller;
 
-import io.kgu.chatservice.domain.dto.ChatDto;
-import io.kgu.chatservice.domain.dto.MessageDto;
-import io.kgu.chatservice.domain.dto.MessageSyncDto;
+import io.kgu.chatservice.domain.dto.chat.ChatDto;
+import io.kgu.chatservice.domain.dto.chat.MessageDto;
+import io.kgu.chatservice.domain.dto.chat.MessageSyncDto;
 import io.kgu.chatservice.service.ChatService;
 import io.kgu.chatservice.service.MessageService;
 import lombok.RequiredArgsConstructor;

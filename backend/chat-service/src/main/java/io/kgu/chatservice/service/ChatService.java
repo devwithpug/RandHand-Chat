@@ -1,6 +1,6 @@
 package io.kgu.chatservice.service;
 
-import io.kgu.chatservice.domain.dto.ChatDto;
+import io.kgu.chatservice.domain.dto.chat.ChatDto;
 
 import java.util.List;
 

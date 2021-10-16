@@ -1,6 +1,6 @@
 package io.kgu.chatservice.domain.entity;
 
-import io.kgu.chatservice.domain.dto.UserDto;
+import io.kgu.chatservice.domain.dto.user.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,10 +13,10 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "users",
-        uniqueConstraints = {
-            @UniqueConstraint(columnNames = {"auth", "email"})
-        })
+@Table(
+        name = "users",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"auth", "email"})}
+)
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity implements Serializable {

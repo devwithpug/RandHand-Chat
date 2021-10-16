@@ -1,7 +1,7 @@
 package io.kgu.chatservice.messagequeue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.kgu.chatservice.domain.dto.ChatDto;
+import io.kgu.chatservice.domain.dto.chat.ChatDto;
 import io.kgu.chatservice.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

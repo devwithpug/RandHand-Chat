@@ -1,4 +1,4 @@
-package io.kgu.chatservice.domain.request;
+package io.kgu.chatservice.domain.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RequestLogin {
+public class RequestLoginDto {
 
     @NotNull(message = "userId 값이 필요합니다.")
     private String userId;

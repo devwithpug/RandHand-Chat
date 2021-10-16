@@ -1,8 +1,8 @@
 package io.kgu.chatservice.service.impl;
 
 import com.amazonaws.util.Base64;
-import io.kgu.chatservice.domain.dto.ChatDto;
-import io.kgu.chatservice.domain.dto.MessageDto;
+import io.kgu.chatservice.domain.dto.chat.ChatDto;
+import io.kgu.chatservice.domain.dto.chat.MessageDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
 import io.kgu.chatservice.domain.entity.MessageContentType;
 import io.kgu.chatservice.domain.entity.MessageEntity;

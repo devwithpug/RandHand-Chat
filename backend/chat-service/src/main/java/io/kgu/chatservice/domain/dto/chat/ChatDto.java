@@ -1,9 +1,8 @@
-package io.kgu.chatservice.domain.dto;
+package io.kgu.chatservice.domain.dto.chat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import io.kgu.chatservice.domain.entity.MessageContentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,18 +10,18 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class MessageDto implements Serializable {
+@AllArgsConstructor
+public class ChatDto implements Serializable {
 
-    private MessageContentType type;
-    private String fromUser;
-    private String content;
+    private String sessionId;
+    private List<String> userIds;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime createdAt;
+    private LocalDateTime syncTime;
 
 }

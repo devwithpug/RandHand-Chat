@@ -1,27 +1,25 @@
-package io.kgu.chatservice.domain.response;
+package io.kgu.chatservice.domain.dto.user;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseUser implements Serializable {
+public class UserDto implements Serializable {
 
     private String userId;
+    private String auth;
     private String email;
     private String name;
     private String statusMessage;
     private String picture;
-    private List<ResponseUser> userFriends;
-    private List<ResponseUser> userBlocked;
+    private LocalDateTime createdAt;
 
 }

@@ -1,7 +1,7 @@
 package io.kgu.chatservice.socket.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.kgu.chatservice.domain.dto.MessageDto;
+import io.kgu.chatservice.domain.dto.chat.MessageDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
 import io.kgu.chatservice.domain.entity.MessageContentType;
 import io.kgu.chatservice.repository.ChatRepository;

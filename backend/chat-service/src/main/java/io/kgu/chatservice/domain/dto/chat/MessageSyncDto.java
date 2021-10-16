@@ -1,4 +1,4 @@
-package io.kgu.chatservice.domain.dto;
+package io.kgu.chatservice.domain.dto.chat;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

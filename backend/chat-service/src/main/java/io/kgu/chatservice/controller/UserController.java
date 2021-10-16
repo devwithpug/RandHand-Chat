@@ -1,8 +1,8 @@
 package io.kgu.chatservice.controller;
 
-import io.kgu.chatservice.domain.dto.UserDto;
-import io.kgu.chatservice.domain.request.RequestUser;
-import io.kgu.chatservice.domain.response.ResponseUser;
+import io.kgu.chatservice.domain.dto.user.UserDto;
+import io.kgu.chatservice.domain.dto.user.RequestUserDto;
+import io.kgu.chatservice.domain.dto.user.ResponseUserDto;
 import io.kgu.chatservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +31,9 @@ public class UserController {
 
     // 회원 생성(UserDto.userId == null 인 경우)
     @PostMapping
-    public ResponseUser createUser(@Valid @RequestBody RequestUser requestUser, HttpServletResponse resp) {
+    public ResponseUserDto createUser(@Valid @RequestBody RequestUserDto requestUserDto, HttpServletResponse resp) {
 
-        UserDto userDto = mapper.map(requestUser, UserDto.class);
+        UserDto userDto = mapper.map(requestUserDto, UserDto.class);
 
         try {
             userDto = userService.createUser(userDto);
@@ -42,12 +42,12 @@ public class UserController {
         }
 
         resp.setStatus(HttpServletResponse.SC_CREATED);
-        return mapper.map(userDto, ResponseUser.class);
+        return mapper.map(userDto, ResponseUserDto.class);
     }
 
     // auth, email 회원 조회
     @GetMapping
-    public ResponseUser findUser(@RequestHeader("auth") String auth, @RequestHeader("email") String email) {
+    public ResponseUserDto findUser(@RequestHeader("auth") String auth, @RequestHeader("email") String email) {
 
         UserDto userDto;
 
@@ -57,12 +57,12 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
 
-        return mapper.map(userDto, ResponseUser.class);
+        return mapper.map(userDto, ResponseUserDto.class);
     }
 
     // userId 회원 조회
     @GetMapping("/{userId}")
-    public ResponseUser user(@PathVariable String userId) {
+    public ResponseUserDto user(@PathVariable String userId) {
 
         UserDto userDto;
 
@@ -72,29 +72,29 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
 
-        return mapper.map(userDto, ResponseUser.class);
+        return mapper.map(userDto, ResponseUserDto.class);
     }
 
     // 회원 정보 변경 요청
     @PutMapping("/update")
-    public ResponseUser modifyUser(@RequestHeader String userId, @Valid @RequestBody RequestUser requestUser) {
+    public ResponseUserDto modifyUser(@RequestHeader String userId, @Valid @RequestBody RequestUserDto requestUserDto) {
 
         UserDto userDto;
 
         try {
-            userDto = userService.modifyUserInfo(userId, mapper.map(requestUser, UserDto.class));
+            userDto = userService.modifyUserInfo(userId, mapper.map(requestUserDto, UserDto.class));
         } catch (UsernameNotFoundException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
 
-        return mapper.map(userDto, ResponseUser.class);
+        return mapper.map(userDto, ResponseUserDto.class);
     }
 
     // 회원 프로필 사진 변경 요청
     @PutMapping("/update/image")
-    public ResponseUser modifyUserPicture(@RequestHeader String userId, @RequestParam MultipartFile image) {
+    public ResponseUserDto modifyUserPicture(@RequestHeader String userId, @RequestParam MultipartFile image) {
 
         UserDto userDto;
 
@@ -106,12 +106,12 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
 
-        return mapper.map(userDto, ResponseUser.class);
+        return mapper.map(userDto, ResponseUserDto.class);
     }
 
     // 친구 목록 조회
     @GetMapping("/friends")
-    public List<ResponseUser> friends(@RequestHeader("userId") String userId, HttpServletResponse resp) {
+    public List<ResponseUserDto> friends(@RequestHeader("userId") String userId, HttpServletResponse resp) {
 
         List<UserDto> friends;
 
@@ -122,13 +122,13 @@ public class UserController {
         }
 
         return friends.stream()
-                .map(u -> mapper.map(u, ResponseUser.class))
+                .map(u -> mapper.map(u, ResponseUserDto.class))
                 .collect(Collectors.toList());
     }
 
     // 친구 단일 조회
     @GetMapping("/friends/{friendId}")
-    public ResponseUser getOneFriends(@RequestHeader("userId") String userId, @PathVariable String friendId) {
+    public ResponseUserDto getOneFriends(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
         UserDto friend;
 
@@ -138,12 +138,12 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
 
-        return mapper.map(friend, ResponseUser.class);
+        return mapper.map(friend, ResponseUserDto.class);
     }
 
     // 친구 추가 요청
     @PatchMapping("/friends/{friendId}")
-    public List<ResponseUser> addFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
+    public List<ResponseUserDto> addFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
         List<UserDto> friends;
 
@@ -156,13 +156,13 @@ public class UserController {
         }
 
         return friends.stream()
-                .map(u -> mapper.map(u, ResponseUser.class))
+                .map(u -> mapper.map(u, ResponseUserDto.class))
                 .collect(Collectors.toList());
     }
 
     // 친구 삭제 요청
     @DeleteMapping("/friends/{friendId}")
-    public List<ResponseUser> removeFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
+    public List<ResponseUserDto> removeFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
         List<UserDto> friends;
 
@@ -175,13 +175,13 @@ public class UserController {
         }
 
         return friends.stream()
-                .map(u -> mapper.map(u, ResponseUser.class))
+                .map(u -> mapper.map(u, ResponseUserDto.class))
                 .collect(Collectors.toList());
     }
 
     // 차단 목록 조회
     @GetMapping("/blacklist")
-    public List<ResponseUser> blocked(@RequestHeader("userId") String userId) {
+    public List<ResponseUserDto> blocked(@RequestHeader("userId") String userId) {
 
         List<UserDto> blacklist;
 
@@ -192,13 +192,13 @@ public class UserController {
         }
 
         return blacklist.stream()
-                .map(u -> mapper.map(u, ResponseUser.class))
+                .map(u -> mapper.map(u, ResponseUserDto.class))
                 .collect(Collectors.toList());
     }
 
     // 차단 유저 단일 조회
     @GetMapping("/blacklist/{blockId}")
-    public ResponseUser getOneBlocked(@RequestHeader("userId") String userId, @PathVariable String blockId) {
+    public ResponseUserDto getOneBlocked(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
         UserDto blocked;
 
@@ -208,12 +208,12 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
         }
 
-        return mapper.map(blocked, ResponseUser.class);
+        return mapper.map(blocked, ResponseUserDto.class);
     }
 
     // 유저 차단 요청
     @PatchMapping("/blacklist/{blockId}")
-    public List<ResponseUser> blockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
+    public List<ResponseUserDto> blockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
         List<UserDto> blacklist;
 
@@ -226,13 +226,13 @@ public class UserController {
         }
 
         return blacklist.stream()
-                .map(u -> mapper.map(u, ResponseUser.class))
+                .map(u -> mapper.map(u, ResponseUserDto.class))
                 .collect(Collectors.toList());
     }
 
     // 유저 차단 해제 요청
     @DeleteMapping("/blacklist/{blockId}")
-    public List<ResponseUser> unblockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
+    public List<ResponseUserDto> unblockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
         List<UserDto> blacklist;
 
@@ -245,7 +245,7 @@ public class UserController {
         }
 
         return blacklist.stream()
-                .map(u -> mapper.map(u, ResponseUser.class))
+                .map(u -> mapper.map(u, ResponseUserDto.class))
                 .collect(Collectors.toList());
     }
 

@@ -1,6 +1,6 @@
 package io.kgu.chatservice.repository;
 
-import io.kgu.chatservice.domain.dto.ChatDto;
+import io.kgu.chatservice.domain.dto.chat.ChatDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
