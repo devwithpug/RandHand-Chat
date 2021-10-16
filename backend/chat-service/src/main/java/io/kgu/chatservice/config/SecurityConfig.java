@@ -1,4 +1,4 @@
-package io.kgu.chatservice.security.config;
+package io.kgu.chatservice.config;
 
 import io.kgu.chatservice.security.filter.CustomAuthenticationFilter;
 import io.kgu.chatservice.security.provider.CustomAuthenticationProvider;

@@ -1,4 +1,4 @@
-package io.kgu.chatservice.socket.handler;
+package io.kgu.chatservice.messaging.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kgu.chatservice.domain.dto.chat.MessageDto;
@@ -7,7 +7,7 @@ import io.kgu.chatservice.domain.entity.MessageContentType;
 import io.kgu.chatservice.repository.ChatRepository;
 import io.kgu.chatservice.service.MessageService;
 import io.kgu.chatservice.service.RedisService;
-import io.kgu.chatservice.socket.custom.WebSocketDto;
+import io.kgu.chatservice.messaging.custom.WebSocketDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;

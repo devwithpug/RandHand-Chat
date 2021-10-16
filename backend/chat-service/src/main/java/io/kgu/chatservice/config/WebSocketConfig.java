@@ -1,6 +1,6 @@
-package io.kgu.chatservice.socket.config;
+package io.kgu.chatservice.config;
 
-import io.kgu.chatservice.socket.handler.TextWithImageWebSocketHandler;
+import io.kgu.chatservice.messaging.handler.TextWithImageWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

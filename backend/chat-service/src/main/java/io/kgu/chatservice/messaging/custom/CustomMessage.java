@@ -1,4 +1,4 @@
-package io.kgu.chatservice.socket.custom;
+package io.kgu.chatservice.messaging.custom;
 
 import io.kgu.chatservice.domain.entity.MessageContentType;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package io.kgu.chatservice.messagequeue;
+package io.kgu.chatservice.config;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

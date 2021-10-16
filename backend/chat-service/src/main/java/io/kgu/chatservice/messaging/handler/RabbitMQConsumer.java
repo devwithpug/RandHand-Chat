@@ -1,4 +1,4 @@
-package io.kgu.chatservice.messagequeue;
+package io.kgu.chatservice.messaging.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kgu.chatservice.domain.dto.chat.ChatDto;

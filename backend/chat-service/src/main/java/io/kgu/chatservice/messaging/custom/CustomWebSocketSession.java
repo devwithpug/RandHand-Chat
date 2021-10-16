@@ -1,4 +1,4 @@
-package io.kgu.chatservice.socket.custom;
+package io.kgu.chatservice.messaging.custom;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
