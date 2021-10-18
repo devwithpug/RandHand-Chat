@@ -1,4 +1,4 @@
-package com.kyonggi.randhand_chat.Fragments.ChatsActivity
+package com.kyonggi.randhand_chat.Activity
 
 import android.app.Activity
 import android.content.Intent
@@ -23,7 +23,6 @@ import com.kyonggi.randhand_chat.Database.*
 import com.kyonggi.randhand_chat.Domain.Message.MessageInfo
 import com.kyonggi.randhand_chat.Domain.Message.SyncInfo
 import com.kyonggi.randhand_chat.Domain.User.ResponseUser
-import com.kyonggi.randhand_chat.Fragments.FriendFragment
 import com.kyonggi.randhand_chat.R
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitChat
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser

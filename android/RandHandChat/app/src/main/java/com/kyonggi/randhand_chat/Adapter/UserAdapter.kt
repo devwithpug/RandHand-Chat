@@ -6,7 +6,7 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kyonggi.randhand_chat.Domain.User.ResponseUser
-import com.kyonggi.randhand_chat.Fragments.UserActivity.ProfileActivity
+import com.kyonggi.randhand_chat.Activity.ProfileActivity
 import com.kyonggi.randhand_chat.R
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
 import com.kyonggi.randhand_chat.Retrofit.ServiceURL

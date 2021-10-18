@@ -1,4 +1,4 @@
-package com.kyonggi.randhand_chat
+package com.kyonggi.randhand_chat.Activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +13,6 @@ import com.kyonggi.randhand_chat.Database.ChatRoomDatabase
 import com.kyonggi.randhand_chat.Database.ChatRoomTable
 import com.kyonggi.randhand_chat.Domain.Chat.ChatInfo
 import com.kyonggi.randhand_chat.Domain.User.ResponseUser
-import com.kyonggi.randhand_chat.Fragments.ChatsActivity.ChatActivity
 import com.kyonggi.randhand_chat.Retrofit.GestureServiceURL
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitChat
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitGesture

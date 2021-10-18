@@ -1,9 +1,10 @@
-package com.kyonggi.randhand_chat
+package com.kyonggi.randhand_chat.Activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.constraintlayout.motion.widget.MotionLayout
+import com.kyonggi.randhand_chat.R
 import com.kyonggi.randhand_chat.databinding.ActivitySplashBinding
 
 class SplashActivity : AppCompatActivity() {

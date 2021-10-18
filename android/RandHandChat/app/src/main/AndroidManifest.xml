@@ -30,31 +30,31 @@
             android:screenOrientation="fullSensor"
             android:theme="@style/MessageTheme" />
         <activity
-            android:name=".ProgressActivity"
+            android:name=".Activity.ProgressActivity"
             android:exported="true"
             android:theme="@style/MessageTheme">
         </activity>
         <activity
-            android:name=".Fragments.ChatsActivity.ChatActivity"
+            android:name=".Activity.ChatActivity"
             android:exported="true"
             android:theme="@style/MessageTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Fragments.UserActivity.EditProfileActivity"
+            android:name=".Activity.EditProfileActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".Fragments.UserActivity.BlockedFriendActivity"
+            android:name=".Activity.BlockedFriendActivity"
             android:exported="true"
             android:theme="@style/MainTheme" />
         <activity
-            android:name=".Fragments.UserActivity.ProfileActivity"
+            android:name=".Activity.ProfileActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.NoActionBar" /> <!-- Message Activity 등록 -->
         <activity
-            android:name=".MainActivity"
+            android:name=".Activity.MainActivity"
             android:theme="@style/MainTheme" /> <!-- Splash Activity 등록 -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".Activity.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -63,7 +63,7 @@
             </intent-filter>
         </activity> <!-- Login Activity 등록 -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activity.LoginActivity"
             android:theme="@style/LoginTheme" />
     </application>
 
