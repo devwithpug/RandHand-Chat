@@ -1,10 +1,12 @@
-package com.kyonggi.randhand_chat
+package com.kyonggi.randhand_chat.Activity
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -25,13 +27,21 @@ import retrofit2.Retrofit
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var loginBinding: ActivityLoginBinding
-    private val RC_SIGN_IN = 9001
     lateinit var mGoogleSignInClient: GoogleSignInClient
 
     // Retrofit 관련 변수 생성
     private lateinit var retrofit: Retrofit
     private lateinit var supplementService: IRetrofitUser
 
+    // 구글 로그인 런처 생성
+    private val googleLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data
+            val task =
+                GoogleSignIn.getSignedInAccountFromIntent(intent)
+            handleSignInResult(task)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +62,6 @@ class LoginActivity : AppCompatActivity() {
         loginBinding.googleLoginButton.setOnClickListener {
             signIn()
         }
-
     }
 
     // 로그인 페이지가 시작하였을때
@@ -70,20 +79,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun signIn() {
         val signInIntent = mGoogleSignInClient.signInIntent
-        startActivityForResult(
-            signInIntent, RC_SIGN_IN
-        )
-    }
-
-    // Deprecate 되었다
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            val task =
-                GoogleSignIn.getSignedInAccountFromIntent(data)
-            handleSignInResult(task)
-        }
+        googleLauncher.launch(signInIntent)
     }
 
     // 사용자 정보 가져오기
