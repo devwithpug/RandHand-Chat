@@ -23,7 +23,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import android.view.*
 import com.kyonggi.randhand_chat.MediaPipe.MediaPipeActivity
-import com.kyonggi.randhand_chat.ProgressActivity
 
 class ChatListFragment : Fragment(){
     private lateinit var retrofit: Retrofit

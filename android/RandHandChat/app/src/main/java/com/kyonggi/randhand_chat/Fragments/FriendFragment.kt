@@ -5,15 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.kyonggi.randhand_chat.Adapter.UserAdapter
-import com.kyonggi.randhand_chat.Fragments.UserActivity.BlockedFriendActivity
+import com.kyonggi.randhand_chat.Activity.BlockedFriendActivity
 import com.kyonggi.randhand_chat.Domain.User.ResponseUser
-import com.kyonggi.randhand_chat.Fragments.UserActivity.ProfileActivity
+import com.kyonggi.randhand_chat.Activity.ProfileActivity
 import com.kyonggi.randhand_chat.R
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
 import com.kyonggi.randhand_chat.Retrofit.ServiceURL

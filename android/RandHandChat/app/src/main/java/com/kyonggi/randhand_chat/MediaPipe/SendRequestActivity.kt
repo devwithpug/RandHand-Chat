@@ -4,19 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
-import android.media.ExifInterface
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.impl.utils.Exif
 import com.google.mediapipe.solutions.hands.HandLandmark
 import com.google.mediapipe.solutions.hands.Hands
 import com.google.mediapipe.solutions.hands.HandsOptions
 import com.google.mediapipe.solutions.hands.HandsResult
-import com.kyonggi.randhand_chat.ProgressActivity
+import com.kyonggi.randhand_chat.Activity.ProgressActivity
 import com.kyonggi.randhand_chat.Retrofit.GestureServiceURL
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitGesture
 import com.kyonggi.randhand_chat.Util.AppUtil
@@ -25,7 +22,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 
@@ -113,7 +109,7 @@ class SendRequestActivity : AppCompatActivity() {
         hands = Hands(
             this,
             HandsOptions.builder()
-                .setMode(HandsOptions.STATIC_IMAGE_MODE)
+                .setStaticImageMode(true)
                 .setMaxNumHands(1)
                 .setRunOnGpu(false)
                 .build()

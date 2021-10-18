@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.kyonggi.randhand_chat.LoginActivity
+import com.kyonggi.randhand_chat.Activity.LoginActivity
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
 import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil

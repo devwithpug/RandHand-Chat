@@ -1,4 +1,4 @@
-package com.kyonggi.randhand_chat.Fragments.UserActivity
+package com.kyonggi.randhand_chat.Activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
