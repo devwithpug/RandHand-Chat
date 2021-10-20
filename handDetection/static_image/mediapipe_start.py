@@ -2,11 +2,13 @@ import os
 import cv2
 import mediapipe as mp
 import pandas as pd 
+
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
+none_list =[]
 
 # For static images:
-path = 'C:\\Users\\dh\\Desktop\\Git\\RandHand-Chat\\handDetection\\static_image\\original_images\\resize' # 파일 경로 지정
+path = 'D:/data/' # 파일 경로 지정
 os.chdir(path)
 IMAGE_FILES = os.listdir(path)
 # --------------------------------------<파일 순서 개선>---------------------------------------
@@ -26,7 +28,7 @@ for i in COPY_FILES:
 
 with mp_hands.Hands(
   static_image_mode=True,
-  max_num_hands=2,
+  max_num_hands=1,
   min_detection_confidence=0.5) as hands:
 
   column = []
@@ -46,6 +48,7 @@ with mp_hands.Hands(
     # Print handedness and draw hand landmarks on the image.
     print('Handedness:', results.multi_handedness)
     if not results.multi_hand_landmarks:
+      none_list.append(idx)
       continue
     image_height, image_width, _ = image.shape
     annotated_image = image.copy()
@@ -68,6 +71,7 @@ with mp_hands.Hands(
       df.loc[idx]=locate
 
     cv2.imwrite(
-        'C:/Users/dh/Desktop/Git/RandHand-Chat/handDetection/static_image/annotated_images/' + str(idx) + '.png', cv2.flip(annotated_image, 1))
+        'C:/Users/mpoli/Desktop/Git/RandHand-Chat/handDetection/static_image/annotated_images/' + str(idx) + '.png', cv2.flip(annotated_image, 1))
         
-df.to_csv('C:/Users/dh/Desktop/Git/RandHand-Chat/handDetection/static_image/dataSets/mediapipe.csv',mode='w')
+df.to_csv('C:/Users/mpoli/Desktop/Git/RandHand-Chat/handDetection/static_image/dataSets/mediapipe.csv',mode='w')
+print(none_list)
