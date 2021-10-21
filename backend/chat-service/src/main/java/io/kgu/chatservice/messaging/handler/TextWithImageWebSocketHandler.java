@@ -109,7 +109,7 @@ public class TextWithImageWebSocketHandler extends AbstractWebSocketHandler impl
 
         // 동일한 웹소켓 서버에 접속하지 않은 경우
         // Redis 통하여 메시지 publish
-        String toUser = session.getHandshakeHeaders().get("to").get(0);
+        String toUser = session.getHandshakeHeaders().get("toUser").get(0);
 
         if (users.containsKey(toUser)) {
             WebSocketSession toSession = users.get(toUser);
