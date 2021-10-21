@@ -31,4 +31,8 @@ public class AmazonS3Config {
                 .withRegion(s3Region)
                 .build();
     }
+
+    public void setS3Bucket(String bucket) {
+        s3Bucket = bucket;
+    }
 }

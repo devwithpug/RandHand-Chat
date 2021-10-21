@@ -64,8 +64,8 @@ public class WarmUpScheduler {
             log.info("Warm up with RestTemplate call");
 
             String email = (RandomStringUtils.randomAlphabetic(3)
-                            + "@" + RandomStringUtils.randomAlphabetic(3)
-                            + "." + RandomStringUtils.randomAlphabetic(3)
+                    + "@" + RandomStringUtils.randomAlphabetic(3)
+                    + "." + RandomStringUtils.randomAlphabetic(3)
             ).toLowerCase();
 
             try {
@@ -96,7 +96,7 @@ public class WarmUpScheduler {
 
                 warmUpGetUserInfoWithAuthAndEmail(email, rt, headers);
                 warmUpGetUserInfoWithUserId(rt, headers, userId);
-                warmUpDeleteUser(rt, headers);
+                warmUpDeleteUser(rt, headers, userId);
 
                 log.info("Completed Chat-service warm up in {} ms", System.currentTimeMillis() - startTime);
 
@@ -176,14 +176,15 @@ public class WarmUpScheduler {
 
     }
 
-    private void warmUpDeleteUser(RestTemplate rt, HttpHeaders headers) {
+    private void warmUpDeleteUser(RestTemplate rt, HttpHeaders headers, String userId) {
 
         rt.exchange(
-                "http://" + hostIp + ":8000/chat-service/users/delete",
-                HttpMethod.GET,
+                "http://" + hostIp + ":8000/chat-service/users/" + userId,
+                HttpMethod.DELETE,
                 new HttpEntity<>(headers),
                 String.class
         );
 
     }
 }
+
