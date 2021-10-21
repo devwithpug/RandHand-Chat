@@ -3,7 +3,7 @@ package io.kgu.chatservice.security.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.kgu.chatservice.domain.request.RequestLogin;
+import io.kgu.chatservice.domain.dto.user.RequestLoginDto;
 import io.kgu.chatservice.security.token.CustomAuthenticationToken;
 import io.kgu.chatservice.service.UserService;
 import org.springframework.core.env.Environment;
@@ -38,7 +38,7 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
 
         try {
 
-            RequestLogin credentials = new ObjectMapper().readValue(request.getInputStream(), RequestLogin.class);
+            RequestLoginDto credentials = new ObjectMapper().readValue(request.getInputStream(), RequestLoginDto.class);
             return getAuthenticationManager().authenticate(
                 new CustomAuthenticationToken(new ArrayList<>(), credentials.getEmail(), credentials.getUserId())
             );

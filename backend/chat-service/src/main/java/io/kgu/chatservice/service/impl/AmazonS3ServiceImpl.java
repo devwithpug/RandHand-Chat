@@ -6,11 +6,11 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import io.kgu.chatservice.config.AmazonS3Config;
 import io.kgu.chatservice.service.AmazonS3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,9 +26,6 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
 
     private final AmazonS3 amazonS3Client;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
     @Override
     public String upload(Object image, String key) throws IOException {
 
@@ -36,12 +33,12 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
             File uploadFile = convert((MultipartFile) image)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid File format"));
 
-            PutObjectRequest request = new PutObjectRequest(bucket, key, uploadFile)
+            PutObjectRequest request = new PutObjectRequest(AmazonS3Config.s3Bucket, key, uploadFile)
                     .withCannedAcl(CannedAccessControlList.PublicRead);
 
             amazonS3Client.putObject(request);
             uploadFile.delete();
-            return amazonS3Client.getUrl(bucket, key).toString();
+            return amazonS3Client.getUrl(AmazonS3Config.s3Bucket, key).toString();
 
         } else if (image instanceof byte[]) {
             String contentType = "image/jpeg";
@@ -49,11 +46,11 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(contentType);
 
-            PutObjectRequest request = new PutObjectRequest(bucket, key, byteArrayToFileInputStream((byte[]) image), objectMetadata);
+            PutObjectRequest request = new PutObjectRequest(AmazonS3Config.s3Bucket, key, byteArrayToFileInputStream((byte[]) image), objectMetadata);
 
             amazonS3Client.putObject(request);
 
-            return amazonS3Client.getUrl(bucket, key).toString();
+            return amazonS3Client.getUrl(AmazonS3Config.s3Bucket, key).toString();
 
         } else {
             throw new IllegalArgumentException("Invalid File format");
@@ -78,20 +75,20 @@ public class AmazonS3ServiceImpl implements AmazonS3Service {
             throw new IOException("Could not create new File, internal server error");
         }
 
-        PutObjectRequest request = new PutObjectRequest(bucket, key, uploadFile)
+        PutObjectRequest request = new PutObjectRequest(AmazonS3Config.s3Bucket, key, uploadFile)
                 .withCannedAcl(CannedAccessControlList.PublicRead);
 
         amazonS3Client.putObject(request);
 
         uploadFile.delete();
 
-        return amazonS3Client.getUrl(bucket, key).toString();
+        return amazonS3Client.getUrl(AmazonS3Config.s3Bucket, key).toString();
     }
 
     @Override
     public void delete(String key) throws AmazonServiceException {
 
-        DeleteObjectRequest request = new DeleteObjectRequest(bucket, key);
+        DeleteObjectRequest request = new DeleteObjectRequest(AmazonS3Config.s3Bucket, key);
 
         amazonS3Client.deleteObject(request);
 

@@ -1,6 +1,6 @@
 package io.kgu.chatservice.service;
 
-import io.kgu.chatservice.domain.dto.UserDto;
+import io.kgu.chatservice.domain.dto.user.UserDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 

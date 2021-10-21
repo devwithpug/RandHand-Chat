@@ -1,6 +1,6 @@
 package io.kgu.chatservice.repository;
 
-import io.kgu.chatservice.domain.dto.ChatDto;
+import io.kgu.chatservice.domain.dto.chat.ChatDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +14,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,8 +27,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 class ChatRepositoryTest {
 
-    @Autowired
-    private EntityManager em;
     @Autowired
     private ChatRepository chatRepository;
     private final ModelMapper mapper = new ModelMapper();
@@ -88,6 +87,20 @@ class ChatRepositoryTest {
         ChatEntity result = chatRepository.findChatEntityBySessionId(chatRoom.getSessionId());
         // then
         assertThat(result).isEqualTo(chatRoom);
+    }
+
+    @Test
+    @DisplayName("ISO8601 날짜 포맷팅 유효성 테스트")
+    void chat_SyncTime_Validation_With_ISO_8601_Formatting() {
+        // given
+        ChatDto chatDto = createChatDto("user1Id", "user2Id");
+        ChatEntity chatRoom = chatRepository.saveAndFlush(mapper.map(chatDto, ChatEntity.class));
+        // when
+        ChatEntity result = chatRepository.findChatEntityBySessionId(chatRoom.getSessionId());
+        String result1 = result.getSyncTime().truncatedTo(ChronoUnit.SECONDS).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String result2 = result.getSyncTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
+        // then
+        assertThat(result1).isEqualTo(result2);
     }
 
     /**

@@ -1,6 +1,6 @@
 package io.kgu.chatservice.repository;
 
-import io.kgu.chatservice.domain.dto.MessageDto;
+import io.kgu.chatservice.domain.dto.chat.MessageDto;
 import io.kgu.chatservice.domain.entity.ChatEntity;
 import io.kgu.chatservice.domain.entity.MessageContentType;
 import io.kgu.chatservice.domain.entity.MessageEntity;

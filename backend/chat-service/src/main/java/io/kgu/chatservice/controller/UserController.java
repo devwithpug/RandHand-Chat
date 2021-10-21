@@ -1,29 +1,24 @@
 package io.kgu.chatservice.controller;
 
-import io.kgu.chatservice.domain.dto.UserDto;
-import io.kgu.chatservice.domain.request.RequestUser;
-import io.kgu.chatservice.domain.response.ResponseUser;
+import io.kgu.chatservice.domain.dto.user.UserDto;
+import io.kgu.chatservice.domain.dto.user.RequestUserDto;
+import io.kgu.chatservice.domain.dto.user.ResponseUserDto;
 import io.kgu.chatservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-@RequestMapping("/")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -31,236 +26,140 @@ public class UserController {
     private final ModelMapper mapper;
 
     // 회원 생성(UserDto.userId == null 인 경우)
-    @PostMapping("/users")
-    public ResponseEntity<ResponseUser> createUser(@Valid @RequestBody RequestUser requestUser) {
+    @PostMapping
+    public ResponseUserDto createUser(@Valid @RequestBody RequestUserDto requestUserDto, HttpServletResponse resp) {
 
-        UserDto userDto = mapper.map(requestUser, UserDto.class);
+        UserDto userDto = userService.createUser(mapper.map(requestUserDto, UserDto.class));
 
-        try {
-            userDto = userService.createUser(userDto);
-        } catch (DuplicateKeyException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.map(userDto, ResponseUser.class));
+        resp.setStatus(HttpServletResponse.SC_CREATED);
+        return mapper.map(userDto, ResponseUserDto.class);
     }
 
     // auth, email 회원 조회
-    @GetMapping("/users")
-    public ResponseEntity<ResponseUser> findUser(@RequestHeader("auth") String auth, @RequestHeader("email") String email) {
+    @GetMapping
+    public ResponseUserDto findUser(@RequestHeader("auth") String auth, @RequestHeader("email") String email) {
 
-        UserDto userDto;
+        UserDto userDto = userService.getUserByAuthAndEmail(auth, email);
 
-        try {
-            userDto = userService.getUserByAuthAndEmail(auth, email);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(userDto, ResponseUser.class));
+        return mapper.map(userDto, ResponseUserDto.class);
     }
 
     // userId 회원 조회
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<ResponseUser> user(@PathVariable String userId) {
+    @GetMapping("/{userId}")
+    public ResponseUserDto user(@PathVariable String userId) {
 
-        UserDto userDto;
+        UserDto userDto = userService.getUserByUserId(userId);
 
-        try {
-            userDto = userService.getUserByUserId(userId);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(userDto, ResponseUser.class));
+        return mapper.map(userDto, ResponseUserDto.class);
     }
 
     // 회원 정보 변경 요청
-    @PostMapping("/users/update")
-    public ResponseEntity<ResponseUser> modifyUser(@RequestHeader String userId, @Valid @RequestBody RequestUser requestUser) {
+    @PutMapping("/update")
+    public ResponseUserDto modifyUser(@RequestHeader String userId, @Valid @RequestBody RequestUserDto requestUserDto) {
 
-        UserDto userDto;
+        UserDto userDto = userService.modifyUserInfo(userId, mapper.map(requestUserDto, UserDto.class));
 
-        try {
-            userDto = userService.modifyUserInfo(userId, mapper.map(requestUser, UserDto.class));
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(userDto, ResponseUser.class));
+        return mapper.map(userDto, ResponseUserDto.class);
     }
 
     // 회원 프로필 사진 변경 요청
-    @PostMapping("/users/update/image")
-    public ResponseEntity<ResponseUser> modifyUserPicture(@RequestHeader String userId, @RequestParam MultipartFile image) {
+    @PutMapping("/update/image")
+    public ResponseUserDto modifyUserPicture(@RequestHeader String userId, @RequestParam MultipartFile image) throws IOException {
 
-        UserDto userDto;
+        UserDto userDto = userService.modifyUserPicture(userId, image);
 
-        try {
-            userDto = userService.modifyUserPicture(userId, image);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (IOException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(userDto, ResponseUser.class));
+        return mapper.map(userDto, ResponseUserDto.class);
     }
 
     // 친구 목록 조회
-    @GetMapping("/users/friends")
-    public ResponseEntity<List<ResponseUser>> friends(@RequestHeader("userId") String userId) {
+    @GetMapping("/friends")
+    public List<ResponseUserDto> friends(@RequestHeader("userId") String userId) {
 
-        List<UserDto> friends;
+        List<UserDto> friends = userService.getAllFriends(userId);
 
-        try {
-            friends = userService.getAllFriends(userId);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-
-        return getListResponseEntity(friends);
+        return friends.stream()
+                .map(u -> mapper.map(u, ResponseUserDto.class))
+                .collect(Collectors.toList());
     }
 
     // 친구 단일 조회
-    @GetMapping("/users/friends/{friendId}")
-    public ResponseEntity<ResponseUser> getOneFriends(@RequestHeader("userId") String userId, @PathVariable String friendId) {
+    @GetMapping("/friends/{friendId}")
+    public ResponseUserDto getOneFriends(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
-        UserDto friend;
+        UserDto friend = userService.getOneFriends(userId, friendId);
 
-        try {
-            friend = userService.getOneFriends(userId, friendId);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(friend, ResponseUser.class));
+        return mapper.map(friend, ResponseUserDto.class);
     }
 
     // 친구 추가 요청
-    @PostMapping("/users/friends/{friendId}")
-    public ResponseEntity<List<ResponseUser>> addFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
+    @PatchMapping("/friends/{friendId}")
+    public List<ResponseUserDto> addFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
-        List<UserDto> friends;
+        List<UserDto> friends = userService.addFriend(userId, friendId);
 
-        try {
-            friends = userService.addFriend(userId, friendId);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        }
-
-        return getListResponseEntity(friends);
+        return friends.stream()
+                .map(u -> mapper.map(u, ResponseUserDto.class))
+                .collect(Collectors.toList());
     }
 
     // 친구 삭제 요청
-    @PostMapping("/users/friends/{friendId}/remove")
-    public ResponseEntity<List<ResponseUser>> removeFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
+    @DeleteMapping("/friends/{friendId}")
+    public List<ResponseUserDto> removeFriend(@RequestHeader("userId") String userId, @PathVariable String friendId) {
 
-        List<UserDto> friends;
+        List<UserDto> friends = userService.removeFriend(userId, friendId);
 
-        try {
-            friends = userService.removeFriend(userId, friendId);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        }
-
-        return getListResponseEntity(friends);
+        return friends.stream()
+                .map(u -> mapper.map(u, ResponseUserDto.class))
+                .collect(Collectors.toList());
     }
 
     // 차단 목록 조회
-    @GetMapping("/users/blocked")
-    public ResponseEntity<List<ResponseUser>> blocked(@RequestHeader("userId") String userId) {
+    @GetMapping("/blacklist")
+    public List<ResponseUserDto> blocked(@RequestHeader("userId") String userId) {
 
-        List<UserDto> blockedList;
+        List<UserDto> blacklist = userService.getAllBlocked(userId);
 
-        try {
-            blockedList = userService.getAllBlocked(userId);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-
-        return getListResponseEntity(blockedList);
+        return blacklist.stream()
+                .map(u -> mapper.map(u, ResponseUserDto.class))
+                .collect(Collectors.toList());
     }
 
     // 차단 유저 단일 조회
-    @GetMapping("/users/blocked/{blockId}")
-    public ResponseEntity<ResponseUser> getOneBlocked(@RequestHeader("userId") String userId, @PathVariable String blockId) {
+    @GetMapping("/blacklist/{blockId}")
+    public ResponseUserDto getOneBlocked(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
-        UserDto blocked;
+        UserDto blocked = userService.getOneBlocked(userId, blockId);
 
-        try {
-            blocked = userService.getOneBlocked(userId, blockId);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(mapper.map(blocked, ResponseUser.class));
+        return mapper.map(blocked, ResponseUserDto.class);
     }
 
     // 유저 차단 요청
-    @PostMapping("/users/blocked/{blockId}")
-    public ResponseEntity<List<ResponseUser>> blockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
+    @PatchMapping("/blacklist/{blockId}")
+    public List<ResponseUserDto> blockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
-        List<UserDto> blockedList;
+        List<UserDto> blacklist = userService.blockUser(userId, blockId);
 
-        try {
-            blockedList = userService.blockUser(userId, blockId);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        }
-
-        return getListResponseEntity(blockedList);
+        return blacklist.stream()
+                .map(u -> mapper.map(u, ResponseUserDto.class))
+                .collect(Collectors.toList());
     }
 
     // 유저 차단 해제 요청
-    @PostMapping("/users/blocked/{blockId}/remove")
-    public ResponseEntity<List<ResponseUser>> unblockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
+    @DeleteMapping("/blacklist/{blockId}")
+    public List<ResponseUserDto> unblockUser(@RequestHeader("userId") String userId, @PathVariable String blockId) {
 
-        List<UserDto> blockedList;
+        List<UserDto> blacklist = userService.unblockUser(userId, blockId);
 
-        try {
-            blockedList = userService.unblockUser(userId, blockId);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
-        }
-
-        return getListResponseEntity(blockedList);
+        return blacklist.stream()
+                .map(u -> mapper.map(u, ResponseUserDto.class))
+                .collect(Collectors.toList());
     }
 
     // 회원 서비스 탈퇴
-    @GetMapping("/users/delete")
-    public ResponseEntity<?> deleteUser(@RequestHeader("userId") String userId) {
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable("userId") String userId) {
 
-        try {
-            userService.deleteUser(userId);
-        } catch (UsernameNotFoundException ex) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of("deleted", userId));
-    }
-
-    private ResponseEntity<List<ResponseUser>> getListResponseEntity(List<UserDto> request) {
-
-        if (request == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        List<ResponseUser> result = new ArrayList<>();
-
-        request.forEach(f -> result.add(mapper.map(f, ResponseUser.class)));
-
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        userService.deleteUser(userId);
     }
 
 }

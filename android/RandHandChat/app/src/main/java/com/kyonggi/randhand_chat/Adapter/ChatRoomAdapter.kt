@@ -1,6 +1,5 @@
 package com.kyonggi.randhand_chat.Adapter
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
@@ -12,7 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kyonggi.randhand_chat.Database.*
-import com.kyonggi.randhand_chat.Fragments.ChatsActivity.ChatActivity
+import com.kyonggi.randhand_chat.Activity.ChatActivity
 import com.kyonggi.randhand_chat.R
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitChat
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser

@@ -1,6 +1,6 @@
 package io.kgu.chatservice.service.impl;
 
-import io.kgu.chatservice.domain.dto.UserDto;
+import io.kgu.chatservice.domain.dto.user.UserDto;
 import io.kgu.chatservice.domain.entity.UserEntity;
 import io.kgu.chatservice.repository.UserRepository;
 import io.kgu.chatservice.service.AmazonS3Service;

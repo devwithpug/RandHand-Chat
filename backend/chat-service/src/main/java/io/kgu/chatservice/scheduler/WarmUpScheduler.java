@@ -1,15 +1,16 @@
 package io.kgu.chatservice.scheduler;
 
-import io.kgu.chatservice.domain.dto.UserDto;
-import io.kgu.chatservice.domain.request.RequestLogin;
-import io.kgu.chatservice.domain.request.RequestUser;
-import io.kgu.chatservice.domain.response.ResponseUser;
+import io.kgu.chatservice.domain.dto.user.UserDto;
+import io.kgu.chatservice.domain.dto.user.RequestLoginDto;
+import io.kgu.chatservice.domain.dto.user.RequestUserDto;
+import io.kgu.chatservice.domain.dto.user.ResponseUserDto;
 import io.kgu.chatservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.http.HttpStatus;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,31 +18,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.UUID;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 
 @Slf4j
 @Component
+@Setter @Validated
 @RequiredArgsConstructor
+@ConfigurationProperties(prefix = "randhand")
 public class WarmUpScheduler {
 
     private final UserService userService;
 
-    @Value("${randhand.host_ip}")
-    private String host;
-    @Value("${randhand.warm_up}")
-    private boolean isWarmUp;
+    @NotEmpty private String hostIp;
+    @NotNull private Boolean warmUp;
 
     @Scheduled(fixedDelay = 30 * 60 * 1000)
     public void onApplicationEvent() {
 
-        if (isWarmUp) {
+        if (warmUp) {
 
             log.info("Initializing Chat-service warm up");
 
@@ -52,7 +54,7 @@ public class WarmUpScheduler {
             while (statusCode != HttpStatus.SC_OK) {
                 try {
                     Thread.sleep(10000);
-                    statusCode = rt.getForEntity("http://" + host + ":8000/chat-service/actuator/health", String.class).getStatusCodeValue();
+                    statusCode = rt.getForEntity("http://" + hostIp + ":8000/chat-service/actuator/health", String.class).getStatusCodeValue();
                 } catch (InterruptedException | HttpServerErrorException | ResourceAccessException e) {
                     log.warn("No servers available now. Retry in next 10 seconds.");
                 }
@@ -62,8 +64,8 @@ public class WarmUpScheduler {
             log.info("Warm up with RestTemplate call");
 
             String email = (RandomStringUtils.randomAlphabetic(3)
-                            + "@" + RandomStringUtils.randomAlphabetic(3)
-                            + "." + RandomStringUtils.randomAlphabetic(3)
+                    + "@" + RandomStringUtils.randomAlphabetic(3)
+                    + "." + RandomStringUtils.randomAlphabetic(3)
             ).toLowerCase();
 
             try {
@@ -71,21 +73,21 @@ public class WarmUpScheduler {
                 long startTime = System.currentTimeMillis();
 
 
-                RequestUser requestCreateUser = RequestUser.builder().email(email).auth("t").name("t").build();
+                RequestUserDto requestCreateUser = RequestUserDto.builder().email(email).auth("t").name("t").build();
                 HttpHeaders headers = new HttpHeaders();
                 headers.add("Content-Type", "application/json");
                 headers.add("Accept", "application/json");
                 headers.add("Accept-Encoding", "gzip, deflate, br");
 
-                ResponseEntity<ResponseUser> resp = warmUpCreateUser(rt, headers, requestCreateUser);
+                ResponseEntity<ResponseUserDto> resp = warmUpCreateUser(rt, headers, requestCreateUser);
 
                 String userId = resp.getBody().getUserId();
 
-                RequestLogin requestLoginUser = new RequestLogin();
-                requestLoginUser.setUserId(userId);
-                requestLoginUser.setEmail(email);
+                RequestLoginDto requestLoginDtoUser = new RequestLoginDto();
+                requestLoginDtoUser.setUserId(userId);
+                requestLoginDtoUser.setEmail(email);
 
-                resp = warmUpLoginUser(rt, headers, requestLoginUser);
+                resp = warmUpLoginUser(rt, headers, requestLoginDtoUser);
 
                 String token = resp.getHeaders().get("token").get(0);
 
@@ -94,7 +96,7 @@ public class WarmUpScheduler {
 
                 warmUpGetUserInfoWithAuthAndEmail(email, rt, headers);
                 warmUpGetUserInfoWithUserId(rt, headers, userId);
-                warmUpDeleteUser(rt, headers);
+                warmUpDeleteUser(rt, headers, userId);
 
                 log.info("Completed Chat-service warm up in {} ms", System.currentTimeMillis() - startTime);
 
@@ -116,13 +118,13 @@ public class WarmUpScheduler {
         }
     }
 
-    private ResponseEntity<ResponseUser> warmUpCreateUser(RestTemplate rt, HttpHeaders headers, RequestUser req) throws HttpServerErrorException {
-        HttpEntity<RequestUser> requestUserHttpEntity = new HttpEntity<>(req, headers);
+    private ResponseEntity<ResponseUserDto> warmUpCreateUser(RestTemplate rt, HttpHeaders headers, RequestUserDto req) throws HttpServerErrorException {
+        HttpEntity<RequestUserDto> requestUserHttpEntity = new HttpEntity<>(req, headers);
 
-        ResponseEntity<ResponseUser> response = rt.postForEntity(
-                "http://" + host + ":8000/chat-service/users",
+        ResponseEntity<ResponseUserDto> response = rt.postForEntity(
+                "http://" + hostIp + ":8000/chat-service/users",
                 requestUserHttpEntity,
-                ResponseUser.class
+                ResponseUserDto.class
         );
 
         if (response.getStatusCodeValue() != HttpStatus.SC_CREATED) {
@@ -132,14 +134,14 @@ public class WarmUpScheduler {
         return response;
     }
 
-    private ResponseEntity<ResponseUser> warmUpLoginUser(RestTemplate rt, HttpHeaders headers, RequestLogin req) throws HttpServerErrorException {
+    private ResponseEntity<ResponseUserDto> warmUpLoginUser(RestTemplate rt, HttpHeaders headers, RequestLoginDto req) throws HttpServerErrorException {
 
-        HttpEntity<RequestLogin> requestLoginHttpEntity = new HttpEntity<>(req, headers);
+        HttpEntity<RequestLoginDto> requestLoginHttpEntity = new HttpEntity<>(req, headers);
 
-        ResponseEntity<ResponseUser> response = rt.postForEntity(
-                "http://" + host + ":8000/chat-service/login",
+        ResponseEntity<ResponseUserDto> response = rt.postForEntity(
+                "http://" + hostIp + ":8000/chat-service/login",
                 requestLoginHttpEntity,
-                ResponseUser.class
+                ResponseUserDto.class
         );
 
         if (response.getStatusCodeValue() != HttpStatus.SC_OK) {
@@ -155,10 +157,10 @@ public class WarmUpScheduler {
         headers.add("email", email);
 
         rt.exchange(
-                "http://" + host + ":8000/chat-service/users",
+                "http://" + hostIp + ":8000/chat-service/users",
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
-                ResponseUser.class
+                ResponseUserDto.class
         );
 
     }
@@ -166,7 +168,7 @@ public class WarmUpScheduler {
     private void warmUpGetUserInfoWithUserId(RestTemplate rt, HttpHeaders headers, String userId) {
 
         rt.exchange(
-                "http://" + host + ":8000/chat-service/users/" + userId,
+                "http://" + hostIp + ":8000/chat-service/users/" + userId,
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 String.class
@@ -174,14 +176,15 @@ public class WarmUpScheduler {
 
     }
 
-    private void warmUpDeleteUser(RestTemplate rt, HttpHeaders headers) {
+    private void warmUpDeleteUser(RestTemplate rt, HttpHeaders headers, String userId) {
 
         rt.exchange(
-                "http://" + host + ":8000/chat-service/users/delete",
-                HttpMethod.GET,
+                "http://" + hostIp + ":8000/chat-service/users/" + userId,
+                HttpMethod.DELETE,
                 new HttpEntity<>(headers),
                 String.class
         );
 
     }
 }
+
