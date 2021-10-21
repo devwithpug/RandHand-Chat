@@ -25,12 +25,12 @@ public class GlobalFilter extends AbstractGatewayFilterFactory<GlobalFilter.Conf
             ServerHttpRequest request = exchange.getRequest();
             ServerHttpResponse response = exchange.getResponse();
 
-            if (config.isPreLogger()) {
+            if (config.isPreLogger() && !request.getURI().getPath().equals("/chat-service/health")) {
                 log.info("Global PRE filter : [{}] {}", request.getMethodValue(), request.getURI().getPath());
             }
 
             return chain.filter(exchange).then(Mono.fromRunnable(() -> {
-                if (config.isPostLogger()) {
+                if (config.isPostLogger() && !request.getURI().getPath().equals("/chat-service/health")) {
                     log.info("Global POST filter : STATUS CODE {} ", response.getStatusCode());
                 }
             }));
