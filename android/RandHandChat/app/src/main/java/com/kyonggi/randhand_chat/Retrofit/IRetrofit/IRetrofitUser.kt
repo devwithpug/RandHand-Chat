@@ -22,7 +22,7 @@ interface IRetrofitUser {
     ) : Call<Client>
 
     // 회원정보 변경
-    @POST("users/update")
+    @PUT("users/update")
     fun editClient(
         @Header("Authorization") userToken: String,
         @Header("userId") userId: String,
@@ -31,7 +31,7 @@ interface IRetrofitUser {
 
     // 회원이미지 변경
     @Multipart
-    @POST("users/update/image")
+    @PUT("users/update/image")
     fun editImage(
         @Header("Authorization") userToken: String,
         @Header("userId") userId: String,
@@ -73,7 +73,7 @@ interface IRetrofitUser {
     ) : Call<ResponseUser>
 
     // 친구 추가 요청
-    @POST("users/friends/{friendId}")
+    @PATCH("users/friends/{friendId}")
     fun addUser(
         // Header 에 넣는 userId는 지금 사용자가 누구인지
         @Header("Authorization") userToken: String,
@@ -83,7 +83,7 @@ interface IRetrofitUser {
     ) : Call<List<ResponseUser>>
 
     // 친구 삭제 요청
-    @POST("users/friends/{friendId}/remove")
+    @DELETE("users/friends/{friendId}")
     fun deleteUser(
         // Header 에 넣는 userId는 지금 사용자가 누구인지
         @Header("Authorization") userToken: String,
@@ -93,7 +93,7 @@ interface IRetrofitUser {
     ) : Call<List<ResponseUser>>
 
     // 유저 차단 요청
-    @POST("users/blocked/{blockId}")
+    @PATCH("users/blacklist/{blockId}")
     fun blockUser(
         // Header 에 넣는 userId는 지금 사용자가 누구인지
         @Header("Authorization") userToken: String,
@@ -103,7 +103,7 @@ interface IRetrofitUser {
     ) : Call<List<ResponseUser>>
 
     // 차단 목록 조회
-    @GET("users/blocked")
+    @GET("users/blacklist")
     fun getBlockUserList(
         // Header 에 넣는 userId는 지금 사용자가 누구인지
         @Header("Authorization") userToken: String,
@@ -111,7 +111,7 @@ interface IRetrofitUser {
     ) : Call<List<ResponseUser>>
 
     // 차단 유저 단일 조회
-    @GET("users/blocked/{blockId}")
+    @GET("users/blacklist/{blockId}")
     fun getBlockUser(
         // Header 에 넣는 userId는 지금 사용자가 누구인지
         @Header("Authorization") userToken: String,
@@ -121,7 +121,7 @@ interface IRetrofitUser {
     ) : Call<ResponseUser>
 
     // 유저 차단 해제 요청
-    @POST("users//blocked/{blockId}/remove")
+    @DELETE("users/blacklist/{blockId}")
     fun getBlockUserRemove(
         // Header 에 넣는 userId는 지금 사용자가 누구인지
         @Header("Authorization") userToken: String,
@@ -131,10 +131,11 @@ interface IRetrofitUser {
     ) : Call<List<ResponseUser>>
 
     // 회원 서비스 탈퇴
-    @GET("users/delete")
+    @DELETE("users/{userId}")
     fun userWithdrawal(
         @Header("Authorization") userToken: String,
         @Header("userId") userId: String,
+        @Path("userId") deleteId: String
     ) : Call<Void>
 
 

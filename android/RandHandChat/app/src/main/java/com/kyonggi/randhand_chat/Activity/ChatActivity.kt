@@ -169,7 +169,7 @@ class ChatActivity : AppCompatActivity() {
      * 채팅방 나가기
      */
     private fun deleteChatRoom(supplementServiceChat: IRetrofitChat, token: String, userId: String) {
-        supplementServiceChat.removeChatRoom(sessionId ,token, userId).enqueue(object: Callback<Void> {
+        supplementServiceChat.removeChatRoom(token, userId, sessionId).enqueue(object: Callback<Void> {
             override fun onResponse(call: Call<Void>, response: retrofit2.Response<Void>) {
 
                 when (response.code()) {
@@ -327,9 +327,10 @@ class ChatActivity : AppCompatActivity() {
          */
         client = OkHttpClient()
         val request = Request.Builder()
-            .url("ws://3.36.37.197:8000/chat-service/websocket/session/$sessionId")
+            .url("ws://devwithpug-lb-1172533163.ap-northeast-2.elb.amazonaws.com/chat-service/websocket/session/$sessionId")
             .addHeader("Authorization", token)
             .addHeader("userId", userId)
+            .addHeader("toUser", chatId)
             .build()
         val listener = ChatActivity().MyWebSocketListener(sessionId, chatId, chatDAO)
 

@@ -15,6 +15,7 @@ import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.kyonggi.randhand_chat.Domain.User.Client
+import com.kyonggi.randhand_chat.R
 import com.kyonggi.randhand_chat.Retrofit.IRetrofit.IRetrofitUser
 import com.kyonggi.randhand_chat.Retrofit.ServiceURL
 import com.kyonggi.randhand_chat.Util.AppUtil
@@ -52,6 +53,7 @@ class LoginActivity : AppCompatActivity() {
 
         val gso =
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
 
@@ -73,7 +75,6 @@ class LoginActivity : AppCompatActivity() {
         // 기존에 로그인 여부
         if (gsa != null) {
             getUserIdRequest(supplementService, "google", gsa.email!!)
-            finish()
         }
     } // onStart End
 
@@ -110,7 +111,7 @@ class LoginActivity : AppCompatActivity() {
             signInClient(supplementService, client)
 
         } catch (e: ApiException) {
-            // Sign in was unsuccessful
+            Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
 
         }
     }
@@ -118,13 +119,15 @@ class LoginActivity : AppCompatActivity() {
         supplementService.requestUserId(auth, email).enqueue(object : Callback<Client> {
             override fun onResponse(call: Call<Client>, response: Response<Client>) {
                 val body = response.body()
-                body?.userId?.let { AppUtil.prefs.setString("userId", it) }
-                body?.name?.let { AppUtil.prefs.setString("userName", it) }
-                body?.picture?.let { AppUtil.prefs.setString("image", it) }
-                body?.message?.let { AppUtil.prefs.setString("status", it) }
-                val userId = AppUtil.prefs.getString("userId", null)
-                val client = Client(userId, null, email, null, null, null)
-                loginClient(supplementService, client)
+                if (body != null) {
+                    body.userId?.let { AppUtil.prefs.setString("userId", it) }
+                    body.name?.let { AppUtil.prefs.setString("userName", it) }
+                    body.picture?.let { AppUtil.prefs.setString("image", it) }
+                    body.message?.let { AppUtil.prefs.setString("status", it) }
+                    val userId = AppUtil.prefs.getString("userId", null)
+                    val client = Client(userId, null, email, null, null, null)
+                    loginClient(supplementService, client)
+                }
             }
 
             override fun onFailure(call: Call<Client>, t: Throwable) {
@@ -165,6 +168,7 @@ class LoginActivity : AppCompatActivity() {
                 val token = response.headers()["token"]
                 AppUtil.prefs.setString("token", "Bearer $token")
                 startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                finish()
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
