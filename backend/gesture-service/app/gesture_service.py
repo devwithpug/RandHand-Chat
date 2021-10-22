@@ -30,7 +30,7 @@ credentials = pika.PlainCredentials(username=username, password=password)
 
 while channel is None:
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host, '5672', credentials=credentials, heartbeat=600, blocked_connection_timeout=600))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host, '5672', credentials=credentials, heartbeat=0))
         channel = connection.channel()
     except RuntimeError as err:
         log(err + "\nretry in 1m")
