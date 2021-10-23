@@ -16,4 +16,15 @@
     <color name="myMes_textColor">#FFF</color>
     <color name="applyMes_textColor">#978C8C</color>
     <color name="color_editText">#777272</color>
+
+    <!-- 메인 컬러 설정 -->
+    <color name="primaryColor">#eeeeee</color>
+    <color name="primaryLightColor">#ffffff</color>
+    <color name="primaryDarkColor">#bcbcbc</color>
+    <color name="secondaryColor">#616161</color>
+    <color name="secondaryLightColor">#8e8e8e</color>
+    <color name="secondaryDarkColor">#373737</color>
+    <color name="primaryTextColor">#424242</color>
+    <color name="secondaryTextColor">#212121</color>
+    <color name="background">#ffffff</color>
 </resources>

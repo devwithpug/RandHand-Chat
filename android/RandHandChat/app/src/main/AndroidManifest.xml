@@ -22,37 +22,31 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MediaPipe.SendRequestActivity"
-            android:theme="@style/MessageTheme"
             android:exported="true" />
         <activity
             android:name=".MediaPipe.MediaPipeActivity"
             android:exported="true"
-            android:screenOrientation="fullSensor"
-            android:theme="@style/MessageTheme" />
+            android:screenOrientation="fullSensor" />
         <activity
             android:name=".Activity.ProgressActivity"
-            android:exported="true"
-            android:theme="@style/MessageTheme">
+            android:exported="true">
         </activity>
         <activity
             android:name=".Activity.ChatActivity"
             android:exported="true"
-            android:theme="@style/MessageTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Activity.EditProfileActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:name=".Activity.EditProfileActivity"/>
         <activity
             android:name=".Activity.BlockedFriendActivity"
-            android:exported="true"
-            android:theme="@style/MainTheme" />
+            android:exported="true" />
         <activity
             android:name=".Activity.ProfileActivity"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.NoActionBar" /> <!-- Message Activity 등록 -->
+            android:exported="true" />
+        <!-- Message Activity 등록 -->
         <activity
-            android:name=".Activity.MainActivity"
-            android:theme="@style/MainTheme" /> <!-- Splash Activity 등록 -->
+            android:name=".Activity.MainActivity" />
+        <!-- Splash Activity 등록 -->
         <activity
             android:name=".Activity.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -63,8 +57,7 @@
             </intent-filter>
         </activity> <!-- Login Activity 등록 -->
         <activity
-            android:name=".Activity.LoginActivity"
-            android:theme="@style/LoginTheme" />
+            android:name=".Activity.LoginActivity" />
     </application>
 
 </manifest>

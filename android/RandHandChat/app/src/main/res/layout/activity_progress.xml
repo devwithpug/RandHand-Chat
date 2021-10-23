@@ -37,7 +37,7 @@
         android:id="@+id/cancelMatchingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/round_button_mediapipe"
+        android:background="@drawable/round_button"
         android:text="요청 취소"
         android:visibility="gone"
         tools:visibility="visible"

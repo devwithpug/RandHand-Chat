@@ -3,6 +3,7 @@ package com.kyonggi.randhand_chat.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kyonggi.randhand_chat.Adapter.BlockedUserAdapter
 import com.kyonggi.randhand_chat.Domain.User.ResponseUser
@@ -27,6 +28,8 @@ class BlockedFriendActivity : AppCompatActivity() {
         setContentView(binding.root)
         initRetrofit()
 
+        binding.toolbar.title = "차단목록"
+        setSupportActionBar(binding.toolbar)
         getBlockedList(supplementService)
         binding.blockedRecycler.layoutManager = LinearLayoutManager(this)
     }
@@ -37,6 +40,9 @@ class BlockedFriendActivity : AppCompatActivity() {
             .enqueue(object : Callback<List<ResponseUser>> {
                 override fun onResponse(call: Call<List<ResponseUser>>, response: Response<List<ResponseUser>>) {
                     blockedList = response.body() as MutableList<ResponseUser>
+                    if (blockedList.size != 0) {
+                        binding.blockedListText.visibility = View.INVISIBLE
+                    }
                     // 화면의 recyclerView와 연결
                     binding.blockedRecycler.adapter = BlockedUserAdapter(blockedList)
                 }
