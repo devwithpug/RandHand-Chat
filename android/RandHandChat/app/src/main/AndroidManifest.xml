@@ -22,6 +22,7 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MediaPipe.SendRequestActivity"
+            android:screenOrientation="portrait"
             android:exported="true" />
         <activity
             android:name=".MediaPipe.MediaPipeActivity"
@@ -29,24 +30,21 @@
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".Activity.ProgressActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
         </activity>
         <activity
             android:name=".Activity.ChatActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".Activity.EditProfileActivity"/>
+        <activity android:name=".Activity.EditProfileActivity" />
         <activity
             android:name=".Activity.BlockedFriendActivity"
             android:exported="true" />
         <activity
             android:name=".Activity.ProfileActivity"
-            android:exported="true" />
-        <!-- Message Activity 등록 -->
-        <activity
-            android:name=".Activity.MainActivity" />
-        <!-- Splash Activity 등록 -->
+            android:exported="true" /> <!-- Message Activity 등록 -->
+        <activity android:name=".Activity.MainActivity" /> <!-- Splash Activity 등록 -->
         <activity
             android:name=".Activity.SplashActivity"
             android:theme="@style/SplashTheme">
@@ -56,8 +54,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- Login Activity 등록 -->
+        <activity android:name=".Activity.LoginActivity" />
+
         <activity
-            android:name=".Activity.LoginActivity" />
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/LicenseTheme" />
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
+            android:theme="@style/LicenseTheme" />
     </application>
 
 </manifest>
