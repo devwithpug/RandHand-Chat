@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object GestureServiceURL {
     // Base Url
-    private const val BASE_URL = "http://3.36.37.197:8000/gesture-service/"
+    private const val BASE_URL = "http://devwithpug-lb-1172533163.ap-northeast-2.elb.amazonaws.com/gesture-service/"
     // Retrofit 선언
     private lateinit var retrofitGesture: Retrofit
     private var gson = GsonBuilder().setLenient().create()

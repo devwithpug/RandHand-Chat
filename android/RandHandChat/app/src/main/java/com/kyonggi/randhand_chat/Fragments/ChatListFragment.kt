@@ -122,6 +122,7 @@ class ChatListFragment : Fragment(){
                     for (info in chatInfo) {
                         val chatId = info.userIds.filter { it != AppUtil.prefs.getString("userId", null) }[0]
                         getUserInfo(supplementServiceUser, chatId, info)
+                        chatBinding.chatListText.visibility = View.INVISIBLE
                     }
                 } else {
                     chatInfo = listOf()

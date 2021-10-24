@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mes_background"
     tools:context=".Activity.LoginActivity">
 
     <androidx.constraintlayout.widget.Guideline
@@ -18,32 +17,53 @@
         android:id="@+id/logoImageView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="64dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="64dp"
-        android:layout_marginBottom="64dp"
         android:src="@drawable/hand_icon"
-        app:layout_constraintBottom_toTopOf="@+id/logo_guideline"
+        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="RandHandChat"
+        android:gravity="center"
+        android:textStyle="italic"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/logo_guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
     <com.google.android.gms.common.SignInButton
         android:id="@+id/google_login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="24dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/logo_guideline">
 
     </com.google.android.gms.common.SignInButton>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:text="@string/madeBy"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

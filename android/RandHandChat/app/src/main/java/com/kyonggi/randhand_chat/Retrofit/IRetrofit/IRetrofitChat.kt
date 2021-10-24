@@ -25,11 +25,11 @@ interface IRetrofitChat {
     ): Call<List<ChatInfo>>
 
     // 채팅방 나가기 요청
-    @GET("chats/leave")
+    @DELETE("chats/{sessionId}")
     fun removeChatRoom(
-        @Header("sessionId") sessionId: String,
         @Header("Authorization") userToken: String,
         @Header("userId") userId: String,
+        @Path("sessionId") sessionId: String
     ) : Call<Void>
 
     // 채팅방 동기화

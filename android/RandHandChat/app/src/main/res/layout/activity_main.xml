@@ -10,7 +10,6 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/mes_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,10 +18,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
             android:layout_gravity="left"
             android:textSize="20sp">
-
         </TextView>
     </androidx.appcompat.widget.Toolbar>
 
@@ -31,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        android:background="@color/background"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
     </androidx.fragment.app.FragmentContainerView>
 
@@ -38,9 +36,9 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/mes_background"
-        app:itemIconTint="@color/black"
         app:labelVisibilityMode="unlabeled"
+        android:background="@color/backgroundNav"
+        app:itemIconTint="@color/primaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -6,6 +6,6 @@ import java.time.LocalDateTime
 data class SyncInfo(
     @SerializedName("syncTime")
     val syncTime: String,
-    @SerializedName("message")
+    @SerializedName("messages")
     val messageList: List<MessageInfo>
 )

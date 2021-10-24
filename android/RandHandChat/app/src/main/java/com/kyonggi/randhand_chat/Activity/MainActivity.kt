@@ -3,8 +3,6 @@ package com.kyonggi.randhand_chat.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kyonggi.randhand_chat.Fragments.ChatListFragment
 import com.kyonggi.randhand_chat.Fragments.FriendFragment
 import com.kyonggi.randhand_chat.Fragments.SettingFragment

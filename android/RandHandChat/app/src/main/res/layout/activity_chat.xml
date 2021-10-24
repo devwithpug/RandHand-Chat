@@ -21,6 +21,7 @@
         android:layout_height="0dp"
         android:layout_weight="2"
         android:divider="#fff"
+        android:background="@color/background"
         android:scrollbars="vertical">
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -35,8 +36,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="5dp"
-            android:padding="20dp"
-            android:background="@android:drawable/ic_menu_gallery">
+            android:padding="16dp"
+            android:backgroundTint="@color/secondaryTextColor"
+            android:background="@drawable/outline_photo_camera_24">
         </ImageButton>
 
         <EditText
@@ -56,10 +58,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:background="@android:drawable/ic_menu_send"
+            android:background="@drawable/outline_send_24"
+            android:backgroundTint="@color/secondaryTextColor"
             android:clickable="true"
+            android:layout_marginEnd="2dp"
             android:focusable="true"
-            android:padding="20dp"
+            android:padding="16dp"
             android:scaleType="fitCenter" />
     </LinearLayout>
 </LinearLayout>

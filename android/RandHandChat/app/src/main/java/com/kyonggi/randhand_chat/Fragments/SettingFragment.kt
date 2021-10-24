@@ -108,7 +108,7 @@ class SettingFragment : Fragment() {
     }
 
     private fun userWithdrawal(supplementService: IRetrofitUser, token: String, userId: String) {
-        supplementService.userWithdrawal(token, userId).enqueue(object : Callback<Void> {
+        supplementService.userWithdrawal(token, userId, userId).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 Log.d("회원탈퇴", "회원탈퇴 성공")
 

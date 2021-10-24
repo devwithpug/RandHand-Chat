@@ -21,10 +21,23 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:clickable="true"
+        android:backgroundTint="@color/secondaryLightColor"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/hand_icon"
         tools:ignore="SpeakableTextPresentCheck" />
+    <TextView
+        android:id="@+id/chatListText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="채팅방이 없습니다."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+    </TextView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
