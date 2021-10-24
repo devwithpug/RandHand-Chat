@@ -145,6 +145,8 @@ class FriendFragment : Fragment() {
                 val list = response.body()
                 Log.d("리스트", list.toString())
                 profileList = list as MutableList<ResponseUser>
+
+                friendsBinding.friendsCount.text = "친구 " + list.size
                 // 어댑터 설정
                 friendsBinding.friendsList.adapter = UserAdapter(profileList)
             }

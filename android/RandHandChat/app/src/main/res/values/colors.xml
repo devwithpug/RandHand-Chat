@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="accent">#FFCA28</color>
+    <color name="mesBackground">#ffb300</color>
 
     <!-- 메시지 입력화면에서의 사용할 컬러 -->
     <color name="colorMyMessage">#FFCC80</color>
@@ -16,4 +17,16 @@
     <color name="myMes_textColor">#FFF</color>
     <color name="applyMes_textColor">#978C8C</color>
     <color name="color_editText">#777272</color>
+
+    <color name="primaryColor">#ffca28</color>
+    <color name="primaryLightColor">#fffd61</color>
+    <color name="primaryDarkColor">#c79a00</color>
+    <color name="secondaryColor">#fb8c00</color>
+    <color name="secondaryLightColor">#ffbd45</color>
+    <color name="secondaryDarkColor">#c25e00</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="secondaryTextColor">#424242</color>
+    <color name="backgroundNav">#ffd54f</color>
+    <color name="background">#fff8e1</color>
+
 </resources>

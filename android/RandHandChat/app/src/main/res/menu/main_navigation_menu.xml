@@ -5,22 +5,21 @@
         android:title="친구목록"
         android:id="@+id/menu_friends"
         android:enabled="true"
-        android:icon="@drawable/user_notfilled">
+        android:icon="@drawable/friend_menu_selector">
     </item>
 
     <item
         android:title="채팅"
         android:id="@+id/menu_chattings"
         android:enabled="true"
-        android:icon="@drawable/chat_notfilled"
-        android:iconTint="@color/black">
+        android:icon="@drawable/chat_menu_selector">
     </item>
 
     <item
         android:title="더보기"
         android:id="@+id/menu_settings"
         android:enabled="true"
-        android:icon="@drawable/more_notfilled"
+        android:icon="@drawable/setting_menu_selector"
         >
     </item>
 

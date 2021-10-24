@@ -7,22 +7,27 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/profileCardView"
-        android:layout_width="400dp"
-        android:layout_height="400dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="1dp"
         app:cardCornerRadius="15dp"
         app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnGallery">
 
         <ImageView
             android:id="@+id/profile_image"
             android:layout_width="match_parent"
+            android:adjustViewBounds="true"
             android:layout_height="match_parent"
             android:background="@color/mes_background"
             android:longClickable="false"
-            android:scaleType="center"
+            android:scaleType="centerCrop"
             android:src="@drawable/hand_icon" />
 
     </androidx.cardview.widget.CardView>
@@ -31,47 +36,89 @@
         android:id="@+id/profileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/primaryDarkColor"
         android:text="사용자"
-        android:layout_marginTop="32dp"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/profileCardView"
-        app:layout_constraintStart_toStartOf="@+id/profileCardView"
-        app:layout_constraintTop_toBottomOf="@+id/btnGallery">
+        android:textSize="20dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/statusMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
     </EditText>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
+        android:background="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/profileName"/>
 
     <EditText
         android:id="@+id/statusMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/primaryDarkColor"
         android:hint="상태메시지를 입력해 주세요."
         android:maxLength="60"
         android:minHeight="48dp"
-        android:textSize="16sp"
+        android:textColor="@color/primaryTextColor"
+        android:textColorHint="@color/primaryDarkColor"
+        android:textSize="16dp"
         app:layout_constraintBottom_toTopOf="@+id/editButton"
-        app:layout_constraintEnd_toEndOf="@+id/profileName"
-        app:layout_constraintStart_toStartOf="@+id/profileName"
-        app:layout_constraintTop_toBottomOf="@+id/profileName" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
+        android:background="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/statusMessage"/>
 
     <ImageButton
         android:id="@+id/btnGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:drawable/ic_menu_gallery"
+        android:background="@drawable/outline_photo_camera_24"
+        android:backgroundTint="@color/primaryDarkColor"
         android:contextClickable="true"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
+        android:minWidth="36dp"
+        android:minHeight="36dp"
+        android:layout_marginBottom="64dp"
+        app:layout_constraintBottom_toTopOf="@+id/profileName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileCardView"
         tools:ignore="SpeakableTextPresentCheck" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
+        android:background="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="5dp"
+        app:layout_constraintTop_toBottomOf="@+id/btnGallery"/>
     <Button
         android:id="@+id/editButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:text="저장"
+        android:textSize="16dp"
+        android:background="@drawable/round_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">

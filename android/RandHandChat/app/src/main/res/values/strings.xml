@@ -7,4 +7,5 @@
     <string name="blockFriend">친구차단</string>
     <string name="deleteFriend">친구삭제</string>
     <string name="default_web_client_id">229651496060-5n3l6dfrsh6gord41fjjgmd3dqqatj76.apps.googleusercontent.com</string>
+    <string name="madeBy">Made by\nJoon/Choi/Han</string>
 </resources>
