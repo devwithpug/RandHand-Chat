@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2021 Jungyu Choi
+Copyright (c) 2021 donghyun han
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,30 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+============================================================================
+   RANDHAND CHAT SUBCOMPONENTS:
+
+   The RandHand-Chat project contains subcomponents with separate copyright
+   notices and license terms. Your use of the source code for the these
+   subcomponents is subject to the terms and conditions of the following
+   licenses.
+   
+========================================================================
+Apache licenses
+========================================================================
+
+The following components are provided under the Apache License. See project link for details.
+The text of each license is also included at licenses/LICENSE-[project]-[version].txt.
+
+    (Apache License 2.0) opencv2 v4.5.3 (https://github.com/opencv/opencv/blob/master/LICENSE)
+    (Apache License 2.0) mediapipe v0.8.3 (https://github.com/google/mediapipe/blob/master/LICENSE)
+    
+========================================================================
+BSD 3-Clause licenses
+========================================================================
+The following components are provided under the BSD 3-Clause license.  See file headers and project links for details.
+
+    (BSD 3-Clause License) pandas v1.1.5 (https://github.com/pandas-dev/pandas/blob/master/LICENSE)
+    (BSD 3-Clause License) numpy v1.19.3 (https://github.com/numpy/numpy/blob/main/LICENSE.txt)
+    (BSD 3-Clause License) scikit-learn (https://github.com/scikit-learn/scikit-learn/blob/main/COPYING)
