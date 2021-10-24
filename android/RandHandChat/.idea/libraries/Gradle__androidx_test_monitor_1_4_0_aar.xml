@@ -5,9 +5,11 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/2a598ad120081fe5e8a6e3e508a02b79/transformed/monitor-1.4.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/0f30faa238ce2694379e793cb25f1909/transformed/monitor-1.4.0/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/292033becd6310912787d69f19a45732/transformed/monitor-1.4.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/2393e4f0ba7e150d8216325ca04ee888/transformed/monitor-1.4.0/AndroidManifest.xml" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/2393e4f0ba7e150d8216325ca04ee888/transformed/monitor-1.4.0/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/2393e4f0ba7e150d8216325ca04ee888/transformed/monitor-1.4.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/5477d95618710b7775b75ab4071a7edb/transformed/monitor-1.4.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/d1356e25a2e0af83fcf76e27477c69ba/transformed/monitor-1.4.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d1356e25a2e0af83fcf76e27477c69ba/transformed/monitor-1.4.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/d1356e25a2e0af83fcf76e27477c69ba/transformed/monitor-1.4.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.test/monitor/1.4.0/2770e38fa6d39242c2fa2e9d2ca3275b1d9debd8/monitor-1.4.0-javadoc.jar!/" />

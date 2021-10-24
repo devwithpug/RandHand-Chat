@@ -6,8 +6,10 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/41a339b9a0a2eaf8ea578864dc08df20/transformed/junit-1.1.3/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/30315f1406c068494ff0a48e0fc9cf0e/transformed/junit-1.1.3/res" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/9651cfad06815556ccdf4a5819dddcef/transformed/junit-1.1.3/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/9651cfad06815556ccdf4a5819dddcef/transformed/junit-1.1.3/AndroidManifest.xml" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/9651cfad06815556ccdf4a5819dddcef/transformed/junit-1.1.3/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/4034da05bc27e6f9c9fb69bda98aad9b/transformed/junit-1.1.3/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/394fc94708dbc74a4966fa6ae9fc8ef0/transformed/junit-1.1.3/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/394fc94708dbc74a4966fa6ae9fc8ef0/transformed/junit-1.1.3/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/394fc94708dbc74a4966fa6ae9fc8ef0/transformed/junit-1.1.3/res" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.test.ext/junit/1.1.3/f138cf897cc1e024dd714073df04f2425d845104/junit-1.1.3-javadoc.jar!/" />

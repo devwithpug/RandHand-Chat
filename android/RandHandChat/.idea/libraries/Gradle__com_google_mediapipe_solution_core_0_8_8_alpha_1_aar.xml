@@ -1,9 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.mediapipe:solution-core:0.8.8-alpha-1@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/1b2db5728f1f60f49b21a1e221f36baf/transformed/solution-core-0.8.8-alpha-1/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/1b2db5728f1f60f49b21a1e221f36baf/transformed/solution-core-0.8.8-alpha-1/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/1b2db5728f1f60f49b21a1e221f36baf/transformed/solution-core-0.8.8-alpha-1/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/f42e867dc6aa102631d5aabe8c1f4172/transformed/solution-core-0.8.8-alpha-1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ee34c24d08240d8d7f8c85334c2e6b02/transformed/solution-core-0.8.8-alpha-1/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/ee34c24d08240d8d7f8c85334c2e6b02/transformed/solution-core-0.8.8-alpha-1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/ee34c24d08240d8d7f8c85334c2e6b02/transformed/solution-core-0.8.8-alpha-1/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
