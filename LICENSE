@@ -214,7 +214,6 @@ MIT License
 ============================================================================
 
 The following components are provided under the MIT License. See project link for details.
-The text of each license is also included at licenses/LICENSE-[project]-[version].txt.
   
    (The MIT License) Animal Sniffer (https://github.com/mojohaus/animal-sniffer/blob/master/LICENSE)
    (The MIT License) Checker Framework Annotations (https://github.com/typetools/checker-framework/blob/master/LICENSE.txt)
@@ -230,8 +229,7 @@ The following components are provided under the BSD 3-Clause license.  See file 
 Apache licenses
 ============================================================================
 
-The following components are provided under the MIT License. See project link for details.
-The text of each license is also included at licenses/LICENSE-[project]-[version].txt.
+The following components are provided under the Apache License. See project link for details.
 
   (Apache License 2.0) androidx (https://github.com/androidx/androidx/blob/androidx-main/LICENSE.txt)
   (Apache License 2.0) apksig (https://github.com/MuntashirAkon/apksig-android/blob/master/LICENSE)
@@ -239,3 +237,4 @@ The text of each license is also included at licenses/LICENSE-[project]-[version
   (Apache License 2.0) com.squareup.okhttp3 (https://github.com/square/okhttp/blob/master/LICENSE.txt)
   (Apache License 2.0) EventBus (https://github.com/greenrobot/EventBus/blob/master/LICENSE)
   (Apache License 2.0) retrofit (https://github.com/square/retrofit/blob/master/LICENSE.txt)
+  (Apache License 2.0) mediapipe (https://github.com/google/mediapipe/blob/master/LICENSE)
