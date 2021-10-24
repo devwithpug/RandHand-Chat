@@ -2,12 +2,15 @@
 
 <img src = "https://user-images.githubusercontent.com/63226023/138600419-24779e81-9854-406b-ab8f-1980c9f15fac.gif">
 
-
-
-
 ## 개요
 
 손 모양을 통해 임의로 만든 수신호(Hand gesture)를 인식하여 동일한 수신호를 입력한 상대방과 랜덤으로 매칭해주는 채팅 애플리케이션입니다. [Mediapipe - Hands](https://google.github.io/mediapipe/solutions/hands)를 이용하여 개발했습니다.
+
+## 라이센스
+
+* Android App - `Apache License 2.0` ([android/LICENSE](./android/LICENSE))
+* Backend Server - `The MIT License` ([backend/LICENSE](./backend/LICENSE))
+* Object Detection - `The MIT License` ([handDetection/LICENSE](./handDetection/LICENSE))
 
 ## 팀원
 
