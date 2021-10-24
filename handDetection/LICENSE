@@ -31,9 +31,7 @@ SOFTWARE.
 ========================================================================
 Apache licenses
 ========================================================================
-
 The following components are provided under the Apache License. See project link for details.
-The text of each license is also included at licenses/LICENSE-[project]-[version].txt.
 
     (Apache License 2.0) opencv2 v4.5.3 (https://github.com/opencv/opencv/blob/master/LICENSE)
     (Apache License 2.0) mediapipe v0.8.3 (https://github.com/google/mediapipe/blob/master/LICENSE)
