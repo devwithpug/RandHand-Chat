@@ -1,6 +1,9 @@
 # 👋 랜손챗 : RandHand-Chat 👋
 
-<img src = "https://user-images.githubusercontent.com/63226023/132185973-58a4ea78-a256-45b9-89ee-06c40cd53b3a.gif">
+<img src = "https://user-images.githubusercontent.com/63226023/138600419-24779e81-9854-406b-ab8f-1980c9f15fac.gif">
+
+
+
 
 ## 개요
 
@@ -18,32 +21,32 @@
 
 ### 01. Welcome, 로그인, 설정 / 프로필 및 변경
 
+
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-<img src = "https://user-images.githubusercontent.com/63226023/132186204-6bb481e3-c429-4853-b8fc-161334ac04ee.png" width="15%" height="15%">
-<img src = "https://user-images.githubusercontent.com/63226023/132176392-cda026ba-3953-4080-9cb3-309daffe3724.png" width="15%" height="15%">
-<img src = "https://user-images.githubusercontent.com/63226023/132186299-37d1ec92-13ec-4243-849b-01d2e559e300.png" width="15%" height="15%">
-<img src = "https://user-images.githubusercontent.com/63226023/132186811-4826f896-920d-4cca-8273-b0229a883082.png" width="15%" height="15%">
-<img src = "https://user-images.githubusercontent.com/63226023/132186817-9af91391-7bd8-4b74-8856-2f8f75fe3b9e.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/138600469-7d45d40c-3a10-410c-934d-40882c4ae7f8.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/138600472-883a25ff-95ef-44cd-92b7-b1db7a892c76.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/138600479-0bb44c1b-aebb-4058-a079-00fbb2d07f99.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/138600485-fa6f34db-f9bb-4cc4-9a15-3a4f83918993.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/138600495-bbc052d6-1336-4248-a36d-12115c112218.png" width="15%" height="15%">
 </div>
 
 ### 02. 채팅방, 채팅화면
 
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-<img src = "https://user-images.githubusercontent.com/63226023/132188667-edfb6b59-e191-404f-b15b-c2f203653436.png" width="15%" height="15%">
-<img src = "https://user-images.githubusercontent.com/63226023/132188678-95811e6e-e61c-4297-9617-7c8ebba9352d.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/138601544-87db375b-2b05-4c72-a63f-5ae4317c0b1c.png" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/138601546-a324f71f-338b-4b9a-9dfe-233c47cec147.png" width="15%" height="15%">
 </div>
 
-### 03. 랜손채팅, 매칭, 채팅방, 채팅화면
+### 03. 랜손채팅, 매칭
 <div style="float:left;margin:0 10px 10px 0" markdown="1">
-<img src = "https://user-images.githubusercontent.com/63226023/132188919-15ddf4f5-e09c-40ea-9a62-4ba8e26525ae.jpg" width="15%" height="15%">
-<img src = "https://user-images.githubusercontent.com/63226023/132189489-3c122182-c90f-4733-b0b3-b292b712f6f7.gif" width="15.8%" height="15.8%">
+<img src = "https://user-images.githubusercontent.com/63226023/138600547-b62a8ecf-d5e1-479b-a767-ab537cb77991.jpg" width="15%" height="15%">
+<img src = "https://user-images.githubusercontent.com/63226023/138600584-4fc54160-bace-42de-8086-32ac5efc1c12.gif" width="15%" height="15%">
 </div>
 
 > 시연 영상: [https://youtu.be/46Wa7FWnS6k](https://youtu.be/46Wa7FWnS6k)
 
 ## 기술 스택
 
-![stack](https://user-images.githubusercontent.com/69145799/132272891-444f8c9a-9fd6-472b-9d92-b5980741aa0e.png)
 
 > Spring Cloud 프레임워크 및 AMQP 생략(Spring Cloud Eureka, Spring Cloud Config, Kafka)   
 > 스프링 프로젝트의 `application.properties` 설정 파일 외부 관리 : [RandHand-config](https://github.com/devwithpug/RandHand-config)
