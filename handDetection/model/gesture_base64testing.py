@@ -17,7 +17,7 @@ class Gesture_Predict:
         mp_hands = mp.solutions.hands
         hands = mp_hands.Hands(
             static_image_mode=True,
-            max_num_hands=2,
+            max_num_hands=1,
             min_detection_confidence=0.5)
 
         # image decode (서버에서 base64 형식으로 packet이 오면, 형태를 이미지화 해줌)
