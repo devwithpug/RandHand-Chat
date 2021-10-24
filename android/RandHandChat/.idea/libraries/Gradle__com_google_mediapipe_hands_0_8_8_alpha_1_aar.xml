@@ -1,9 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.mediapipe:hands:0.8.8-alpha-1@aar">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/8b3cc86f676ed024d70dcf8cc6774416/transformed/hands-0.8.8-alpha-1/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/8b3cc86f676ed024d70dcf8cc6774416/transformed/hands-0.8.8-alpha-1/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/8b3cc86f676ed024d70dcf8cc6774416/transformed/hands-0.8.8-alpha-1/AndroidManifest.xml" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/f64554b31d829a5f9a54a9793ad201ca/transformed/hands-0.8.8-alpha-1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c0bbf396374cbb86b49a66d48b40062d/transformed/hands-0.8.8-alpha-1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/c0bbf396374cbb86b49a66d48b40062d/transformed/hands-0.8.8-alpha-1/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/c0bbf396374cbb86b49a66d48b40062d/transformed/hands-0.8.8-alpha-1/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
