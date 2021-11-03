@@ -43,7 +43,7 @@ public class WarmUpScheduler {
     @Scheduled(fixedDelay = 30 * 60 * 1000)
     public void onApplicationEvent() {
 
-        if (warmUp) {
+        if (false) {
 
             log.info("Initializing Chat-service warm up");
 

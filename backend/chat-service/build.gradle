@@ -72,7 +72,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
-    implementation 'org.glassfish.jaxb:jaxb-runtime'
+    implementation 'javax.xml.bind:jaxb-api:2.1'
 
 }
 
