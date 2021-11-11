@@ -1,5 +1,12 @@
 # 👋 랜손챗 : RandHand-Chat 👋
 
+## 과학기술정보통신부 주최 / 2021 공개SW 개발자대회
+
+### [랜손챗 팀(OSS-24-027) 은상 수상](https://www.oss.kr/dev_competition_notice/show/eafbc679-e341-4d07-9dd3-8e28e5443358)
+
+> 시연 영상: [https://youtu.be/epUv5T32eJ8](https://youtu.be/epUv5T32eJ8)   
+> 발표 자료: [공개SW 개발자대회 최종 발표 (랜손챗)](./발표%20자료.pdf)
+
 <img src = "https://user-images.githubusercontent.com/63226023/138600419-24779e81-9854-406b-ab8f-1980c9f15fac.gif">
 
 ## 개요
@@ -46,10 +53,11 @@
 <img src = "https://user-images.githubusercontent.com/63226023/138600584-4fc54160-bace-42de-8086-32ac5efc1c12.gif" width="15%" height="15%">
 </div>
 
-> 시연 영상: [https://youtu.be/46Wa7FWnS6k](https://youtu.be/46Wa7FWnS6k)
-
 ## 기술 스택
 
+![backend-1](https://user-images.githubusercontent.com/69145799/141271929-b9b246d8-8313-4647-99d4-85c8c2457f79.png)
+
+![backend-2](https://user-images.githubusercontent.com/69145799/141271953-553adcf9-bb25-4445-8f73-f3e93246c42f.png)
 
 > Spring Cloud 프레임워크 및 AMQP 생략(Spring Cloud Eureka, Spring Cloud Config, Kafka)   
 > 스프링 프로젝트의 `application.properties` 설정 파일 외부 관리 : [RandHand-config](https://github.com/devwithpug/RandHand-config)
