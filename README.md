@@ -59,7 +59,6 @@
 
 ![backend-2](https://user-images.githubusercontent.com/69145799/141271953-553adcf9-bb25-4445-8f73-f3e93246c42f.png)
 
-> Spring Cloud 프레임워크 및 AMQP 생략(Spring Cloud Eureka, Spring Cloud Config, Kafka)   
 > 스프링 프로젝트의 `application.properties` 설정 파일 외부 관리 : [RandHand-config](https://github.com/devwithpug/RandHand-config)
 
 ## 개발 일지
